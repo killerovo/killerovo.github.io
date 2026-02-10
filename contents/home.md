@@ -1,17 +1,17 @@
 
 
-[![senli1073](https://img.shields.io/badge/senli1073-github-blue?logo=github)](https://github.com/senli1073)
+[![killerovo](https://img.shields.io/badge/killerovo-github-blue?logo=github)](https://github.com/killerovo)
 
-He is currently a Fellow in the Department of Earth and Planetary Sciences (EPS) at Harvard University.
+A Graduate Student in the School of Information and Communication Engineering at University of Electronic Science and Technology of China (UESTC).
 
 #### Contact
 
-Email: senli[at]fas.harvard.edu
+Email: 3322752936@qq.com
 
 #### Education
-M.E., Computer Science and Technology, China University of Mining and Technology, 2022—2025.\
-B.E., Data Science and Big Data Technology, China University of Mining and Technology, 2018—2022.
+M.S., Information and Communication Engineering, University of Electronic Science and Technology of China (UESTC), 2026—2029.\
+B.S., Information and Communication Engineering, Beijing University of Posts and Telecommunications (BUPT), 2022—2026.
 
 #### Research Interests
-Machine Learning for Seismology; Foundation Model; Observational Seismology; Microseismic Monitoring
+Large Language Models (LLM); Vision-Language Models (VLM); Multi-modal Learning; Computer Vision
 
