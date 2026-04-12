@@ -5,7 +5,8 @@
 
 #### Contact
 
-Email: 3322752936@qq.com
+Email: 3322752936@qq.com  
+Google Scholar: [https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN](https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN)
 
 #### Education
 M.S., Information and Communication Engineering, University of Electronic Science and Technology of China (UESTC).\
