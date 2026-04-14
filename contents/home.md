@@ -6,7 +6,8 @@
 #### Contact
 
 Email: 3322752936@qq.com  
-Google Scholar: [https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN](https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN)
+Google Scholar: [https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN](https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN)  
+Baidu Scholar: [https://xueshu.baidu.com/scholarID/CN-B4O7QYFK](https://xueshu.baidu.com/scholarID/CN-B4O7QYFK)
 
 #### Education
 M.S., Information and Communication Engineering, University of Electronic Science and Technology of China (UESTC).\
