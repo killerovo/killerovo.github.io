@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>视频解析工具</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f5f5f5;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        input {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        iframe {
+            margin-top: 20px;
+            border: none;
+        }
+        .desc {
+            width: 60%;
+            margin: auto;
+            text-align: left;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎬 视频解析工具</h1>
+
+    <!-- 使用说明 -->
+    <div class="desc">
+        <h3>使用说明：</h3>
+        <p>1️⃣ 打开 <a href="https://www.iqiyi.com" target="_blank">爱奇艺</a> 找到你想看的视频</p>
+        <p>2️⃣ 复制浏览器地址栏中的视频链接</p>
+        <p>3️⃣ 粘贴到下方输入框</p>
+        <p>4️⃣ 点击“解析播放”即可观看</p>
+    </div>
+
+    <!-- 说明图片 -->
+    <div style="margin: 20px 0;">
+        <img src="static/assets/img/tools/ScreenShot_2026-04-23_174152_931.png" alt="使用说明图片" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    </div>
+
+    <br>
+
+    <!-- 输入框 -->
+    <input id="videoUrl" placeholder="请粘贴视频链接，例如：https://www.iqiyi.com/v_xxxxx.html">
+
+    <br>
+
+    <!-- 按钮 -->
+    <button onclick="goOriginal()">🔗 打开原视频</button>
+    <button onclick="playVideo()">▶️ 解析播放</button>
+
+    <!-- 播放区域 -->
+    <div>
+        <iframe id="player" width="800" height="450"></iframe>
+    </div>
+
+</div>
+
+<script>
+
+function goOriginal() {
+    let url = document.getElementById("videoUrl").value;
+    if (!url) {
+        alert("请先输入视频链接！");
+        return;
+    }
+    window.open(url);
+}
+
+function playVideo() {
+    let url = document.getElementById("videoUrl").value;
+    if (!url) {
+        alert("请先输入视频链接！");
+        return;
+    }
+
+    let parseUrl = "https://jx.xmflv.cc/?url=" + encodeURIComponent(url);
+    document.getElementById("player").src = parseUrl;
+}
+
+</script>
+
+</body>
+</html>
