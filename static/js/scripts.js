@@ -56,6 +56,12 @@ window.addEventListener('DOMContentLoaded', event => {
                 const html = marked.parse(markdown);
                 document.getElementById(name + '-md').innerHTML = html;
             }).then(() => {
+                // Add target="_blank" to all links
+                const links = document.querySelectorAll('#' + name + '-md a');
+                links.forEach(link => {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                });
                 // MathJax
                 MathJax.typeset();
             })
