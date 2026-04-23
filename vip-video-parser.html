@@ -27,6 +27,17 @@
             margin-top: 20px;
             border: none;
         }
+        #playerContainer {
+            position: relative;
+        }
+        #playerContainer:fullscreen {
+            width: 100vw;
+            height: 100vh;
+        }
+        #playerContainer:fullscreen iframe {
+            width: 100%;
+            height: 100%;
+        }
         .desc {
             width: 60%;
             margin: auto;
@@ -68,9 +79,10 @@
     <!-- 按钮 -->
     <button onclick="goOriginal()">🔗 打开原视频</button>
     <button onclick="playVideo()">▶️ 解析播放</button>
+    <button onclick="toggleFullscreen()">⛶ 全屏播放</button>
 
     <!-- 播放区域 -->
-    <div>
+    <div id="playerContainer">
         <iframe id="player" width="800" height="450"></iframe>
     </div>
 
@@ -96,6 +108,19 @@ function playVideo() {
 
     let parseUrl = "https://jx.xmflv.cc/?url=" + encodeURIComponent(url);
     document.getElementById("player").src = parseUrl;
+}
+
+function toggleFullscreen() {
+    const container = document.getElementById('playerContainer');
+    if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+            alert(`全屏请求失败: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
 }
 
 </script>
