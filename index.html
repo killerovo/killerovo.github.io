@@ -3,195 +3,712 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Academic Webpage" />
-    <meta name="author" content="senli1073" />
-    <title id="title"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Academic Homepage" />
+    <meta name="author" content="killerovo" />
+    <title id="title">Li Zhijiang</title>
 
-    <!-- Icon -->
     <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
 
-    <!-- Bootstrap icons-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-
-    <!-- Google fonts-->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&amp;display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link type="text/css" href="static/css/styles.css" rel="stylesheet" />
+    <!-- Core CSS -->
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
 
-    <!-- Bootstrap core JS-->
-    <script type="text/javascript" src="static/js/bootstrap.bundle.min.js"></script>
-
-    <!-- For Compatability -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    
-    <!-- Markdown -->
+    <!-- Markdown Parser -->
     <script type="text/javascript" src="static/js/marked.min.js"></script>
 
-    <!-- Mathematics -->
+    <!-- YAML Parser -->
+    <script type="text/javascript" src="static/js/js-yaml.min.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- MathJax -->
     <script>
-        // See https://docs.mathjax.org/en/latest/index.html for more details.
         MathJax = {
             tex: {
-                packages: {},              // extensions to use
-                inlineMath: [              // start/end delimiter pairs for in-line math
-                    ['$', '$'],
-                    ['\\(', '\\)']
-                ],
-                displayMath: [             // start/end delimiter pairs for display math
-                    ['$$', '$$'],
-                    ['\\[', '\\]']
-                ],
-                processEscapes: false,      // use \$ to produce a literal dollar sign
-                processEnvironments: true, // process \begin{xxx}...\end{xxx} outside math mode
-                processRefs: true,         // process \ref{...} outside of math mode
-                digits: /^(?:[0-9]+(?:\{,\}[0-9]{3})*(?:\.[0-9]*)?|\.[0-9]+)/,    // pattern for recognizing numbers
-                tags: 'all',              // or 'ams' or 'all'
-                tagSide: 'right',          // side for \tag macros
-                tagIndent: '0.8em',        // amount to indent tags
-                useLabelIds: true,         // use label name rather than tag for ids
-                maxMacros: 10000,          // maximum number of macro substitutions per expression
-                maxBuffer: 5 * 1024,       // maximum size for the internal TeX string (5K)
-                // baseURL:                   // URL for use with links to tags (when there is a <base> tag in effect)
-                // (document.getElementsByTagName('base').length === 0) ? '' : String(document.location).replace(/#.*$/, ''),
-                formatError:               // function called when TeX syntax errors occur
-                    (jax, err) => jax.formatError(err)
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: false,
+                processEnvironments: true,
+                processRefs: true,
+                tags: 'all',
+                tagSide: 'right',
+                tagIndent: '0.8em',
+                useLabelIds: true,
+                maxMacros: 10000,
+                maxBuffer: 5 * 1024,
             }
         };
     </script>
     <script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <!-- Core JS-->
-    <script type="text/javascript" src="static/js/scripts.js"></script>
-    <script type="text/javascript" src="static/js/js-yaml.min.js"></script>
-
 </head>
 
 <body id="page-top">
-    <!-- Navigation-->
-    <nav class="header navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
-        <div class="container px-5">
-            <a id="page-top-title" class="navbar-brand fw-bold" href="#page-top"></a>
-            <!-- <a href="#page-top"><img src="static/assets/img/CUMT_LOGO.svg" style="width: 11rem;"></a> -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                MENU
-                <i class="bi-list"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link me-lg-3" href="#page-top">HOME</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link me-lg-3" href="#introduction">INTRODUCTION</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link me-lg-3" href="#tools">TOOLS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link me-lg-3" href="#blogs">BLOGS</a>
-                    </li>
 
-                </ul>
-            </div>
+    <!-- Particle Network Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orbs">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a class="nav-brand" href="#page-top" id="page-top-title">Li Zhijiang</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="navbarResponsive">
+                <li><a href="#page-top" class="nav-link">HOME</a></li>
+                <li><a href="#introduction" class="nav-link">INTRODUCTION</a></li>
+                <li><a href="#tools" class="nav-link">TOOLS</a></li>
+                <li><a href="#blogs" class="nav-link">BLOGS</a></li>
+            </ul>
         </div>
     </nav>
 
-    <!-- Top Section -->
-    <section class="top-section" style="background-image: url('static/assets/img/background.jpeg');">
-        <div class="top-section-content">
-            <div class="container px-5">
-                <h2 id="top-section-bg-text" class="text-white display-3 lh-1 font-alt"></h2>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Floating Geometric Shapes -->
+        <div class="hero-geo geo-1"></div>
+        <div class="hero-geo geo-2"></div>
+        <div class="hero-geo geo-3"></div>
+
+        <div class="hero-content reveal">
+            <h1>
+                <span class="gradient-text" id="top-section-bg-text">Computer Science</span>
+            </h1>
+            <p class="hero-subtitle" id="home-subtitle">Li Zhijiang&ensp;|&ensp;李治江</p>
+        </div>
+
+        <!-- 3D Rubik's Cube -->
+        <div id="cube-container"></div>
+
+        <div class="hero-scroll-hint">
+            <div class="mouse"></div>
+            <span>SCROLL</span>
         </div>
     </section>
-    <!-- Top Section -->
 
-    <!-- Photo -->
-    <div class="container px-5">
-        <div id="avatar">
-            <img class="shadow" src="static/assets/img/photo.png">
-        </div>
+    <!-- Avatar -->
+    <div class="avatar-wrapper reveal" id="avatar">
+        <img class="avatar-img" src="static/assets/img/photo.png" alt="Li Zhijiang" />
     </div>
-    <!-- Photo -->
-    
-    <!-- Introduction -->
-    <section class="bg-gradient-primary-to-secondary-light mt5 md5" id="introduction">
-        <div class="container px-5">
-            <header>
-                <button class="btn btn-link text-decoration-none text-left w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#introduction-content" aria-expanded="false" aria-controls="introduction-content">
-                    <h2 id="introduction-subtitle" class="mb-0"><i class="bi bi-person-fill"></i>&nbsp;INTRODUCTION</h2>
-                    <i class="bi bi-chevron-down"></i>
-                </button>
-            </header>
-            <div class="collapse" id="introduction-content">
-                <div class="main-body mt-3" id="home-md"></div>
-                <div class="main-body mt-5" id="publications-md"></div>
+
+    <!-- Introduction Section -->
+    <section class="content-section" id="introduction">
+        <div class="section-inner">
+            <div class="glass-card reveal">
+                <div class="section-header">
+                    <div class="icon">&#x1F464;</div>
+                    <button class="collapse-toggle" id="intro-toggle" aria-expanded="false" data-target="introduction-content">
+                        <h2 id="introduction-subtitle">Introduction</h2>
+                        <span class="chevron">&#x25BC;</span>
+                    </button>
+                </div>
+                <div class="collapse-content collapsed" id="introduction-content">
+                    <div class="main-body" id="home-md"></div>
+                    <div class="main-body" id="publications-md" style="margin-top: 32px;"></div>
+                </div>
             </div>
         </div>
     </section>
-    <!-- Introduction -->
 
-    <!-- Tools -->
-    <section class="bg-gradient-primary-to-secondary-gray mt5 md5" id="tools">
-        <div class="container px-5">
-            <header>
-                <button class="btn btn-link text-decoration-none text-left w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#tools-content" aria-expanded="true" aria-controls="tools-content">
-                    <h2 id="tools-subtitle" class="mb-0"><i class="bi bi-tools"></i>&nbsp;TOOLS</h2>
-                    <i class="bi bi-chevron-down"></i>
-                </button>
-            </header>
-            <div class="collapse show" id="tools-content">
-                <div class="main-body mt-3" id="tools-md"></div>
+    <!-- Tools Section -->
+    <section class="content-section" id="tools">
+        <div class="section-inner">
+            <div class="glass-card reveal reveal-delay-1">
+                <div class="section-header">
+                    <div class="icon">&#x1F6E0;</div>
+                    <button class="collapse-toggle" id="tools-toggle" aria-expanded="true" data-target="tools-content">
+                        <h2 id="tools-subtitle">Tools</h2>
+                        <span class="chevron">&#x25BC;</span>
+                    </button>
+                </div>
+                <div class="collapse-content expanded" id="tools-content">
+                    <div class="main-body" id="tools-md"></div>
+                </div>
             </div>
         </div>
     </section>
-    <!-- Tools -->
 
-    <!-- Blogs -->
-    <section class="bg-gradient-primary-to-secondary-gray mt5 md5" id="blogs">
-        <div class="container px-5">
-            <header>
-                <button class="btn btn-link text-decoration-none text-left w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#blogs-content" aria-expanded="true" aria-controls="blogs-content">
-                    <h2 id="blogs-subtitle" class="mb-0"><i class="bi bi-pencil-fill"></i>&nbsp;BLOGS</h2>
-                    <i class="bi bi-chevron-down"></i>
-                </button>
-            </header>
-            <div class="collapse show" id="blogs-content">
-                <div class="main-body mt-3" id="blogs-md"></div>
+    <!-- Blogs Section -->
+    <section class="content-section" id="blogs">
+        <div class="section-inner">
+            <div class="glass-card reveal reveal-delay-2">
+                <div class="section-header">
+                    <div class="icon">&#x270E;</div>
+                    <button class="collapse-toggle" id="blogs-toggle" aria-expanded="true" data-target="blogs-content">
+                        <h2 id="blogs-subtitle">Blogs</h2>
+                        <span class="chevron">&#x25BC;</span>
+                    </button>
+                </div>
+                <div class="collapse-content expanded" id="blogs-content">
+                    <div class="main-body" id="blogs-md"></div>
+                </div>
             </div>
         </div>
     </section>
-    <!-- Blogs -->
 
-
-    <!-- Footer-->
-    <footer class="bg-bottom text-center py-5">
-        <div class="container px-5">
-            <div class="text-white-50 small">
-                <div id="copyright-text" class="mb-2"></div>
-                <a id="github-link" href="https://github.com/killerovo">Github</a>
-                <span class="mx-1">&middot;</span>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-text">
+            <div class="footer-links">
+                <a id="github-link" href="https://github.com/killerovo">GitHub</a>
+                <span class="dot">&middot;</span>
                 <a id="scholar-link" href="https://scholar.google.com/citations?user=p0Fd3T4AAAAJ&hl=zh-CN">Google Scholar</a>
-                <span class="mx-1">&middot;</span>
+                <span class="dot">&middot;</span>
                 <a id="baidu-scholar-link" href="https://xueshu.baidu.com/scholarID/CN-B4O7QYFK">Baidu Scholar</a>
-                <span class="mx-1">&middot;</span>
+                <span class="dot">&middot;</span>
                 <a id="license-link" href="https://github.com/killerovo/killerovo.github.io/blob/main/LICENSE">License</a>
             </div>
+            <div id="copyright-text">&copy; Li Zhijiang 2025-2035. All Rights Reserved.</div>
         </div>
     </footer>
 
-</body>
+    <!-- Floating Code Particles Background -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
 
+            let W, H;
+            const PARTICLE_COUNT = 150;
+            const particles = [];
+
+            // Code-like characters
+            const chars = (
+                '01' +
+                '{}[]()<>/\\|#*+-=~^' +
+                'λΣΠΩΔΘΞΨΦ' +
+                '23456789ABCDEF' +
+                'ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ' +
+                '░▒▓█▀▄■□▪▫●○◆◇▲△▼▽' +
+                'importexportconstasyncawaitfunctionreturnclass' +
+                '田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'
+            ).split('');
+
+            const colors = [
+                'rgba(129,140,248,ALPHA)',   // light indigo
+                'rgba(99,102,241,ALPHA)',    // indigo
+                'rgba(79,70,229,ALPHA)',     // deep indigo
+                'rgba(6,182,212,ALPHA)',     // cyan
+                'rgba(34,211,238,ALPHA)',    // light cyan
+                'rgba(139,92,246,ALPHA)',    // violet
+                'rgba(167,139,250,ALPHA)',   // light violet
+                'rgba(148,163,184,ALPHA)',   // slate
+            ];
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            function createParticle() {
+                return {
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6,
+                    char: chars[Math.floor(Math.random() * chars.length)],
+                    size: 10 + Math.random() * 18,
+                    baseAlpha: 0.15 + Math.random() * 0.5,
+                    alpha: 0,
+                    targetAlpha: 0.15 + Math.random() * 0.5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    glowColor: colors[Math.floor(Math.random() * 3)],
+                    phase: Math.random() * Math.PI * 2,
+                    pulseSpeed: 0.003 + Math.random() * 0.008,
+                    driftForce: 0.001 + Math.random() * 0.004,
+                    wobbleAmp: 0.1 + Math.random() * 0.3,
+                };
+            }
+
+            // Initialize particles
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const p = createParticle();
+                p.alpha = p.targetAlpha; // Start visible
+                particles.push(p);
+            }
+
+            let mouseX = -1000, mouseY = -1000;
+
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            document.addEventListener('mouseleave', function() {
+                mouseX = -1000;
+                mouseY = -1000;
+            });
+
+            function draw(time) {
+                ctx.clearRect(0, 0, W, H);
+
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const p = particles[i];
+
+                    // Organic drifting motion
+                    p.vx += (Math.sin(time * p.driftForce + p.phase) * p.wobbleAmp) * 0.01;
+                    p.vy += (Math.cos(time * p.driftForce * 1.3 + p.phase) * p.wobbleAmp) * 0.01;
+
+                    // Gentle random nudges
+                    p.vx += (Math.random() - 0.5) * 0.02;
+                    p.vy += (Math.random() - 0.5) * 0.02;
+
+                    // Mouse interaction - subtle attraction
+                    const dx = mouseX - p.x;
+                    const dy = mouseY - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 200 && dist > 0) {
+                        const force = (200 - dist) / 200 * 0.003;
+                        p.vx += (dx / dist) * force;
+                        p.vy += (dy / dist) * force;
+                    }
+
+                    // Damping
+                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    const maxSpeed = 0.8;
+                    if (speed > maxSpeed) {
+                        p.vx = (p.vx / speed) * maxSpeed;
+                        p.vy = (p.vy / speed) * maxSpeed;
+                    }
+                    if (speed < 0.05) {
+                        p.vx += (Math.random() - 0.5) * 0.04;
+                        p.vy += (Math.random() - 0.5) * 0.04;
+                    }
+
+                    // Move
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Wrap around edges
+                    if (p.x < -20) p.x = W + 20;
+                    if (p.x > W + 20) p.x = -20;
+                    if (p.y < -20) p.y = H + 20;
+                    if (p.y > H + 20) p.y = -20;
+
+                    // Pulse alpha
+                    p.targetAlpha = p.baseAlpha + Math.sin(time * p.pulseSpeed + p.phase) * 0.15;
+                    p.alpha += (p.targetAlpha - p.alpha) * 0.02;
+
+                    const alpha = Math.max(0.05, Math.min(0.8, p.alpha));
+
+                    // Draw glow
+                    ctx.save();
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = p.glowColor.replace('ALPHA', '0.4');
+                    ctx.globalAlpha = alpha * 0.5;
+                    ctx.font = 'bold ' + p.size + 'px "Courier New", "MS Gothic", monospace';
+                    ctx.fillStyle = p.glowColor.replace('ALPHA', '1');
+                    ctx.fillText(p.char, p.x, p.y);
+                    ctx.restore();
+
+                    // Draw character
+                    ctx.font = 'bold ' + p.size + 'px "Courier New", "MS Gothic", monospace';
+                    ctx.fillStyle = p.color.replace('ALPHA', String(alpha));
+                    ctx.fillText(p.char, p.x, p.y);
+                }
+
+                // Occasionally spawn fresh particles to replace stale ones
+                if (Math.random() < 0.02) {
+                    const idx = Math.floor(Math.random() * PARTICLE_COUNT);
+                    particles[idx] = createParticle();
+                }
+
+                requestAnimationFrame(draw);
+            }
+
+            requestAnimationFrame(draw);
+        })();
+    </script>
+
+    <!-- 3D Rubik's Cube Script -->
+    <script>
+        (function() {
+            var container = document.getElementById('cube-container');
+            var scene, camera, renderer, cubeGroup;
+            var isDragging = false;
+            var prevMouse = { x: 0, y: 0 };
+            var autoRotate = true;
+            var autoRotateTimeout;
+
+            // Color scheme matching site design
+            var C = {
+                bg: '#0c0c1d',
+                primary: '#6366f1',
+                secondary: '#06b6d4',
+                accent: '#8b5cf6',
+                dark: '#06060e',
+                border: '#818cf8',
+                white: '#e8e8f0'
+            };
+
+            function createFaceTexture(index) {
+                var canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                var ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = C.dark;
+                ctx.fillRect(0, 0, 256, 256);
+
+                ctx.strokeStyle = C.primary;
+                ctx.lineWidth = 2.5;
+                ctx.strokeRect(8, 8, 240, 240);
+
+                var patterns = getPattern(index);
+                ctx.font = '11px "Courier New", monospace';
+                ctx.textAlign = 'center';
+
+                patterns.forEach(function(row, ri) {
+                    var chars = row.split('');
+                    chars.forEach(function(ch, ci) {
+                        var x = 28 + ci * 11;
+                        var y = 28 + ri * 13;
+                        var brightness = 0.65 + Math.random() * 0.35;
+                        ctx.globalAlpha = brightness;
+                        ctx.fillStyle = C.primary;
+                        ctx.fillText(ch, x, y);
+                    });
+                });
+                ctx.globalAlpha = 1;
+
+                var tex = new THREE.CanvasTexture(canvas);
+                tex.needsUpdate = true;
+                return tex;
+            }
+
+            function getPattern(index) {
+                var patterns = [
+                    // Face 1: cat/octocat
+                    [
+                        '    +------------+    ',
+                        '   +--------------+   ',
+                        '  +----------------+  ',
+                        ' +----++----++----+ ',
+                        '+----++------++----+',
+                        '|------------------|',
+                        '|------++++++------|',
+                        '|-----+------+-----|',
+                        '|------------------|',
+                        '+----+--------+----+',
+                        ' +---+--------+---+ ',
+                        '  +--------------+  ',
+                        '   +------------+   '
+                    ],
+                    // Face 2: git branch
+                    [
+                        '    *               ',
+                        '    |               ',
+                        '    |               ',
+                        '    +------*        ',
+                        '    |      |        ',
+                        '    |      |        ',
+                        '    +------+        ',
+                        '    |      |        ',
+                        '    |      +-----*  ',
+                        '    |      |     |  ',
+                        '    *------+-----*  ',
+                        '    |      |        ',
+                        '    *               '
+                    ],
+                    // Face 3: code
+                    [
+                        '+------------------+',
+                        '| function() {     |',
+                        '|   return {       |',
+                        '|     code: true,  |',
+                        '|     love: "git"  |',
+                        '|   };            |',
+                        '| }                |',
+                        '|                  |',
+                        '| git push origin  |',
+                        '| git merge main   |',
+                        '| git commit -m    |',
+                        '|                  |',
+                        '+------------------+'
+                    ],
+                    // Face 4: abstract
+                    [
+                        '    ++      ++    ',
+                        '  ++++++  ++++++  ',
+                        ' ++++++++++++++++ ',
+                        '++++  ++++++  ++++',
+                        '++++          ++++',
+                        '++++  ++++++  ++++',
+                        '++++          ++++',
+                        ' +++++    ++++++ ',
+                        '  ++++++++++++++  ',
+                        '   +++++  +++++   ',
+                        '  ++ ++  ++ ++  ',
+                        ' ++  ++  ++  ++ ',
+                        '++            ++'
+                    ],
+                    // Face 5: cube wireframe
+                    [
+                        '                  ',
+                        '   ///////////\\\\\\   ',
+                        '  /////////////\\\\\\  ',
+                        ' ///////////////\\\\\\ ',
+                        '/               \\',
+                        '|                |',
+                        '|                |',
+                        '|                |',
+                        '\\               /',
+                        ' \\\\\\\\\\\\\\///////////////// ',
+                        '  \\\\\\\\\\\\///////////////  ',
+                        '   \\\\\\\\\\/////////////   ',
+                        '                  '
+                    ],
+                    // Face 6: GitHub style
+                    [
+                        '+------------------+',
+                        '|                  |',
+                        '| ++++++++++++++  |',
+                        '| +              + |',
+                        '| +   ++  ++    + |',
+                        '| +              + |',
+                        '| +    +++++     + |',
+                        '| +              + |',
+                        '| +              + |',
+                        '| +              + |',
+                        '|  +            +  |',
+                        '|   ++++++++++++   |',
+                        '+------------------+'
+                    ]
+                ];
+                return patterns[index % patterns.length];
+            }
+
+            function createCubelet(x, y, z, textures) {
+                var geo = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+                var mats = [];
+
+                var faceMap = {
+                    right: x === 1 ? 0 : -1,
+                    left: x === -1 ? 1 : -1,
+                    top: y === 1 ? 2 : -1,
+                    bottom: y === -1 ? 3 : -1,
+                    front: z === 1 ? 4 : -1,
+                    back: z === -1 ? 5 : -1
+                };
+
+                ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(function(name) {
+                    var ti = faceMap[name];
+                    if (ti >= 0) {
+                        mats.push(new THREE.MeshStandardMaterial({
+                            map: textures[ti],
+                            roughness: 0.35,
+                            metalness: 0.15,
+                            emissive: new THREE.Color(C.primary),
+                            emissiveIntensity: 0.04
+                        }));
+                    } else {
+                        mats.push(new THREE.MeshStandardMaterial({
+                            color: 0x0c0c1d,
+                            roughness: 0.7,
+                            metalness: 0.05
+                        }));
+                    }
+                });
+
+                var cube = new THREE.Mesh(geo, mats);
+                cube.position.set(x, y, z);
+
+                var edgeGeo = new THREE.EdgesGeometry(geo);
+                var edgeMat = new THREE.LineBasicMaterial({
+                    color: C.primary,
+                    transparent: true,
+                    opacity: 0.5
+                });
+                var edges = new THREE.LineSegments(edgeGeo, edgeMat);
+                cube.add(edges);
+
+                return cube;
+            }
+
+            function createCube() {
+                cubeGroup = new THREE.Group();
+                scene.add(cubeGroup);
+
+                var textures = [];
+                for (var i = 0; i < 6; i++) {
+                    textures.push(createFaceTexture(i));
+                }
+
+                for (var x = -1; x <= 1; x++) {
+                    for (var y = -1; y <= 1; y++) {
+                        for (var z = -1; z <= 1; z++) {
+                            cubeGroup.add(createCubelet(x, y, z, textures));
+                        }
+                    }
+                }
+            }
+
+            function init() {
+                var W = container.clientWidth;
+                var H = container.clientHeight;
+
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+                camera.position.set(4.5, 3.5, 5.5);
+                camera.lookAt(0, 0, 0);
+
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(W, H);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+
+                var ambient = new THREE.AmbientLight(0xffffff, 0.4);
+                scene.add(ambient);
+
+                var mainLight = new THREE.DirectionalLight(C.primary, 0.9);
+                mainLight.position.set(5, 10, 5);
+                scene.add(mainLight);
+
+                var fillLight = new THREE.DirectionalLight(C.secondary, 0.5);
+                fillLight.position.set(-5, 5, -5);
+                scene.add(fillLight);
+
+                var rimLight = new THREE.DirectionalLight(C.accent, 0.35);
+                rimLight.position.set(0, -5, 10);
+                scene.add(rimLight);
+
+                var pointLight = new THREE.PointLight(C.primary, 0.4, 20);
+                pointLight.position.set(0, 0, 5);
+                scene.add(pointLight);
+
+                createCube();
+
+                // Mouse events
+                renderer.domElement.addEventListener('mousedown', onDown);
+                renderer.domElement.addEventListener('mousemove', onMove);
+                renderer.domElement.addEventListener('mouseup', onUp);
+                renderer.domElement.addEventListener('mouseleave', onUp);
+                renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
+
+                // Touch events
+                renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+                renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+                renderer.domElement.addEventListener('touchend', onTouchEnd);
+
+                window.addEventListener('resize', onResize);
+                animate();
+            }
+
+            function onDown(e) {
+                isDragging = true;
+                autoRotate = false;
+                clearTimeout(autoRotateTimeout);
+                prevMouse.x = e.clientX;
+                prevMouse.y = e.clientY;
+            }
+
+            function onMove(e) {
+                if (!isDragging) return;
+                var dx = e.clientX - prevMouse.x;
+                var dy = e.clientY - prevMouse.y;
+                cubeGroup.rotation.y += dx * 0.008;
+                cubeGroup.rotation.x += dy * 0.008;
+                prevMouse.x = e.clientX;
+                prevMouse.y = e.clientY;
+            }
+
+            function onUp() {
+                isDragging = false;
+                autoRotateTimeout = setTimeout(function() {
+                    if (!isDragging) autoRotate = true;
+                }, 2500);
+            }
+
+            function onWheel(e) {
+                e.preventDefault();
+                camera.position.multiplyScalar(1 + e.deltaY * 0.0008);
+                camera.position.clampLength(3.5, 14);
+            }
+
+            var touchStart = { x: 0, y: 0 };
+
+            function onTouchStart(e) {
+                e.preventDefault();
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    autoRotate = false;
+                    clearTimeout(autoRotateTimeout);
+                    touchStart.x = e.touches[0].clientX;
+                    touchStart.y = e.touches[0].clientY;
+                }
+            }
+
+            function onTouchMove(e) {
+                e.preventDefault();
+                if (!isDragging || e.touches.length !== 1) return;
+                var dx = e.touches[0].clientX - touchStart.x;
+                var dy = e.touches[0].clientY - touchStart.y;
+                cubeGroup.rotation.y += dx * 0.008;
+                cubeGroup.rotation.x += dy * 0.008;
+                touchStart.x = e.touches[0].clientX;
+                touchStart.y = e.touches[0].clientY;
+            }
+
+            function onTouchEnd() {
+                isDragging = false;
+                autoRotateTimeout = setTimeout(function() {
+                    if (!isDragging) autoRotate = true;
+                }, 2500);
+            }
+
+            function onResize() {
+                var W = container.clientWidth;
+                var H = container.clientHeight;
+                camera.aspect = W / H;
+                camera.updateProjectionMatrix();
+                renderer.setSize(W, H);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                if (autoRotate) {
+                    cubeGroup.rotation.y += 0.004;
+                    cubeGroup.rotation.x = Math.sin(Date.now() * 0.00025) * 0.15;
+                }
+
+                renderer.render(scene, camera);
+            }
+
+            // Start when container is ready
+            if (container.clientWidth > 0) {
+                init();
+            } else {
+                // Delay init if container hasn't laid out yet
+                setTimeout(init, 100);
+            }
+        })();
+    </script>
+
+    <!-- Core Scripts -->
+    <script type="text/javascript" src="static/js/scripts.js"></script>
+
+</body>
 </html>

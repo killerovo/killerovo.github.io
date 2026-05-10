@@ -1,200 +1,566 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>视频解析工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP视频解析工具</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
     <style>
+        :root {
+            --bg-deep: #06060e;
+            --bg-card: rgba(255, 255, 255, 0.025);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(99, 102, 241, 0.25);
+            --text-primary: #e8e8f0;
+            --text-secondary: #9494b8;
+            --text-muted: #6b6b8a;
+            --accent-1: #6366f1;
+            --accent-2: #06b6d4;
+            --accent-3: #8b5cf6;
+            --glow-1: rgba(99, 102, 241, 0.35);
+            --glow-2: rgba(6, 182, 212, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-1) var(--bg-deep);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+            border-radius: 3px;
+        }
+
         body {
-            font-family: Arial;
-            text-align: center;
-            background: #f5f5f5;
+            font-family: "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
+
+        /* ---- Background Particle Canvas ---- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ---- Glow Orbs ---- */
+        .glow-orbs {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+
+        .glow-orb.orb-1 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%);
+            top: -15%; left: -10%;
+        }
+
+        .glow-orb.orb-2 {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
+            bottom: -10%; right: -8%;
+            animation-delay: -5s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(20px,-30px) scale(1.05); }
+        }
+
+        /* ---- Main Container ---- */
         .container {
-            margin-top: 50px;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 900px;
+            margin: 40px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 48px 40px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
-        input {
-            width: 60%;
-            padding: 10px;
-            font-size: 16px;
+
+        h1 {
+            text-align: center;
+            font-family: "Kanit", sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
         }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ---- Description Card ---- */
+        .desc {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 32px;
+        }
+
+        .desc h3 {
+            font-size: 1.1rem;
+            color: var(--accent-2);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .desc p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 2;
+            font-weight: 300;
+        }
+
+        .desc a {
+            color: var(--accent-1);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .desc a:hover { color: var(--accent-2); }
+
+        /* ---- Slideshow ---- */
+        .slideshow-container {
+            position: relative;
+            margin: 20px auto 16px;
+            max-width: 500px;
+        }
+
+        .mySlides {
+            display: none;
+            text-align: center;
+        }
+
+        .mySlides img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .fade {
+            animation: fadeSlide 1.2s ease;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0.3; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .dot-row { text-align: center; margin-bottom: 24px; }
+
+        .dot {
+            height: 10px; width: 10px;
+            margin: 0 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.4s ease;
             cursor: pointer;
         }
-        iframe {
-            margin-top: 20px;
-            border: none;
+
+        .dot.active {
+            background: var(--accent-1);
+            box-shadow: 0 0 10px var(--glow-1);
+            width: 28px;
+            border-radius: 5px;
         }
+
+        /* ---- Input ---- */
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            flex: 1;
+            min-width: 240px;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        input:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 20px rgba(99,102,241,0.15);
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* ---- Buttons ---- */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            font-weight: 600;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: rgba(99,102,241,0.15);
+            color: var(--accent-1);
+            border-color: rgba(99,102,241,0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(99,102,241,0.25);
+            box-shadow: 0 0 30px var(--glow-1);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .btn-accent {
+            background: rgba(6,182,212,0.12);
+            color: var(--accent-2);
+            border-color: rgba(6,182,212,0.3);
+        }
+
+        .btn-accent:hover {
+            background: rgba(6,182,212,0.22);
+            box-shadow: 0 0 30px var(--glow-2);
+            transform: translateY(-1px);
+        }
+
+        /* ---- Player ---- */
         #playerContainer {
             position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: #000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
+
+        iframe {
+            display: block;
+            width: 100%;
+            height: 480px;
+            border: none;
+        }
+
         #playerContainer:fullscreen {
             width: 100vw;
             height: 100vh;
+            border-radius: 0;
         }
+
         #playerContainer:fullscreen iframe {
             width: 100%;
             height: 100%;
         }
-        .desc {
-            width: 60%;
-            margin: auto;
-            text-align: left;
-            background: #fff;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        /* 轮播样式 */
-        .slideshow-container {
-            position: relative;
-            margin: auto;
-        }
-        .mySlides {
-            display: none;
-        }
-        .fade {
-            animation-name: fade;
-            animation-duration: 1.5s;
-        }
-        @keyframes fade {
-            from {opacity: .4}
-            to {opacity: 1}
-        }
-        .dot {
-            height: 15px;
-            width: 15px;
-            margin: 0 2px;
-            background-color: #bbb;
-            border-radius: 50%;
+
+        /* ---- Back Link ---- */
+        .back-link {
             display: inline-block;
-            transition: background-color 0.6s ease;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
         }
-        .active {
-            background-color: #717171;
+
+        .back-link:hover { color: var(--accent-2); }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 640px) {
+            .container {
+                margin: 16px;
+                padding: 28px 20px;
+                border-radius: 16px;
+            }
+
+            h1 { font-size: 1.5rem; }
+
+            .btn-group { flex-direction: column; }
+            button { width: 100%; }
+
+            iframe { height: 260px; }
+
+            .desc { padding: 16px 20px; }
         }
     </style>
 </head>
-
 <body>
 
-<div class="container">
+    <!-- Background Particles -->
+    <canvas id="bg-canvas"></canvas>
 
-    <h1>🎬 视频解析工具</h1>
-
-    <!-- 使用说明 -->
-    <div class="desc">
-        <h3>使用说明：</h3>
-        <p>1️⃣ 打开 <a href="https://www.iqiyi.com" target="_blank">爱奇艺</a> 找到你想看的视频</p>
-        <p>2️⃣ 复制浏览器地址栏中的视频链接（不要跳转app）</p>
-        <p>3️⃣ 粘贴到下方输入框</p>
-        <p>4️⃣ 点击“解析播放”即可观看</p>
+    <!-- Glow Orbs -->
+    <div class="glow-orbs">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
     </div>
 
-    <!-- 说明图片轮播 -->
-    <div style="margin: 20px 0;">
+    <div class="container">
+
+        <h1>VIP视频解析工具</h1>
+
+        <!-- 使用说明 -->
+        <div class="desc">
+            <h3>使用说明</h3>
+            <p>1. 打开 <a href="https://www.iqiyi.com" target="_blank">爱奇艺</a> 找到你想看的视频</p>
+            <p>2. 复制浏览器地址栏中的视频链接（不要跳转app）</p>
+            <p>3. 粘贴到下方输入框</p>
+            <p>4. 点击「解析播放」即可观看</p>
+        </div>
+
+        <!-- 说明图片轮播 -->
         <div class="slideshow-container">
             <div class="mySlides fade">
-                <img src="static/assets/img/tools/图片1.png" alt="使用说明图片1" style="max-width: 50%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <img src="static/assets/img/tools/图片1.png" alt="使用说明图片1">
             </div>
             <div class="mySlides fade">
-                <img src="static/assets/img/tools/图片2.png" alt="使用说明图片2" style="max-width: 50%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <img src="static/assets/img/tools/图片2.png" alt="使用说明图片2">
             </div>
             <div class="mySlides fade">
-                <img src="static/assets/img/tools/图片3.png" alt="使用说明图片3" style="max-width: 50%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <img src="static/assets/img/tools/图片3.png" alt="使用说明图片3">
             </div>
-            <!-- 预加载图片 -->
-            <div style="display: none;">
+            <!-- 预加载 -->
+            <div style="display:none">
                 <img src="static/assets/img/tools/图片1.png" alt="">
                 <img src="static/assets/img/tools/图片2.png" alt="">
                 <img src="static/assets/img/tools/图片3.png" alt="">
             </div>
         </div>
-        <br>
-        <div style="text-align:center">
-            <span class="dot"></span> 
-            <span class="dot"></span> 
-            <span class="dot"></span> 
+
+        <div class="dot-row">
+            <span class="dot" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
         </div>
+
+        <!-- 输入框 -->
+        <input id="videoUrl" placeholder="请粘贴视频链接，例如：https://www.iqiyi.com/v_xxxxx.html">
+
+        <!-- 按钮 -->
+        <div class="btn-group">
+            <button class="btn-secondary" onclick="goOriginal()">打开原视频</button>
+            <button class="btn-primary" onclick="playVideo()">解析播放</button>
+            <button class="btn-accent" onclick="toggleFullscreen()">全屏播放</button>
+        </div>
+
+        <!-- 播放区域 -->
+        <div id="playerContainer">
+            <iframe id="player" width="800" height="450" allowfullscreen></iframe>
+        </div>
+
+        <a href="index.html" class="back-link">&larr; 返回主页</a>
     </div>
 
-    <br>
+    <script>
+        // ---- Background Particles ----
+        (function() {
+            var canvas = document.getElementById('bg-canvas');
+            var ctx = canvas.getContext('2d');
+            var W, H, nodes = [];
+            var N = 50;
+            var CONNECT = 130;
 
-    <!-- 输入框 -->
-    <input id="videoUrl" placeholder="请粘贴视频链接，例如：https://www.iqiyi.com/v_xxxxx.html">
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
 
-    <br>
+            for (var i = 0; i < N; i++) {
+                nodes.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    r: 1 + Math.random() * 2
+                });
+            }
 
-    <!-- 按钮 -->
-    <button onclick="goOriginal()">🔗 打开原视频</button>
-    <button onclick="playVideo()">▶️ 解析播放</button>
-    <button onclick="toggleFullscreen()">⛶ 全屏播放</button>
+            function animate() {
+                ctx.clearRect(0, 0, W, H);
 
-    <!-- 播放区域 -->
-    <div id="playerContainer">
-        <iframe id="player" width="800" height="450"></iframe>
-    </div>
+                for (var i = 0; i < N; i++) {
+                    var n = nodes[i];
+                    n.x += n.vx;
+                    n.y += n.vy;
+                    if (n.x < 0) n.x = W;
+                    if (n.x > W) n.x = 0;
+                    if (n.y < 0) n.y = H;
+                    if (n.y > H) n.y = 0;
 
-</div>
+                    var speed = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+                    if (speed < 0.08) {
+                        n.vx += (Math.random() - 0.5) * 0.03;
+                        n.vy += (Math.random() - 0.5) * 0.03;
+                    }
+                    n.vx *= 0.999;
+                    n.vy *= 0.999;
 
-<script>
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(99,102,241,0.4)';
+                    ctx.fill();
+                }
 
-function goOriginal() {
-    let url = document.getElementById("videoUrl").value;
-    if (!url) {
-        alert("请先输入视频链接！");
-        return;
-    }
-    window.open(url);
-}
+                for (var i = 0; i < N; i++) {
+                    for (var j = i + 1; j < N; j++) {
+                        var dx = nodes[i].x - nodes[j].x;
+                        var dy = nodes[i].y - nodes[j].y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < CONNECT) {
+                            var alpha = (1 - dist / CONNECT) * 0.2;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.strokeStyle = 'rgba(99,102,241,' + alpha + ')';
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
 
-function playVideo() {
-    let url = document.getElementById("videoUrl").value;
-    if (!url) {
-        alert("请先输入视频链接！");
-        return;
-    }
+                requestAnimationFrame(animate);
+            }
 
-    let parseUrl = "https://jx.xmflv.cc/?url=" + encodeURIComponent(url);
-    document.getElementById("player").src = parseUrl;
-}
+            animate();
+        })();
 
-function toggleFullscreen() {
-    const container = document.getElementById('playerContainer');
-    if (!document.fullscreenElement) {
-        container.requestFullscreen().catch(err => {
-            alert(`全屏请求失败: ${err.message}`);
-        });
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
+        // ---- Video Functions ----
+        function goOriginal() {
+            var url = document.getElementById('videoUrl').value;
+            if (!url) { alert('请先输入视频链接！'); return; }
+            window.open(url);
         }
-    }
-}
 
-// 图片轮播功能
-let slideIndex = 0;
-showSlides();
+        function playVideo() {
+            var url = document.getElementById('videoUrl').value;
+            if (!url) { alert('请先输入视频链接！'); return; }
+            var parseUrl = 'https://jx.xmflv.cc/?url=' + encodeURIComponent(url);
+            document.getElementById('player').src = parseUrl;
+        }
 
-function showSlides() {
-    let i;
-    let slides = document.getElementsByClassName("mySlides");
-    let dots = document.getElementsByClassName("dot");
-    for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) {slideIndex = 1}
-    for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
-    }
-    slides[slideIndex-1].style.display = "block";
-    dots[slideIndex-1].className += " active";
-    setTimeout(showSlides, 3000); // 每3秒切换一张图片
-}
+        function toggleFullscreen() {
+            var container = document.getElementById('playerContainer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(function(err) {
+                    alert('全屏请求失败: ' + err.message);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
-</script>
+        // ---- Slideshow ----
+        var slideIndex = 0;
+        var slides = document.getElementsByClassName('mySlides');
+        var dots = document.getElementsByClassName('dot');
+
+        function showSlides() {
+            for (var i = 0; i < slides.length; i++) {
+                slides[i].style.display = 'none';
+            }
+            for (var i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(' active', '');
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1; }
+            slides[slideIndex - 1].style.display = 'block';
+            dots[slideIndex - 1].className += ' active';
+            setTimeout(showSlides, 3500);
+        }
+
+        function goToSlide(n) {
+            slideIndex = n;
+            for (var i = 0; i < slides.length; i++) {
+                slides[i].style.display = 'none';
+            }
+            for (var i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(' active', '');
+            }
+            slides[slideIndex].style.display = 'block';
+            dots[slideIndex].className += ' active';
+        }
+
+        showSlides();
+    </script>
 
 </body>
 </html>

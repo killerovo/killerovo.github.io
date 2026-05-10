@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m http.server 8080)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/index.html)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl -s http://localhost:8080/index.html)",
+      "Bash(curl *)",
+      "Bash(start *)",
+      "WebFetch(domain:www.midjourney.com)",
+      "WebSearch",
+      "WebFetch(domain:my.feishu.cn)",
+      "Bash(python -c \"import markdown; print\\('available'\\)\")",
+      "Bash(python3 -c \"import markdown; print\\('available'\\)\")",
+      "Bash(python *)"
+    ]
+  }
+}
