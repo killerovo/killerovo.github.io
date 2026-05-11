@@ -12,7 +12,8 @@
       "WebFetch(domain:my.feishu.cn)",
       "Bash(python -c \"import markdown; print\\('available'\\)\")",
       "Bash(python3 -c \"import markdown; print\\('available'\\)\")",
-      "Bash(python *)"
+      "Bash(python *)",
+      "WebFetch(domain:www.bilibili.com)"
     ]
   }
 }
