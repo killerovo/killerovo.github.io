@@ -13,7 +13,8 @@
       "Bash(python -c \"import markdown; print\\('available'\\)\")",
       "Bash(python3 -c \"import markdown; print\\('available'\\)\")",
       "Bash(python *)",
-      "WebFetch(domain:www.bilibili.com)"
+      "WebFetch(domain:www.bilibili.com)",
+      "WebFetch(domain:daheiai.com)"
     ]
   }
 }
