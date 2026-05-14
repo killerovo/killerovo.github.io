@@ -19,6 +19,106 @@
     <!-- Core CSS -->
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
 
+    <!-- Filmstrip Styles -->
+    <style>
+        .filmstrip-wrapper {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            padding: 48px 0;
+            margin-top: -30px;
+            margin-bottom: 40px;
+        }
+
+        .filmstrip-container {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(180deg, #12122a 0%, #0a0a1e 30%, #0a0a1e 70%, #12122a 100%);
+            border-top: 2px solid rgba(99, 102, 241, 0.2);
+            border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+            padding: 4px 0;
+        }
+
+        .filmstrip-sprocket {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 16px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .filmstrip-sprocket-top {
+            top: -8px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 15px,
+                #06060e 15px,
+                #06060e 21px
+            );
+        }
+
+        .filmstrip-sprocket-bottom {
+            bottom: -8px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 15px,
+                #06060e 15px,
+                #06060e 21px
+            );
+        }
+
+        .filmstrip-viewport {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .filmstrip-track {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .filmstrip-track img {
+            height: 180px;
+            width: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+            margin: 0 5px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .filmstrip-track img.center-glow {
+            box-shadow: 0 4px 30px rgba(99, 102, 241, 0.4), 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .filmstrip-viewport {
+                height: 200px;
+            }
+            .filmstrip-track img {
+                height: 120px;
+                width: 120px;
+                margin: 0 3px;
+            }
+            .filmstrip-wrapper {
+                padding: 32px 0;
+                margin-top: -16px;
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+
     <!-- Markdown Parser -->
     <script type="text/javascript" src="static/js/marked.min.js"></script>
 
@@ -105,9 +205,15 @@
         </div>
     </section>
 
-    <!-- Avatar -->
-    <div class="avatar-wrapper reveal" id="avatar">
-        <img class="avatar-img" src="static/assets/img/photo.png" alt="Li Zhijiang" />
+    <!-- Filmstrip Gallery -->
+    <div class="filmstrip-wrapper reveal" id="avatar">
+        <div class="filmstrip-container">
+            <div class="filmstrip-sprocket filmstrip-sprocket-top"></div>
+            <div class="filmstrip-viewport" id="filmstrip-viewport">
+                <div class="filmstrip-track" id="filmstrip-track"></div>
+            </div>
+            <div class="filmstrip-sprocket filmstrip-sprocket-bottom"></div>
+        </div>
     </div>
 
     <!-- Introduction Section -->
@@ -191,16 +297,17 @@
             const PARTICLE_COUNT = 150;
             const particles = [];
 
-            // Code-like characters
+            // English letters, numbers, symbols, and Japanese
             const chars = (
-                '01' +
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+                'abcdefghijklmnopqrstuvwxyz' +
+                '0123456789' +
                 '{}[]()<>/\\|#*+-=~^' +
-                'λΣΠΩΔΘΞΨΦ' +
-                '23456789ABCDEF' +
-                'ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ' +
-                '░▒▓█▀▄■□▪▫●○◆◇▲△▼▽' +
-                'importexportconstasyncawaitfunctionreturnclass' +
-                '田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'
+                '!@$%&_?.,:;\'"`' +
+                '¥$€£₽₹₿₩' +
+                'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん' +
+                'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン' +
+                'ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ'
             ).split('');
 
             const colors = [
@@ -704,6 +811,101 @@
                 // Delay init if container hasn't laid out yet
                 setTimeout(init, 100);
             }
+        })();
+    </script>
+
+    <!-- Filmstrip Animation -->
+    <script>
+        (function() {
+            var viewport = document.getElementById('filmstrip-viewport');
+            var track = document.getElementById('filmstrip-track');
+            if (!viewport || !track) return;
+
+            var IMAGE_COUNT = 20;
+            var IMG_SIZE = 180;  // base image width/height in px
+            var GAP = 5;         // gap on each side of image
+            var STEP = IMG_SIZE + GAP * 2;  // center-to-center spacing
+            var ONE_SET = IMAGE_COUNT * STEP;
+            var MAX_SCALE = 1.7;
+            var MIN_SCALE = 0.55;
+            var SCROLL_SPEED = 0.5;  // px per frame
+
+            // Create 2 copies of images for seamless looping
+            for (var copy = 0; copy < 2; copy++) {
+                for (var i = 1; i <= IMAGE_COUNT; i++) {
+                    var img = document.createElement('img');
+                    img.src = 'cat/' + i + '.jpeg';
+                    img.alt = 'Cat ' + i;
+                    img.style.width = IMG_SIZE + 'px';
+                    img.style.height = IMG_SIZE + 'px';
+                    track.appendChild(img);
+                }
+            }
+
+            var allImages = track.querySelectorAll('img');
+            var TOTAL = allImages.length;  // 40
+            var scrollX = 0;
+
+            function getSize() {
+                return IMG_SIZE;
+            }
+            function getStep() {
+                return STEP;
+            }
+            function getOneSet() {
+                return ONE_SET;
+            }
+
+            function animate() {
+                scrollX += SCROLL_SPEED;
+                if (scrollX >= getOneSet()) {
+                    scrollX -= getOneSet();
+                }
+
+                var vpWidth = viewport.clientWidth;
+                var vpCenter = vpWidth / 2;
+                var influence = vpWidth * 0.55;
+                var step = getStep();
+                var imgSize = getSize();
+
+                for (var i = 0; i < TOTAL; i++) {
+                    var imgCenter = i * step + imgSize / 2 - scrollX;
+                    var dist = Math.abs(imgCenter - vpCenter);
+                    var t = Math.min(dist / influence, 1.0);
+
+                    // Ease-out curve for smoother falloff
+                    var eased = 1 - Math.pow(1 - t, 2);
+                    var scale = MAX_SCALE - eased * (MAX_SCALE - MIN_SCALE);
+                    var opacity = 0.45 + (1 - t) * 0.55;
+
+                    var img = allImages[i];
+                    img.style.transform = 'scale(' + scale.toFixed(3) + ')';
+                    img.style.opacity = opacity.toFixed(3);
+                    img.style.zIndex = Math.floor(scale * 100);
+
+                    // Glow on center image
+                    if (t < 0.2) {
+                        img.classList.add('center-glow');
+                    } else {
+                        img.classList.remove('center-glow');
+                    }
+                }
+
+                track.style.transform = 'translateX(' + (-scrollX).toFixed(2) + 'px)';
+                requestAnimationFrame(animate);
+            }
+
+            // Handle window resize
+            var resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function() {
+                    // Recalculate but keep scroll position
+                }, 150);
+            });
+
+            // Start animation
+            requestAnimationFrame(animate);
         })();
     </script>
 
