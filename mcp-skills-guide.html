@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP 与 Skills 入门指南：让 AI 能力翻倍</title>
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <link type="text/css" href="static/css/main.css" rel="stylesheet" />
+
+    <style>
+        .tutorial-hero {
+            position: relative;
+            z-index: 10;
+            padding: 100px 32px 40px;
+            text-align: center;
+        }
+        .tutorial-hero h1 {
+            font-family: "Kanit", sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            background: linear-gradient(135deg, #f59e0b, #ef4444, #8b5cf6);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .tutorial-tip {
+            max-width: 800px;
+            margin: 16px auto 0;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            font-size: 0.9rem;
+        }
+        .tutorial-body {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            padding: 0 32px;
+        }
+        .tutorial-body .glass-card { padding: 40px 48px; }
+        .tutorial-body h2 {
+            font-family: "Kanit", sans-serif;
+            font-size: 1.6rem;
+            color: #e8e8f0;
+            margin: 36px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .tutorial-body h3 {
+            font-family: "Kanit", sans-serif;
+            font-size: 1.2rem;
+            color: #a5b4fc;
+            margin: 28px 0 12px;
+        }
+        .tutorial-body h4 {
+            font-size: 1rem;
+            color: #f59e0b;
+            margin: 20px 0 8px;
+        }
+        .tutorial-body p {
+            color: #9494b8;
+            line-height: 1.85;
+            margin-bottom: 12px;
+        }
+        .tutorial-body strong { color: #e8e8f0; font-weight: 600; }
+        .tutorial-body a { color: #f59e0b; }
+        .tutorial-body a:hover { color: #ef4444; }
+        .tutorial-body ul, .tutorial-body ol {
+            color: #9494b8;
+            margin: 8px 0 16px 24px;
+            line-height: 1.8;
+        }
+        .tutorial-body li { margin-bottom: 4px; }
+        .tutorial-body code {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            font-size: 0.9em;
+            color: #e8e8f0;
+        }
+        .tutorial-body pre {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin: 16px 0;
+            line-height: 1.6;
+        }
+        .tutorial-body pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.85rem;
+            color: #c9d1d9;
+        }
+        .tutorial-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        .tutorial-body th {
+            background: rgba(139, 92, 246, 0.1);
+            color: #e8e8f0;
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.06);
+            font-weight: 600;
+        }
+        .tutorial-body td {
+            color: #9494b8;
+            padding: 8px 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tutorial-body hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin: 32px 0;
+        }
+        .tutorial-body blockquote {
+            border-left: 3px solid #f59e0b;
+            padding: 12px 20px;
+            margin: 16px 0;
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: 0 8px 8px 0;
+            color: #fcd34d;
+        }
+        .mcp-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+        .skill-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fcd34d;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+        @media (max-width: 640px) {
+            .tutorial-body .glass-card { padding: 20px; }
+            .tutorial-body pre { padding: 14px 16px; }
+            .tutorial-body table { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body id="page-top">
+
+    <canvas id="particle-canvas"></canvas>
+    <div class="noise-overlay"></div>
+    <div class="glow-orbs">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a class="nav-brand" href="index.html">Li Zhijiang</a>
+            <a href="index.html" style="color:#9494b8;font-size:0.85rem;">← 返回主页</a>
+        </div>
+    </nav>
+
+    <section class="tutorial-hero">
+        <h1>MCP 与 Skills 入门指南：让 AI 能力翻倍</h1>
+        <div class="tutorial-tip">
+            💡 MCP 像「厨房系统」，Skills 像「菜谱」——一个解决"AI 能接什么"，一个解决"AI 该怎么做"。
+        </div>
+    </section>
+
+    <div class="tutorial-body">
+        <div class="glass-card" id="tutorial-content">
+
+<h2 id="toc">目录</h2>
+<ul>
+<li><a href="#what-is-mcp">1. MCP 是什么？</a></li>
+<li><a href="#what-is-skill">2. Skills 是什么？</a></li>
+<li><a href="#mcp-vs-skill">3. MCP vs Skills：核心区别</a></li>
+<li><a href="#mcpmarket">4. MCP 市场 — mcpmarket.com</a></li>
+<li><a href="#skillhub">5. 技能中心 — skillhub.cn</a></li>
+<li><a href="#how-to-install">6. 怎么安装和使用？</a></li>
+<li><a href="#recommend">7. 推荐入手的 MCP 和 Skills</a></li>
+</ul>
+<hr />
+
+<h2 id="what-is-mcp">1. MCP 是什么？</h2>
+
+<h3>一句话解释</h3>
+
+<blockquote><strong>MCP（Model Context Protocol，模型上下文协议）</strong>是 Anthropic 于 2024 年 11 月开源的开放协议，用于标准化 AI 模型与外部工具/数据源之间的通信。</blockquote>
+
+<h3>通俗理解</h3>
+
+<p>想象一下：AI 模型就像一个聪明的大脑，但它「困」在对话框里，不能直接读写你的文件、访问数据库、调 GitHub API。MCP 就是给这个大脑安装 <strong>「USB 接口」</strong>——插上什么设备，就能用什么功能。</p>
+
+<h3>为什么要 MCP？</h3>
+
+<p>以前，N 个 AI 模型 × M 个工具，需要 N×M 个适配器。MCP 把这个变成了<strong>一个标准接口</strong>：所有模型只要实现了 MCP 客户端，就能调所有实现了 MCP 协议的工具。</p>
+
+<table>
+<thead><tr><th>指标</th><th>数据（2026 年）</th></tr></thead>
+<tbody>
+<tr><td>月 SDK 下载量</td><td>9,700 万次</td></tr>
+<tr><td>活跃 MCP Server</td><td>10,000+</td></tr>
+<tr><td>支持方</td><td>OpenAI、Google、Microsoft、AWS</td></tr>
+<tr><td>治理</td><td>已移交 Linux Foundation 旗下 Agentic AI Foundation</td></tr>
+</tbody>
+</table>
+
+<h3>常见 MCP Server 举例</h3>
+
+<table>
+<thead><tr><th>MCP Server</th><th>能做什么</th></tr></thead>
+<tbody>
+<tr><td>文件系统 MCP</td><td>让 AI 读取、编辑、创建本地文件</td></tr>
+<tr><td>GitHub MCP</td><td>让 AI 管理仓库、创建 Issue/PR、查看代码</td></tr>
+<tr><td>数据库 MCP（PostgreSQL / MySQL）</td><td>让 AI 查询数据库、分析表结构</td></tr>
+<tr><td>飞书/钉钉 MCP</td><td>让 AI 收发消息、操作文档</td></tr>
+<tr><td>浏览器 MCP（Puppeteer）</td><td>让 AI 打开网页、截图、抓取数据</td></tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="what-is-skill">2. Skills 是什么？</h2>
+
+<h3>一句话解释</h3>
+
+<blockquote><strong>Skills（技能）</strong>是 Claude Code 提供的模块化能力扩展机制。本质是 Markdown 文件（<code>SKILL.md</code>），将专业知识和工作流固化为 AI 可自动加载执行的能力包。</blockquote>
+
+<h3>通俗理解</h3>
+
+<p>如果 MCP 是给 AI 接外部设备的 USB 接口，那 <strong>Skill 就是给 AI 写的「操作手册」</strong>。比如你想让 AI 按你们团队的代码风格写代码，你不需要每次都啰嗦一遍——写一个 Skill 文件，AI 会自动加载并按规范执行。</p>
+
+<h3>Skills 的核心特征</h3>
+
+<table>
+<thead><tr><th>特征</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>模块化封装</td><td>把知识、步骤、规范固化为独立 Skill</td></tr>
+<tr><td>自动触发</td><td>Claude 根据上下文自动发现并调用合适 Skill</td></tr>
+<tr><td>轻量</td><td>只需 Markdown，不需要写代码</td></tr>
+<tr><td>渐进式加载</td><td>初始只占 ~400 tokens，按需展开，不像 MCP 一次性 ~8,000 tokens</td></tr>
+<tr><td>可组合</td><td>多个 Skill 可以串成完整工作流</td></tr>
+</tbody>
+</table>
+
+<h3>Skills 能做什么？</h3>
+
+<table>
+<thead><tr><th>场景</th><th>Skill 示例</th></tr></thead>
+<tbody>
+<tr><td>编码规范</td><td>强制执行团队命名约定、文件结构、错误处理模式</td></tr>
+<tr><td>测试生成</td><td>自动按项目测试框架生成单测、Mock 策略</td></tr>
+<tr><td>Git 工作流</td><td>规范化 commit message、分支命名、PR 模板</td></tr>
+<tr><td>代码审查</td><td>按团队 checklist 逐项检查质量、安全、性能</td></tr>
+<tr><td>DevOps 部署</td><td>固化 Docker 构建、K8s 部署、CI/CD 流程</td></tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="mcp-vs-skill">3. MCP vs Skills：核心区别</h2>
+
+<blockquote>MCP 是「厨房系统」——锅碗瓢盆灶台通风。Skills 是「菜谱」——宫保鸡丁怎么做、火候多少、先放什么后放什么。</blockquote>
+
+<p><strong>MCP 解决「模型能用什么工具」，Skills 解决「模型该怎么用这些工具」。</strong></p>
+
+<table>
+<thead>
+<tr><th>维度</th><th><span class="mcp-badge">MCP</span></th><th><span class="skill-badge">Skill</span></th></tr>
+</thead>
+<tbody>
+<tr><td><strong>本质</strong></td><td>开放协议 / 通信标准</td><td>能力封装 / 操作手册</td></tr>
+<tr><td><strong>形式</strong></td><td>服务端程序（需写代码）</td><td>Markdown 文件（写文档即可）</td></tr>
+<tr><td><strong>技术难度</strong></td><td>高（需写 Server + 配认证）</td><td>低（写 Markdown）</td></tr>
+<tr><td><strong>Token 消耗</strong></td><td>~8,000 tokens（加载所有工具定义）</td><td>~400 tokens（渐进式按需加载）</td></tr>
+<tr><td><strong>可组合性</strong></td><td>弱（每个工具独立）</td><td>强（可串成工作流）</td></tr>
+<tr><td><strong>适用场景</strong></td><td>持久连接、复杂认证、企业集成</td><td>知识固化、工作流规范、代码风格</td></tr>
+</tbody>
+</table>
+
+<p><strong>两者不是替代关系，是协作关系。</strong> 比如你可以用一个 GitHub MCP Server 让 AI 访问仓库，再用一个 "PR Review Skill" 告诉 AI 按什么标准审查代码。</p>
+
+<hr />
+
+<h2 id="mcpmarket">4. MCP 市场 — mcpmarket.com</h2>
+
+<p><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a> 是目前最活跃的社区策展型 AI 工具/Skills 目录，类似「AI 应用商店」。</p>
+
+<h3>提供什么？</h3>
+<ul>
+<li><strong>150+ Skills</strong>：覆盖编码、测试、部署、文档等场景，免费为主，付费 5-15 欧元</li>
+<li><strong>100+ MCP Server</strong>：持续更新，涵盖数据库、云服务、通讯工具等</li>
+<li>技能评分、安装量排行、一键安装</li>
+<li>支持 Claude Code、ChatGPT、Codex 等多平台</li>
+</ul>
+
+<h3>热度排行（Leaderboard）</h3>
+<p>榜单上可以看到当前最热门的 Skills 和 MCP 工具，按安装量、评分排序。适合新手从这里开始探索。</p>
+
+<h3>怎么用？</h3>
+<ol>
+<li>打开 <a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a></li>
+<li>浏览排行榜或按分类搜索</li>
+<li>找到想要的 Skill/MCP，复制安装命令</li>
+<li>在 Claude Code 里粘贴执行即可</li>
+</ol>
+
+<hr />
+
+<h2 id="skillhub">5. 技能中心 — skillhub.cn</h2>
+
+<p><a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> 是国内本土化的 AI 技能中心，专为中国用户优化。</p>
+
+<h3>提供什么？</h3>
+<ul>
+<li><strong>13,000+ Skills</strong>：中文搜索、本土化适配</li>
+<li>国内节点加速：下载安装更快，不受网络限制</li>
+<li>分类清晰：前端、后端、DevOps、数据分析、安全等</li>
+<li>社区贡献：国内开发者上传和维护的技能</li>
+</ul>
+
+<h3>和 mcpmarket 的区别</h3>
+<table>
+<thead><tr><th></th><th>mcpmarket.com</th><th>skillhub.cn</th></tr></thead>
+<tbody>
+<tr><td>语言</td><td>英文为主</td><td>中文优先</td></tr>
+<tr><td>规模</td><td>150+ Skills, 100+ MCP</td><td>13,000+ Skills</td></tr>
+<tr><td>访问</td><td>海外，可能慢</td><td>国内节点，速度快</td></tr>
+<tr><td>内容</td><td>全球社区</td><td>本土化 + 腾讯等国内产品技能化</td></tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="how-to-install">6. 怎么安装和使用？</h2>
+
+<h3>6.1 安装 MCP Server</h3>
+
+<p>以 <strong>文件系统 MCP</strong> 为例（最基础的，10 分钟就能跑通）：</p>
+
+<p><strong>Step 1：</strong> 在 Claude Code 设置中注册 MCP Server。编辑 <code>~/.claude/.mcp.json</code>（Windows 为 <code>用户目录/.claude/.mcp.json</code>）：</p>
+
+<pre><code class="language-json">{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/path/to/allowed/dir"]
+    }
+  }
+}</code></pre>
+
+<p><strong>Step 2：</strong> 重启 Claude Code，MCP Server 自动启动。现在 AI 就能直接读写你指定的目录了。</p>
+
+<p><strong>更多 MCP Server：</strong></p>
+<ul>
+<li>GitHub MCP：<code>npx -y @anthropic-ai/mcp-server-github</code></li>
+<li>PostgreSQL MCP：<code>npx -y @anthropic-ai/mcp-server-postgres</code></li>
+<li>浏览器 MCP：<code>npx -y @anthropic-ai/mcp-server-puppeteer</code></li>
+<li>去 <a href="https://mcpmarket.com" target="_blank">mcpmarket.com</a> 搜更多</li>
+</ul>
+
+<h3>6.2 安装 Skills</h3>
+
+<p><strong>方式一：从 Skill 市场安装（最简单）</strong></p>
+<p>在 Claude Code 里直接运行：</p>
+<pre><code class="language-bash">npx skills add &lt;技能名&gt; -y</code></pre>
+<p>比如：</p>
+<pre><code class="language-bash"># 安装 find-skills 搜索引擎（累计安装 579K+）
+npx skills add find-skills -y
+
+# 安装 caveman 压缩 token
+npx skills add caveman -y
+
+# 安装 Anthropic 官方 skill-creator
+npx skills add skill-creator -y</code></pre>
+
+<p><strong>方式二：从 skillhub.cn 浏览安装</strong></p>
+<ol>
+<li>打开 <a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a></li>
+<li>搜索想要的技能类型，比如「测试」「部署」</li>
+<li>复制安装命令，到 Claude Code 里运行</li>
+</ol>
+
+<p><strong>方式三：自己写 Skill（非常容易）</strong></p>
+<p>在项目目录新建 <code>.claude/skills/my-skill/SKILL.md</code>：</p>
+<pre><code class="language-markdown">---
+name: my-coding-standard
+description: 强制执行团队的 Python 编码规范
+---
+
+# Python 编码规范
+
+## 命名规则
+- 类名用 PascalCase
+- 函数和变量用 snake_case
+- 常量用 UPPER_SNAKE_CASE
+
+## 代码风格
+- 每行不超过 100 字符
+- 函数不超过 50 行
+- 使用 type hints
+
+## 错误处理
+- 不裸捕 Exception
+- 自定义异常类继承自项目基类</code></pre>
+
+<p>保存后 Claude Code 会自动加载，之后写代码时会自动遵循这些规范。</p>
+
+<h3>6.3 在聊天中切换和查看</h3>
+
+<pre><code class="language-bash"># 查看当前已加载的 Skills
+/skills
+
+# 临时禁用某个 Skill
+/skills disable my-coding-standard
+
+# 启用
+/skills enable my-coding-standard</code></pre>
+
+<hr />
+
+<h2 id="recommend">7. 推荐入手的 MCP 和 Skills</h2>
+
+<h3>🔥 2026 年 5 月最热 Skills Top 5</h3>
+
+<table>
+<thead><tr><th>排名</th><th>Skill</th><th>亮点</th><th>安装量</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>find-skills</strong></td><td>技能生态的「搜索引擎」，帮你找到需要的 Skill</td><td>579K+</td></tr>
+<tr><td>2</td><td><strong>caveman</strong></td><td>压缩 token 消耗，省钱提速</td><td>53.6K Stars</td></tr>
+<tr><td>3</td><td><strong>Superpowers</strong></td><td>20+ 子技能全家桶（TDD、调试、代码审查）</td><td>热门</td></tr>
+<tr><td>4</td><td><strong>vercel-react-best-practices</strong></td><td>45+ 条 React 规则，Bug 率下降 40%</td><td>热门</td></tr>
+<tr><td>5</td><td><strong>skill-creator</strong></td><td>Anthropic 官方「元技能」——用自然语言生成新 Skill</td><td>官方</td></tr>
+</tbody>
+</table>
+
+<h3>推荐新手安装顺序</h3>
+
+<ol>
+<li>
+    <p><strong>先装 find-skills</strong>——相当于有了一个技能搜索引擎：</p>
+    <pre><code class="language-bash">npx skills add find-skills -y -g</code></pre>
+</li>
+<li>
+    <p><strong>再装 skill-creator</strong>——把你们团队的规范变成 Skill：</p>
+    <pre><code class="language-bash">npx skills add skill-creator -y -g</code></pre>
+</li>
+<li>
+    <p><strong>然后去逛市场</strong>：</p>
+    <ul>
+        <li><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a> — 看全球热度榜</li>
+        <li><a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> — 搜中文本土化技能</li>
+    </ul>
+</li>
+</ol>
+
+<hr />
+
+<h2 id="summary">总结</h2>
+
+<blockquote>
+<p><strong>MCP</strong> = 给 AI 接工具的 USB 接口（协议层，需要写代码）<br>
+<strong>Skills</strong> = 给 AI 写的操作手册（应用层，Markdown 即可）</p>
+
+<p>两者的关系不是替代，是<strong>协作</strong>。MCP 让 AI 能连接外部世界，Skills 教 AI 在每个场景中怎么做才是对的。</p>
+
+<p>入门路径：先逛 <a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket</a> 和 <a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> 看看别人做了什么，再安装几个热门的试试，最后把你自己团队的规范写成 Skill。</p>
+</blockquote>
+
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-text">
+            <a href="index.html">← 返回主页</a>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            const PARTICLE_COUNT = 100;
+            const particles = [];
+            const chars = '01{}[]()<>/\\|#*+-=~^λΣΠΩΔΘΞΨΦ23456789ABCDEFｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ░▒▓█▀▄■□▪▫●○◆◇▲△▼▽importexportconstasyncawaitfunctionreturnclass田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'.split('');
+            const colors = ['rgba(129,140,248,ALPHA)','rgba(99,102,241,ALPHA)','rgba(79,70,229,ALPHA)','rgba(6,182,212,ALPHA)','rgba(34,211,238,ALPHA)','rgba(139,92,246,ALPHA)','rgba(167,139,250,ALPHA)','rgba(148,163,184,ALPHA)'];
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+            function createParticle() {
+                return { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, char: chars[Math.floor(Math.random() * chars.length)], size: 10 + Math.random() * 18, baseAlpha: 0.15 + Math.random() * 0.5, alpha: 0, targetAlpha: 0.15 + Math.random() * 0.5, color: colors[Math.floor(Math.random() * colors.length)], glowColor: colors[Math.floor(Math.random() * 3)], phase: Math.random() * Math.PI * 2, pulseSpeed: 0.003 + Math.random() * 0.008, driftForce: 0.001 + Math.random() * 0.004, wobbleAmp: 0.1 + Math.random() * 0.3 };
+            }
+            for (let i = 0; i < PARTICLE_COUNT; i++) { const p = createParticle(); p.alpha = p.targetAlpha; particles.push(p); }
+            let mouseX = -1000, mouseY = -1000;
+            document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
+            document.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
+            function draw(time) {
+                ctx.clearRect(0, 0, W, H);
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const p = particles[i];
+                    p.vx += (Math.sin(time * p.driftForce + p.phase) * p.wobbleAmp) * 0.01;
+                    p.vy += (Math.cos(time * p.driftForce * 1.3 + p.phase) * p.wobbleAmp) * 0.01;
+                    p.vx += (Math.random() - 0.5) * 0.02;
+                    p.vy += (Math.random() - 0.5) * 0.02;
+                    const dx = mouseX - p.x, dy = mouseY - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 200 && dist > 0) { const force = (200 - dist) / 200 * 0.003; p.vx += (dx / dist) * force; p.vy += (dy / dist) * force; }
+                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    if (speed > 0.8) { p.vx = (p.vx / speed) * 0.8; p.vy = (p.vy / speed) * 0.8; }
+                    if (speed < 0.05) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04; }
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
+                    if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
+                    p.targetAlpha = p.baseAlpha + Math.sin(time * p.pulseSpeed + p.phase) * 0.15;
+                    p.alpha += (p.targetAlpha - p.alpha) * 0.02;
+                    const alpha = Math.max(0.05, Math.min(0.8, p.alpha));
+                    ctx.save();
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = p.glowColor.replace('ALPHA', '0.4');
+                    ctx.globalAlpha = alpha * 0.5;
+                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
+                    ctx.fillStyle = p.glowColor.replace('ALPHA', '1');
+                    ctx.fillText(p.char, p.x, p.y);
+                    ctx.restore();
+                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
+                    ctx.fillStyle = p.color.replace('ALPHA', String(alpha));
+                    ctx.fillText(p.char, p.x, p.y);
+                }
+                if (Math.random() < 0.02) { const idx = Math.floor(Math.random() * PARTICLE_COUNT); particles[idx] = createParticle(); }
+                requestAnimationFrame(draw);
+            }
+            requestAnimationFrame(draw);
+        })();
+    </script>
+
+</body>
+</html>
