@@ -206,7 +206,7 @@
     </section>
 
     <!-- Filmstrip Gallery -->
-    <div class="filmstrip-wrapper reveal" id="avatar">
+    <div class="filmstrip-wrapper" id="avatar">
         <div class="filmstrip-container">
             <div class="filmstrip-sprocket filmstrip-sprocket-top"></div>
             <div class="filmstrip-viewport" id="filmstrip-viewport">
@@ -814,21 +814,28 @@
         })();
     </script>
 
-    <!-- Filmstrip Animation -->
+        <!-- Filmstrip Animation -->
     <script>
         (function() {
             var viewport = document.getElementById('filmstrip-viewport');
             var track = document.getElementById('filmstrip-track');
-            if (!viewport || !track) return;
+            if (!viewport || !track) {
+                console.warn('Filmstrip: viewport or track not found');
+                return;
+            }
+
+            // Make wrapper visible
+            var wrapper = document.getElementById('avatar');
+            if (wrapper) wrapper.style.opacity = '1';
 
             var IMAGE_COUNT = 20;
-            var IMG_SIZE = 180;  // base image width/height in px
-            var GAP = 5;         // gap on each side of image
-            var STEP = IMG_SIZE + GAP * 2;  // center-to-center spacing
+            var IMG_SIZE = 180;
+            var GAP = 5;
+            var STEP = IMG_SIZE + GAP * 2;
             var ONE_SET = IMAGE_COUNT * STEP;
             var MAX_SCALE = 1.7;
             var MIN_SCALE = 0.55;
-            var SCROLL_SPEED = 0.5;  // px per frame
+            var SCROLL_SPEED = 0.5;
 
             // Create 2 copies of images for seamless looping
             for (var copy = 0; copy < 2; copy++) {
@@ -838,42 +845,43 @@
                     img.alt = 'Cat ' + i;
                     img.style.width = IMG_SIZE + 'px';
                     img.style.height = IMG_SIZE + 'px';
+
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        console.warn('Filmstrip: failed to load ' + this.src);
+                    };
+
                     track.appendChild(img);
                 }
             }
 
             var allImages = track.querySelectorAll('img');
-            var TOTAL = allImages.length;  // 40
+            var TOTAL = allImages.length;
             var scrollX = 0;
 
-            function getSize() {
-                return IMG_SIZE;
-            }
-            function getStep() {
-                return STEP;
-            }
-            function getOneSet() {
-                return ONE_SET;
-            }
+            console.log('Filmstrip: initialized ' + TOTAL + ' image elements');
 
             function animate() {
                 scrollX += SCROLL_SPEED;
-                if (scrollX >= getOneSet()) {
-                    scrollX -= getOneSet();
+                if (scrollX >= ONE_SET) {
+                    scrollX -= ONE_SET;
                 }
 
                 var vpWidth = viewport.clientWidth;
+                if (vpWidth === 0) {
+                    requestAnimationFrame(animate);
+                    return;
+                }
+
                 var vpCenter = vpWidth / 2;
-                var influence = vpWidth * 0.55;
-                var step = getStep();
-                var imgSize = getSize();
+                var influence = Math.max(vpWidth * 0.55, 400);
+                var step = STEP;
+                var imgSize = IMG_SIZE;
 
                 for (var i = 0; i < TOTAL; i++) {
                     var imgCenter = i * step + imgSize / 2 - scrollX;
                     var dist = Math.abs(imgCenter - vpCenter);
                     var t = Math.min(dist / influence, 1.0);
-
-                    // Ease-out curve for smoother falloff
                     var eased = 1 - Math.pow(1 - t, 2);
                     var scale = MAX_SCALE - eased * (MAX_SCALE - MIN_SCALE);
                     var opacity = 0.45 + (1 - t) * 0.55;
@@ -883,7 +891,6 @@
                     img.style.opacity = opacity.toFixed(3);
                     img.style.zIndex = Math.floor(scale * 100);
 
-                    // Glow on center image
                     if (t < 0.2) {
                         img.classList.add('center-glow');
                     } else {
@@ -895,21 +902,11 @@
                 requestAnimationFrame(animate);
             }
 
-            // Handle window resize
-            var resizeTimeout;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(function() {
-                    // Recalculate but keep scroll position
-                }, 150);
-            });
-
-            // Start animation
             requestAnimationFrame(animate);
         })();
     </script>
 
-    <!-- Core Scripts -->
+<!-- Core Scripts -->
     <script type="text/javascript" src="static/js/scripts.js"></script>
 
 </body>
