@@ -160,6 +160,9 @@
     <!-- YAML Parser -->
     <script type="text/javascript" src="static/js/js-yaml.min.js"></script>
 
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- MathJax -->
     <script>
         MathJax = {
@@ -239,6 +242,9 @@
 
         <!-- Letter Storm Canvas -->
         <canvas id="letter-storm-canvas"></canvas>
+
+        <!-- 3D Rubik's Cube -->
+        <div id="cube-container"></div>
 
         <p class="hero-subtitle" style="margin-top:8px;z-index:10;position:relative;">Li Zhijiang&ensp;|&ensp;李治江</p>
 
@@ -822,6 +828,203 @@
         })();
     </script>
 
+    <!-- 3D Rubik's Cube Script -->
+    <script>
+        (function() {
+            var container = document.getElementById('cube-container');
+            if (!container) return;
+            var scene, camera, renderer, cubeGroup;
+            var isDragging = false;
+            var prevMouse = { x: 0, y: 0 };
+            var autoRotate = true;
+            var autoRotateTimeout;
+
+            var C = {
+                bg: '#0c0c1d',
+                primary: '#6366f1',
+                secondary: '#06b6d4',
+                accent: '#8b5cf6',
+                dark: '#06060e',
+                border: '#818cf8',
+                white: '#e8e8f0'
+            };
+
+            function createFaceTexture(index) {
+                var canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = C.dark;
+                ctx.fillRect(0, 0, 256, 256);
+                ctx.strokeStyle = C.primary;
+                ctx.lineWidth = 2.5;
+                ctx.strokeRect(8, 8, 240, 240);
+                var patterns = getPattern(index);
+                ctx.font = '11px "Courier New", monospace';
+                ctx.textAlign = 'center';
+                patterns.forEach(function(row, ri) {
+                    var chars = row.split('');
+                    chars.forEach(function(ch, ci) {
+                        var x = 28 + ci * 11;
+                        var y = 28 + ri * 13;
+                        var brightness = 0.65 + Math.random() * 0.35;
+                        ctx.globalAlpha = brightness;
+                        ctx.fillStyle = C.primary;
+                        ctx.fillText(ch, x, y);
+                    });
+                });
+                ctx.globalAlpha = 1;
+                var tex = new THREE.CanvasTexture(canvas);
+                tex.needsUpdate = true;
+                return tex;
+            }
+
+            function getPattern(index) {
+                var patterns = [
+                    ['    +------------+    ','   +--------------+   ','  +----------------+  ',' +----++----++----+ ','+----++------++----+','|------------------|','|------++++++------|','|-----+------+-----|','|------------------|','+----+--------+----+',' +---+--------+---+ ','  +--------------+  ','   +------------+   '],
+                    ['    *               ','    |               ','    |               ','    +------*        ','    |      |        ','    |      |        ','    +------+        ','    |      |        ','    |      +-----*  ','    |      |     |  ','    *------+-----*  ','    |      |        ','    *               '],
+                    ['+------------------+','| function() {     |','|   return {       |','|     code: true,  |','|     love: "git"  |','|   };            |','| }                |','|                  |','| git push origin  |','| git merge main   |','| git commit -m    |','|                  |','+------------------+'],
+                    ['    ++      ++    ','  ++++++  ++++++  ',' ++++++++++++++++ ','++++  ++++++  ++++','++++          ++++','++++  ++++++  ++++','++++          ++++',' +++++    ++++++ ','  ++++++++++++++  ','   +++++  +++++   ','  ++ ++  ++ ++  ',' ++  ++  ++  ++ ','++            ++'],
+                    ['                  ','   ///////////\\\\\\   ','  /////////////\\\\\\  ',' ///////////////\\\\\\ ','/               \\','|                |','|                |','|                |','\\               /',' \\\\\\\\\\\\\\///////////////// ','  \\\\\\\\\\\\///////////////  ','   \\\\\\\\\\/////////////   ','                  '],
+                    ['+------------------+','|                  |','| ++++++++++++++  |','| +              + |','| +   ++  ++    + |','| +              + |','| +    +++++     + |','| +              + |','| +              + |','| +              + |','|  +            +  |','|   ++++++++++++   |','+------------------+']
+                ];
+                return patterns[index % patterns.length];
+            }
+
+            function createCubelet(x, y, z, textures) {
+                var geo = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+                var mats = [];
+                var faceMap = {
+                    right: x === 1 ? 0 : -1,
+                    left: x === -1 ? 1 : -1,
+                    top: y === 1 ? 2 : -1,
+                    bottom: y === -1 ? 3 : -1,
+                    front: z === 1 ? 4 : -1,
+                    back: z === -1 ? 5 : -1
+                };
+                ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(function(name) {
+                    var ti = faceMap[name];
+                    if (ti >= 0) {
+                        mats.push(new THREE.MeshStandardMaterial({
+                            map: textures[ti], roughness: 0.35, metalness: 0.15,
+                            emissive: new THREE.Color(C.primary), emissiveIntensity: 0.04
+                        }));
+                    } else {
+                        mats.push(new THREE.MeshStandardMaterial({
+                            color: 0x0c0c1d, roughness: 0.7, metalness: 0.05
+                        }));
+                    }
+                });
+                var cube = new THREE.Mesh(geo, mats);
+                cube.position.set(x, y, z);
+                var edgeGeo = new THREE.EdgesGeometry(geo);
+                var edgeMat = new THREE.LineBasicMaterial({ color: C.primary, transparent: true, opacity: 0.5 });
+                cube.add(new THREE.LineSegments(edgeGeo, edgeMat));
+                return cube;
+            }
+
+            function createCube() {
+                cubeGroup = new THREE.Group();
+                scene.add(cubeGroup);
+                var textures = [];
+                for (var i = 0; i < 6; i++) textures.push(createFaceTexture(i));
+                for (var x = -1; x <= 1; x++)
+                    for (var y = -1; y <= 1; y++)
+                        for (var z = -1; z <= 1; z++)
+                            cubeGroup.add(createCubelet(x, y, z, textures));
+            }
+
+            function init() {
+                var W = container.clientWidth || 300;
+                var H = container.clientHeight || 300;
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+                camera.position.set(4.5, 3.5, 5.5);
+                camera.lookAt(0, 0, 0);
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(W, H);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+                scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+                var ml = new THREE.DirectionalLight(C.primary, 0.9); ml.position.set(5, 10, 5); scene.add(ml);
+                var fl = new THREE.DirectionalLight(C.secondary, 0.5); fl.position.set(-5, 5, -5); scene.add(fl);
+                var rl = new THREE.DirectionalLight(C.accent, 0.35); rl.position.set(0, -5, 10); scene.add(rl);
+                var pl = new THREE.PointLight(C.primary, 0.4, 20); pl.position.set(0, 0, 5); scene.add(pl);
+                createCube();
+                renderer.domElement.addEventListener('mousedown', onDown);
+                renderer.domElement.addEventListener('mousemove', onMove);
+                renderer.domElement.addEventListener('mouseup', onUp);
+                renderer.domElement.addEventListener('mouseleave', onUp);
+                renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
+                renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+                renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+                renderer.domElement.addEventListener('touchend', onTouchEnd);
+                window.addEventListener('resize', onResize);
+                animate();
+            }
+
+            function onDown(e) {
+                isDragging = true; autoRotate = false;
+                clearTimeout(autoRotateTimeout);
+                prevMouse.x = e.clientX; prevMouse.y = e.clientY;
+            }
+            function onMove(e) {
+                if (!isDragging) return;
+                cubeGroup.rotation.y += (e.clientX - prevMouse.x) * 0.008;
+                cubeGroup.rotation.x += (e.clientY - prevMouse.y) * 0.008;
+                prevMouse.x = e.clientX; prevMouse.y = e.clientY;
+            }
+            function onUp() {
+                isDragging = false;
+                autoRotateTimeout = setTimeout(function() { if (!isDragging) autoRotate = true; }, 2500);
+            }
+            function onWheel(e) {
+                e.preventDefault();
+                camera.position.multiplyScalar(1 + e.deltaY * 0.0008);
+                camera.position.clampLength(3.5, 14);
+            }
+            var touchStart = { x: 0, y: 0 };
+            function onTouchStart(e) {
+                e.preventDefault();
+                if (e.touches.length === 1) {
+                    isDragging = true; autoRotate = false;
+                    clearTimeout(autoRotateTimeout);
+                    touchStart.x = e.touches[0].clientX;
+                    touchStart.y = e.touches[0].clientY;
+                }
+            }
+            function onTouchMove(e) {
+                e.preventDefault();
+                if (!isDragging || e.touches.length !== 1) return;
+                cubeGroup.rotation.y += (e.touches[0].clientX - touchStart.x) * 0.008;
+                cubeGroup.rotation.x += (e.touches[0].clientY - touchStart.y) * 0.008;
+                touchStart.x = e.touches[0].clientX;
+                touchStart.y = e.touches[0].clientY;
+            }
+            function onTouchEnd() {
+                isDragging = false;
+                autoRotateTimeout = setTimeout(function() { if (!isDragging) autoRotate = true; }, 2500);
+            }
+            function onResize() {
+                var W = container.clientWidth || 300;
+                var H = container.clientHeight || 300;
+                camera.aspect = W / H;
+                camera.updateProjectionMatrix();
+                renderer.setSize(W, H);
+            }
+            function animate() {
+                requestAnimationFrame(animate);
+                if (autoRotate) {
+                    cubeGroup.rotation.y += 0.004;
+                    cubeGroup.rotation.x = Math.sin(Date.now() * 0.00025) * 0.15;
+                }
+                renderer.render(scene, camera);
+            }
+
+            setTimeout(init, 100);
+        })();
+    </script>
+
         <!-- Filmstrip Animation -->
     <script>
         (function() {
@@ -832,7 +1035,6 @@
                 return;
             }
 
-            // Make wrapper visible
             var wrapper = document.getElementById('avatar');
             if (wrapper) wrapper.style.opacity = '1';
 
@@ -843,7 +1045,18 @@
             var ONE_SET = IMAGE_COUNT * STEP;
             var MAX_SCALE = 1.7;
             var MIN_SCALE = 0.55;
-            var SCROLL_SPEED = 0.5;
+            var BASE_SPEED = 1.2;
+
+            // Auto-scroll state
+            var autoSpeed = BASE_SPEED;
+            var inertiaSpeed = 0;
+
+            // Drag state
+            var isDragging = false;
+            var dragStartX = 0;
+            var scrollAtDragStart = 0;
+            var lastDragX = 0;
+            var lastDragT = 0;
 
             // Create 2 copies of images for seamless looping
             for (var copy = 0; copy < 2; copy++) {
@@ -853,12 +1066,11 @@
                     img.alt = 'Cat ' + i;
                     img.style.width = IMG_SIZE + 'px';
                     img.style.height = IMG_SIZE + 'px';
-
+                    img.draggable = false;
                     img.onerror = function() {
                         this.style.display = 'none';
                         console.warn('Filmstrip: failed to load ' + this.src);
                     };
-
                     track.appendChild(img);
                 }
             }
@@ -867,12 +1079,93 @@
             var TOTAL = allImages.length;
             var scrollX = 0;
 
-            console.log('Filmstrip: initialized ' + TOTAL + ' image elements');
+            function wrapX(x) {
+                while (x >= ONE_SET) x -= ONE_SET;
+                while (x < 0) x += ONE_SET;
+                return x;
+            }
+
+            // ---- Mouse drag ----
+            viewport.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                inertiaSpeed = 0;
+                dragStartX = e.clientX;
+                scrollAtDragStart = scrollX;
+                lastDragX = e.clientX;
+                lastDragT = performance.now();
+                viewport.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                var dx = e.clientX - dragStartX;
+                scrollX = wrapX(scrollAtDragStart - dx);
+                var now = performance.now();
+                var dt = now - lastDragT;
+                if (dt > 0) {
+                    inertiaSpeed = -(e.clientX - lastDragX) / dt * 16;
+                }
+                lastDragX = e.clientX;
+                lastDragT = now;
+            });
+
+            window.addEventListener('mouseup', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                viewport.style.cursor = '';
+                autoSpeed = 0;
+                if (Math.abs(inertiaSpeed) < 0.3) inertiaSpeed = 0;
+            });
+
+            // ---- Touch swipe ----
+            viewport.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    inertiaSpeed = 0;
+                    dragStartX = e.touches[0].clientX;
+                    scrollAtDragStart = scrollX;
+                    lastDragX = e.touches[0].clientX;
+                    lastDragT = performance.now();
+                }
+            }, { passive: false });
+
+            window.addEventListener('touchmove', function(e) {
+                if (!isDragging || e.touches.length !== 1) return;
+                var dx = e.touches[0].clientX - dragStartX;
+                scrollX = wrapX(scrollAtDragStart - dx);
+                var now = performance.now();
+                var dt = now - lastDragT;
+                if (dt > 0) {
+                    inertiaSpeed = -(e.touches[0].clientX - lastDragX) / dt * 16;
+                }
+                lastDragX = e.touches[0].clientX;
+                lastDragT = now;
+                e.preventDefault();
+            }, { passive: false });
+
+            window.addEventListener('touchend', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                autoSpeed = 0;
+                if (Math.abs(inertiaSpeed) < 0.3) inertiaSpeed = 0;
+            });
 
             function animate() {
-                scrollX += SCROLL_SPEED;
-                if (scrollX >= ONE_SET) {
-                    scrollX -= ONE_SET;
+                if (!isDragging) {
+                    if (Math.abs(inertiaSpeed) > 0.01) {
+                        scrollX += inertiaSpeed;
+                        inertiaSpeed *= 0.965;
+                    } else {
+                        inertiaSpeed = 0;
+                        // Ramp autoSpeed back to BASE_SPEED
+                        if (autoSpeed < BASE_SPEED) {
+                            autoSpeed += (BASE_SPEED - autoSpeed) * 0.02 + 0.01;
+                            if (autoSpeed > BASE_SPEED) autoSpeed = BASE_SPEED;
+                        }
+                        scrollX += autoSpeed;
+                    }
+                    scrollX = wrapX(scrollX);
                 }
 
                 var vpWidth = viewport.clientWidth;

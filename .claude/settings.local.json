@@ -18,7 +18,11 @@
       "WebFetch(domain:zhuanlan.zhihu.com)",
       "WebFetch(domain:juejin.cn)",
       "WebFetch(domain:www.skillhub.cn)",
-      "WebFetch(domain:mcpmarket.com)"
+      "WebFetch(domain:mcpmarket.com)",
+      "Bash(Select-String -Pattern \"cube-container|3D Rubik|createCube\" -Context 0,1)",
+      "Bash(git show *)",
+      "Read(//tmp/**)",
+      "PowerShell(\\(Get-Content \"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\\\\index.html\" | Measure-Object -Line\\).Lines)"
     ]
   }
 }
