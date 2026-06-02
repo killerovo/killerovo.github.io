@@ -58,6 +58,11 @@
 
     <!-- Hero Section -->
     <header class="hero">
+        <div class="typing-wrapper">
+            <span class="typing-prefix">$ </span>
+            <span class="typing-text" id="typing-text"></span>
+            <span class="typing-cursor">|</span>
+        </div>
         <img class="hero-avatar" src="static/assets/img/photo.png" alt="Li Zhijiang" />
         <h1>Li Zhijiang</h1>
         <p class="hero-desc" id="home-subtitle">Li Zhijiang&ensp;|&ensp;李治江</p>
@@ -177,6 +182,50 @@
                     setTheme(e.matches ? 'light' : 'dark');
                 }
             });
+        })();
+    </script>
+
+    <!-- Typing Animation -->
+    <script>
+        (function() {
+            var words = ['vibe coding', 'claude code', 'codex', 'ai'];
+            var el = document.getElementById('typing-text');
+            if (!el) return;
+
+            var wordIndex = 0;
+            var charIndex = 0;
+            var isDeleting = false;
+            var typeSpeed = 80;
+            var deleteSpeed = 40;
+            var pauseEnd = 2000;
+            var pauseStart = 600;
+
+            function tick() {
+                var current = words[wordIndex];
+
+                if (isDeleting) {
+                    charIndex--;
+                    if (charIndex < 0) {
+                        isDeleting = false;
+                        wordIndex = (wordIndex + 1) % words.length;
+                        setTimeout(tick, pauseStart);
+                        return;
+                    }
+                } else {
+                    charIndex++;
+                    if (charIndex > current.length) {
+                        isDeleting = true;
+                        setTimeout(tick, pauseEnd);
+                        return;
+                    }
+                }
+
+                el.textContent = current.substring(0, charIndex);
+                var delay = isDeleting ? deleteSpeed : typeSpeed;
+                setTimeout(tick, delay);
+            }
+
+            tick();
         })();
     </script>
 
