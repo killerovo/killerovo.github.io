@@ -140,9 +140,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     link.setAttribute('target', '_blank');
                     link.setAttribute('rel', 'noopener noreferrer');
                 });
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typeset();
-                }
             })
             .catch(function(error) { console.log(error); });
     });

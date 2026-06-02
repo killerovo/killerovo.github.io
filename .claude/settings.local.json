@@ -22,7 +22,11 @@
       "Bash(Select-String -Pattern \"cube-container|3D Rubik|createCube\" -Context 0,1)",
       "Bash(git show *)",
       "Read(//tmp/**)",
-      "PowerShell(\\(Get-Content \"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\\\\index.html\" | Measure-Object -Line\\).Lines)"
+      "PowerShell(\\(Get-Content \"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\\\\index.html\" | Measure-Object -Line\\).Lines)",
+      "Bash(Get-ChildItem -Recurse -File)",
+      "Bash(Select-Object FullName, Length)",
+      "Bash(Format-Table -AutoSize)",
+      "WebFetch(domain:www.apple.com.cn)"
     ]
   }
 }
