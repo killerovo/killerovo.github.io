@@ -285,16 +285,22 @@ a:hover { color: var(--accent-hover); }
 .typing-wrapper {
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 22px;
   color: var(--text-secondary);
-  min-height: 28px;
+  min-height: 34px;
+  max-width: 720px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .typing-prefix {
   color: var(--accent);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 22px;
 }
 
 .typing-text {
@@ -305,12 +311,24 @@ a:hover { color: var(--accent-hover); }
   display: inline-block;
   color: var(--accent);
   font-weight: 400;
+  font-size: 22px;
   animation: cursor-blink 0.8s step-end infinite;
 }
 
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .typing-wrapper,
+  .typing-prefix,
+  .typing-cursor {
+    font-size: 16px;
+  }
+  .typing-wrapper {
+    max-width: 90vw;
+  }
 }
 
 .hero-avatar {
