@@ -1053,12 +1053,17 @@ a:hover { color: var(--accent-hover); }
 }
 
 .tutorial-sidebar {
-  position: sticky;
-  top: calc(var(--nav-height) + 32px);
-  width: 200px;
-  flex-shrink: 0;
-  max-height: calc(100vh - var(--nav-height) - 64px);
+  position: fixed;
+  top: calc(var(--nav-height) + 48px);
+  left: max(24px, calc((100vw - 1100px) / 2));
+  width: 180px;
+  max-height: calc(100vh - var(--nav-height) - 80px);
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.tutorial-sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .tutorial-sidebar-title {
@@ -1092,7 +1097,23 @@ a:hover { color: var(--accent-hover); }
   font-weight: 500;
 }
 
+.tutorial-sidebar a.sub {
+  font-size: 12px;
+  padding-left: 24px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.tutorial-sidebar a.sub:hover,
+.tutorial-sidebar a.sub.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
 .tutorial-layout .tutorial-container {
+  margin-left: 228px;
   flex: 1;
   min-width: 0;
 }
@@ -1101,6 +1122,9 @@ a:hover { color: var(--accent-hover); }
 @media (max-width: 1024px) {
   .tutorial-sidebar {
     display: none;
+  }
+  .tutorial-layout .tutorial-container {
+    margin-left: 0;
   }
   .tutorial-toc {
     display: block;
