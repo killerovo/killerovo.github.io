@@ -502,6 +502,7 @@ function animateFrom(startIdx) {
 
 // ---- Rendering ----
 function draw() {
+    if (!grid || grid.length === 0) return;
     var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
 
     var wallCol   = isDark ? '#2d3a4f' : '#1e293b';
@@ -680,35 +681,57 @@ document.getElementById('btnSearch').addEventListener('click', runSearch);
 document.getElementById('btnReset').addEventListener('click', function() { resetSearch(); updateStats(); draw(); });
 document.getElementById('btnNewMaze').addEventListener('click', generateMaze);
 
-// ---- Theme + Nav ----
+// ---- Init ----
+mode = 'start';
+generateMaze();
+updateStats();
+
+// ---- Theme + Nav (after maze is ready) ----
 (function() {
     var html = document.documentElement;
     var toggle = document.getElementById('themeToggle');
+
     function getTheme() {
-        var s = localStorage.getItem('theme');
-        return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        var saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
-    function apply(t) {
-        if (t === 'light') html.setAttribute('data-theme', 'light');
-        else html.removeAttribute('data-theme');
+
+    function applyTheme(t) {
+        if (t === 'light') {
+            html.setAttribute('data-theme', 'light');
+        } else {
+            html.removeAttribute('data-theme');
+        }
+    }
+
+    function setTheme(t) {
+        applyTheme(t);
+        localStorage.setItem('theme', t);
         draw();
     }
-    apply(getTheme());
-    if (toggle) toggle.addEventListener('click', function() {
-        var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        apply(n); localStorage.setItem('theme', n);
+
+    // Apply on load (grid is already built, safe to draw)
+    setTheme(getTheme());
+
+    if (toggle) {
+        toggle.addEventListener('click', function() {
+            var cur = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            setTheme(cur);
+        });
+    }
+
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('theme')) {
+            setTheme(e.matches ? 'light' : 'dark');
+        }
     });
+
     var nav = document.getElementById('mainNav');
     window.addEventListener('scroll', function() {
         nav.classList.toggle('scrolled', window.scrollY > 10);
     }, { passive: true });
 })();
-
-// ---- Init ----
-mode = 'start';
-generateMaze();
-draw();
-updateStats();
 
 })();
 </script>

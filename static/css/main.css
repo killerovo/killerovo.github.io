@@ -284,23 +284,25 @@ a:hover { color: var(--accent-hover); }
 /* Typing animation */
 .typing-wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   flex-wrap: wrap;
   gap: 2px;
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 18px;
   color: var(--text-secondary);
-  min-height: 34px;
-  max-width: 720px;
-  line-height: 1.5;
+  height: 88px;
+  max-width: 680px;
+  line-height: 1.55;
   text-align: center;
+  overflow: hidden;
 }
 
 .typing-prefix {
   color: var(--accent);
-  font-weight: 600;
-  font-size: 22px;
+  font-weight: 500;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .typing-text {
@@ -311,7 +313,7 @@ a:hover { color: var(--accent-hover); }
   display: inline-block;
   color: var(--accent);
   font-weight: 400;
-  font-size: 22px;
+  font-size: 18px;
   animation: cursor-blink 0.8s step-end infinite;
 }
 
@@ -324,10 +326,11 @@ a:hover { color: var(--accent-hover); }
   .typing-wrapper,
   .typing-prefix,
   .typing-cursor {
-    font-size: 16px;
+    font-size: 14px;
   }
   .typing-wrapper {
     max-width: 90vw;
+    height: 70px;
   }
 }
 
@@ -1277,4 +1280,70 @@ a:hover { color: var(--accent-hover); }
   .footer-links {
     gap: 10px;
   }
+}
+
+/* ---- Dynamic Island ---- */
+.dynamic-island {
+  position: fixed;
+  top: calc(var(--nav-height) + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 26px;
+  background: rgba(28, 28, 30, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.15);
+  cursor: default;
+}
+
+.di-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c759;
+  flex-shrink: 0;
+}
+
+.di-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.di-line1 {
+  font-family: var(--font-system);
+  font-size: 15px;
+  font-weight: 500;
+  color: #f5f5f7;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.di-line2 {
+  font-family: var(--font-system);
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(245, 245, 247, 0.6);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .dynamic-island {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .di-line1 {
+  color: #1d1d1f;
+}
+
+[data-theme="light"] .di-line2 {
+  color: rgba(29, 29, 31, 0.55);
 }

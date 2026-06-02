@@ -56,6 +56,15 @@
         </div>
     </nav>
 
+    <!-- Dynamic Island (fixed position, outside hero) -->
+    <div class="dynamic-island">
+        <span class="di-dot" id="diDot"></span>
+        <div class="di-content">
+            <span class="di-line1" id="diLine1"></span>
+            <span class="di-line2" id="diLine2"></span>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <header class="hero">
         <div class="typing-wrapper">
@@ -243,6 +252,50 @@
             }
 
             tick();
+        })();
+    </script>
+
+    <!-- Dynamic Island Script -->
+    <script>
+        (function() {
+            var dotEl = document.getElementById('diDot');
+            var line1 = document.getElementById('diLine1');
+            var line2 = document.getElementById('diLine2');
+            if (!line1 || !line2) return;
+
+            var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+            function update() {
+                var now = new Date();
+                var M = now.getMonth() + 1;
+                var d = now.getDate();
+                var w = weekdays[now.getDay()];
+                var h = now.getHours();
+                var m = now.getMinutes();
+                var mm = (m < 10 ? '0' : '') + m;
+                var timeStr = (h < 10 ? '0' : '') + h + ':' + mm;
+
+                var greeting;
+                if (h >= 0 && h < 6) {
+                    greeting = '夜深了';
+                    if (dotEl) dotEl.style.background = '#8b5cf6';
+                } else if (h >= 6 && h < 12) {
+                    greeting = '上午好';
+                    if (dotEl) dotEl.style.background = '#f59e0b';
+                } else if (h >= 12 && h < 18) {
+                    greeting = '下午好';
+                    if (dotEl) dotEl.style.background = '#34c759';
+                } else {
+                    greeting = '晚上好';
+                    if (dotEl) dotEl.style.background = '#6366f1';
+                }
+
+                line1.textContent = timeStr + '  ' + greeting + (h < 6 ? '，早点休息' : '');
+                line2.textContent = M + '月' + d + '日  ' + w;
+            }
+
+            update();
+            setInterval(update, 10000);
         })();
     </script>
 

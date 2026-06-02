@@ -26,7 +26,8 @@
       "Bash(Get-ChildItem -Recurse -File)",
       "Bash(Select-Object FullName, Length)",
       "Bash(Format-Table -AutoSize)",
-      "WebFetch(domain:www.apple.com.cn)"
+      "WebFetch(domain:www.apple.com.cn)",
+      "WebFetch(domain:www.xihuannio.cn)"
     ]
   }
 }
