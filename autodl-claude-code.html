@@ -37,7 +37,23 @@
 
     <!-- Content -->
     <main class="tutorial-page">
-        <div class="tutorial-container">
+        <div class="tutorial-layout">
+
+            <aside class="tutorial-sidebar" id="sidebar">
+                <div class="tutorial-sidebar-title">目录</div>
+                <a href="#why">为什么要这样做？</a>
+                <a href="#prereq">准备工作</a>
+                <a href="#ssh-keygen">第一步：生成 SSH 密钥</a>
+                <a href="#ssh-upload">第二步：上传公钥</a>
+                <a href="#ssh-verify">第三步：验证免密登录</a>
+                <a href="#cc-connect">第四步：连接远程服务器</a>
+                <a href="#usage">第五步：连上后怎么用</a>
+                <a href="#tmux">第六步：tmux 防中断</a>
+                <a href="#tips">进阶技巧</a>
+                <a href="#troubleshooting">常见问题排查</a>
+            </aside>
+
+            <div class="tutorial-container">
             <div class="content-card">
 
                 <h1>AutoDL 使用 Claude Code：SSH 直连实战</h1>
@@ -403,6 +419,7 @@ OS：Ubuntu 22.04</code></pre>
 
             </div>
         </div>
+        </div>
     </main>
 
     <!-- Theme Toggle + Nav Scroll -->
@@ -433,6 +450,34 @@ OS：Ubuntu 22.04</code></pre>
             window.addEventListener('scroll', function() {
                 nav.classList.toggle('scrolled', window.scrollY > 10);
             }, { passive: true });
+        })();
+    </script>
+
+    <!-- Sidebar scroll spy -->
+    <script>
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            if (!sidebar) return;
+            var links = sidebar.querySelectorAll('a');
+            var headings = [];
+            links.forEach(function(a) {
+                var id = a.getAttribute('href').substring(1);
+                var h = document.getElementById(id);
+                if (h) headings.push({ el: h, link: a });
+            });
+            if (!headings.length) return;
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        links.forEach(function(l) { l.classList.remove('active'); });
+                        var match = headings.find(function(h) { return h.el === e.target; });
+                        if (match) match.link.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+            headings.forEach(function(h) { observer.observe(h.el); });
         })();
     </script>
 

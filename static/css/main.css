@@ -1043,6 +1043,76 @@ a:hover { color: var(--accent-hover); }
   letter-spacing: 0;
 }
 
+/* ---- Layout with sidebar ---- */
+.tutorial-layout {
+  display: flex;
+  gap: 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.tutorial-sidebar {
+  position: sticky;
+  top: calc(var(--nav-height) + 32px);
+  width: 200px;
+  flex-shrink: 0;
+  max-height: calc(100vh - var(--nav-height) - 64px);
+  overflow-y: auto;
+}
+
+.tutorial-sidebar-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.tutorial-sidebar a {
+  display: block;
+  padding: 5px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  padding-left: 12px;
+  transition: color var(--ease-out), border-color var(--ease-out);
+}
+
+.tutorial-sidebar a:hover {
+  color: var(--text-secondary);
+}
+
+.tutorial-sidebar a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.tutorial-layout .tutorial-container {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hide sidebar on smaller screens, show inline TOC instead */
+@media (max-width: 1024px) {
+  .tutorial-sidebar {
+    display: none;
+  }
+  .tutorial-toc {
+    display: block;
+  }
+}
+
+@media (min-width: 1025px) {
+  .tutorial-toc {
+    display: none;
+  }
+}
+
 /* Back link */
 .tutorial-back {
   display: inline-block;

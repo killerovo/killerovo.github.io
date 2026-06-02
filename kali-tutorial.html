@@ -37,7 +37,19 @@
 
     <!-- Content -->
     <main class="tutorial-page">
-        <div class="tutorial-container">
+        <div class="tutorial-layout">
+
+            <aside class="tutorial-sidebar" id="sidebar">
+                <div class="tutorial-sidebar-title">目录</div>
+                <a href="#prep">第零章：前置准备</a>
+                <a href="#windows">第一章：Windows 远控</a>
+                <a href="#android">第二章：Android 远控</a>
+                <a href="#meterpreter">第三章：Meterpreter 手册</a>
+                <a href="#cpolar">第四章：cpolar SSH 穿透</a>
+                <a href="#troubleshoot">第五章：故障排查</a>
+            </aside>
+
+            <div class="tutorial-container">
             <div class="content-card">
 
                 <h1>Kali Linux 渗透测试实战教程</h1>
@@ -862,6 +874,7 @@ sudo systemctl restart apache2</code></pre>
 
             </div>
         </div>
+        </div>
     </main>
 
     <!-- Theme Toggle + Nav Scroll -->
@@ -892,6 +905,34 @@ sudo systemctl restart apache2</code></pre>
             window.addEventListener('scroll', function() {
                 nav.classList.toggle('scrolled', window.scrollY > 10);
             }, { passive: true });
+        })();
+    </script>
+
+    <!-- Sidebar scroll spy -->
+    <script>
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            if (!sidebar) return;
+            var links = sidebar.querySelectorAll('a');
+            var headings = [];
+            links.forEach(function(a) {
+                var id = a.getAttribute('href').substring(1);
+                var h = document.getElementById(id);
+                if (h) headings.push({ el: h, link: a });
+            });
+            if (!headings.length) return;
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        links.forEach(function(l) { l.classList.remove('active'); });
+                        var match = headings.find(function(h) { return h.el === e.target; });
+                        if (match) match.link.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+            headings.forEach(function(h) { observer.observe(h.el); });
         })();
     </script>
 
