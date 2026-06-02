@@ -5,516 +5,434 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoDL 使用 Claude Code：SSH 直连实战</title>
     <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
-
-    <style>
-        .tutorial-hero {
-            position: relative;
-            z-index: 10;
-            padding: 100px 32px 40px;
-            text-align: center;
-        }
-        .tutorial-hero h1 {
-            font-family: "Kanit", sans-serif;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            background: linear-gradient(135deg, #10b981, #06b6d4, #6366f1);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 5s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .tutorial-tip {
-            max-width: 800px;
-            margin: 16px auto 0;
-            padding: 12px 20px;
-            border-radius: 12px;
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
-            font-size: 0.9rem;
-        }
-        .tutorial-warning {
-            max-width: 800px;
-            margin: 16px auto 0;
-            padding: 12px 20px;
-            border-radius: 12px;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            font-size: 0.9rem;
-        }
-        .tutorial-body {
-            position: relative;
-            z-index: 10;
-            max-width: 900px;
-            margin: 0 auto 60px;
-            padding: 0 32px;
-        }
-        .tutorial-body .glass-card { padding: 40px 48px; }
-        .tutorial-body h2 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.6rem;
-            color: #e8e8f0;
-            margin: 36px 0 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body h3 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.2rem;
-            color: #a5b4fc;
-            margin: 28px 0 12px;
-        }
-        .tutorial-body h4 {
-            font-size: 1rem;
-            color: #06b6d4;
-            margin: 20px 0 8px;
-        }
-        .tutorial-body p {
-            color: #9494b8;
-            line-height: 1.85;
-            margin-bottom: 12px;
-        }
-        .tutorial-body strong { color: #e8e8f0; font-weight: 600; }
-        .tutorial-body a { color: #06b6d4; }
-        .tutorial-body a:hover { color: #6366f1; }
-        .tutorial-body ul, .tutorial-body ol {
-            color: #9494b8;
-            margin: 8px 0 16px 24px;
-            line-height: 1.8;
-        }
-        .tutorial-body li { margin-bottom: 4px; }
-        .tutorial-body code {
-            background: rgba(255,255,255,0.06);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: "Courier New", monospace;
-            font-size: 0.9em;
-            color: #e8e8f0;
-        }
-        .tutorial-body pre {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 20px 24px;
-            overflow-x: auto;
-            margin: 16px 0;
-            line-height: 1.6;
-        }
-        .tutorial-body pre code {
-            background: none;
-            padding: 0;
-            font-size: 0.85rem;
-            color: #c9d1d9;
-        }
-        .tutorial-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.9rem;
-        }
-        .tutorial-body th {
-            background: rgba(99,102,241,0.1);
-            color: #e8e8f0;
-            padding: 10px 14px;
-            text-align: left;
-            border: 1px solid rgba(255,255,255,0.06);
-            font-weight: 600;
-        }
-        .tutorial-body td {
-            color: #9494b8;
-            padding: 8px 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body hr {
-            border: none;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            margin: 32px 0;
-        }
-        .tutorial-body blockquote {
-            border-left: 3px solid #10b981;
-            padding: 12px 20px;
-            margin: 16px 0;
-            background: rgba(16, 185, 129, 0.05);
-            border-radius: 0 8px 8px 0;
-            color: #6ee7b7;
-        }
-        .step-number {
-            display: inline-block;
-            background: linear-gradient(135deg, #6366f1, #06b6d4);
-            color: #fff;
-            width: 28px;
-            height: 28px;
-            line-height: 28px;
-            text-align: center;
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-right: 8px;
-        }
-        @media (max-width: 640px) {
-            .tutorial-body .glass-card { padding: 20px; }
-            .tutorial-body pre { padding: 14px 16px; }
-            .tutorial-body table { font-size: 0.75rem; }
-        }
-    </style>
 </head>
-<body id="page-top">
+<body>
 
-    <canvas id="particle-canvas"></canvas>
-    <div class="noise-overlay"></div>
-    <div class="glow-orbs">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-    </div>
-
+    <!-- Navigation -->
     <nav class="nav" id="mainNav">
         <div class="nav-inner">
             <a class="nav-brand" href="index.html">Li Zhijiang</a>
-            <a href="index.html" style="color:#9494b8;font-size:0.85rem;">← 返回主页</a>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <section class="tutorial-hero">
-        <h1>AutoDL 使用 Claude Code：SSH 直连实战</h1>
-        <div class="tutorial-tip">
-            💡 核心思路：Claude Code 跑在本地，通过 SSH 操作远程服务器。API 请求走本地网络，命令执行在远程 GPU 环境。
-        </div>
-    </section>
+    <!-- Content -->
+    <main class="tutorial-page">
+        <div class="tutorial-container">
+            <div class="content-card">
 
-    <div class="tutorial-body">
-        <div class="glass-card" id="tutorial-content">
+                <h1>AutoDL 使用 Claude Code：SSH 直连实战</h1>
+                <p style="font-size:16px;color:var(--text-tertiary);margin-bottom:40px;">不需要在服务器上装代理。Claude Code 跑在本地，通过 SSH 操作远程 GPU 服务器。API 请求走本地网络，命令行在远程执行。</p>
 
-<h2 id="toc">目录</h2>
-<ul>
-<li><a href="#why">0. 为什么远程服务器用不了 Claude Code？</a></li>
-<li><a href="#ssh-setup">1. 配置 SSH 密钥免密登录（踩坑全记录）</a></li>
-<li><a href="#connect">2. 用 Claude Code 连接远程服务器</a></li>
-<li><a href="#usage">3. 连上之后怎么用？</a></li>
-<li><a href="#tips">4. 进阶技巧</a></li>
-<li><a href="#troubleshooting">5. 常见问题</a></li>
-</ul>
-<hr />
+                <!-- 目录 -->
+                <div class="tutorial-toc">
+                    <p>目录</p>
+                    <ul>
+                        <li><a href="#why">为什么要这样做？</a></li>
+                        <li><a href="#prereq">准备工作</a></li>
+                        <li><a href="#ssh-keygen">第一步：生成本地 SSH 密钥</a></li>
+                        <li><a href="#ssh-upload">第二步：把公钥上传到 AutoDL 服务器</a></li>
+                        <li><a href="#ssh-verify">第三步：验证免密登录</a></li>
+                        <li><a href="#cc-connect">第四步：用 Claude Code 连接远程服务器</a></li>
+                        <li><a href="#usage">第五步：连上之后怎么用？</a></li>
+                        <li><a href="#tmux">第六步：用 tmux 保持任务不中断</a></li>
+                        <li><a href="#tips">进阶技巧</a></li>
+                        <li><a href="#troubleshooting">常见问题排查</a></li>
+                    </ul>
+                </div>
 
-<h2 id="why">0. 为什么远程服务器用不了 Claude Code？</h2>
+                <hr />
 
-<p>很多朋友在 AutoDL 上做远程开发，本地 VSCode 里用着 Claude 插件很爽，自然也想在远程环境用上 AI 编程助手。结果装上去发现：<strong>API 连不上</strong>。</p>
+                <h2 id="why">为什么要这样做？</h2>
 
-<p>网上搜一圈，说要在服务器上装代理——clash、配端口、设 <code>HTTP_PROXY</code> 环境变量，折腾半天好不容易跑通，重启服务器又失效了。</p>
+                <p>很多朋友买了 AutoDL 云 GPU 服务器做深度学习，本地用着 Claude Code 写代码很爽，于是也在服务器上装了 Claude Code，结果发现——<strong>根本连不上 API</strong>。</p>
 
-<blockquote>方向就错了。为什么非要在服务器上装 Claude Code？你本地不是用得好好的吗？</blockquote>
+                <p>然后你开始搜教程：有人在服务器上装 Clash、配 <code>HTTP_PROXY</code> 环境变量、设端口转发……折腾一下午终于跑通，结果服务器重启一下，代理又挂了。</p>
 
-<h3>核心原因</h3>
+                <div class="tutorial-tip">
+                    <strong>关键认知：</strong>Claude Code 本质上是一个命令行客户端。它把你的需求发给 Anthropic 的 API，再把 API 返回的结果展示给你。<strong>API 请求从哪台机器发出，Claude Code 就必须在哪台机器上运行。</strong>
+                </div>
 
-<p>Claude Code 本质上是一个命令行客户端——你在终端里跟它对话，它把你的需求发给 API。关键在于：<strong>API 请求从哪里发出，Claude Code 就在哪里跑</strong>。</p>
+                <table>
+                    <thead><tr><th>场景</th><th>API 请求路径</th><th>结果</th></tr></thead>
+                    <tbody>
+                        <tr><td>本地电脑有代理 / 国内直连</td><td>你的电脑 → API 服务器</td><td>✅ 通</td></tr>
+                        <tr><td>AutoDL 服务器没代理</td><td>服务器 → API 服务器（被墙）</td><td>❌ 不通</td></tr>
+                    </tbody>
+                </table>
 
-<table>
-<thead><tr><th>场景</th><th>API 请求路径</th><th>结果</th></tr></thead>
-<tbody>
-<tr><td>本地电脑有代理</td><td>API 请求走代理</td><td style="color:#6ee7b7;">✅ 通</td></tr>
-<tr><td>远程服务器没代理</td><td>API 请求直连海外</td><td style="color:#fca5a5;">❌ 不通</td></tr>
-</tbody>
-</table>
+                <p><strong>换个思路：</strong>让 Claude Code 继续在你本地跑（API 走本地网络），但通过 SSH 让它<strong>操作远程服务器</strong>。它能在远程读写文件、执行命令、调用 GPU，而 API 请求压根没经过远程服务器。</p>
 
-<p><strong>换个思路：</strong> 让 Claude Code 在本地跑，通过 SSH 操作远程服务器。API 请求走本地网络，问题根本不存在。</p>
+                <blockquote>
+                    <p>这就是本教程的全部核心。理解这一点，后面都是操作细节。</p>
+                </blockquote>
 
-<hr />
+                <hr />
 
-<h2 id="ssh-setup">1. 配置 SSH 密钥免密登录（踩坑全记录）</h2>
+                <h2 id="prereq">准备工作</h2>
+                <p>开始之前，请确认以下条件：</p>
+                <ol>
+                    <li><strong>本地 Claude Code 已能正常使用</strong>——能正常跟它对话就行</li>
+                    <li><strong>AutoDL 服务器已开机</strong>——拿到 SSH 连接信息（IP、端口、用户名）</li>
+                    <li><strong>本地是 Windows 系统</strong>——本教程基于 Windows 11 + PowerShell，macOS/Linux 会更简单</li>
+                </ol>
 
-<h3>1.1 先在本地终端生成密钥</h3>
+                <p>AutoDL 的 SSH 连接信息长这样（在你租用实例的控制台页面可以找到）：</p>
+                <pre><code>SSH 命令：ssh -p 42144 root@connect.cqa1.seetacloud.com
+端口：42144
+用户名：root
+主机：connect.cqa1.seetacloud.com</code></pre>
 
-<p>打开本地终端（PowerShell / cmd / Git Bash），生成 SSH 密钥：</p>
+                <hr />
 
-<pre><code class="language-bash">ssh-keygen -t ed25519</code></pre>
+                <h2 id="ssh-keygen">第一步：在本地生成 SSH 密钥</h2>
 
-<p>一路回车即可（默认路径 <code>~/.ssh/id_ed25519</code>，无需设密码）。</p>
+                <p>SSH 密钥就像一把钥匙和一把锁。你把「公钥」（锁）放在服务器上，自己留着「私钥」（钥匙）。连接时服务器用公钥验证你是私钥的持有者，不需要每次都输密码。</p>
 
-<h3>1.2 把公钥上传到 AutoDL 服务器</h3>
+                <p><strong>打开本地终端：</strong>按键盘上的 <code>Win + R</code>，输入 <code>powershell</code>，回车。</p>
 
-<p>这一步是踩坑最密集的地方，以下列出各种尝试及最终方案。</p>
+                <p>在 PowerShell 中输入以下命令：</p>
+                <pre><code>ssh-keygen -t ed25519</code></pre>
 
-<div class="tutorial-warning" style="margin:16px 0;">
-⚠️ <strong>踩坑记录</strong>：以下方法在 Windows 环境都会失败，可以直接跳到最终方案。
-</div>
+                <p>你会看到三个提示，<strong>全部直接按回车</strong>即可：</p>
+                <pre><code>Generating public/private ed25519 key pair.
+Enter file in which to save the key (C:\Users\你的用户名/.ssh/id_ed25519):   ← 直接回车
+Enter passphrase (empty for no passphrase):                                   ← 直接回车（不设密码）
+Enter same passphrase again:                                                  ← 再回车一次</code></pre>
 
-<h4>❌ 方法一：Claude Code 里直接 ! ssh</h4>
-<pre><code>! ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
-<p><strong>失败原因：</strong> Claude Code 的 Bash 工具没有交互式 TTY，无法输入密码。报错 <code>Permission denied (publickey,password)</code>。</p>
+                <div class="tutorial-tip">
+                    <strong>说明：</strong><code>ed25519</code> 是最新的密钥算法，比老的 RSA 更快更安全。不设密码是为了让 Claude Code 能自动连接，不需要你每次手动输入。
+                </div>
 
-<h4>❌ 方法二：用 sshpass</h4>
-<pre><code class="language-bash">sshpass -p '密码' ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
-<p><strong>失败原因：</strong> Windows 没有 <code>sshpass</code> 命令。</p>
+                <p>完成后，你的密钥文件位于：</p>
+                <pre><code>C:\Users\你的用户名\.ssh\
+├── id_ed25519      ← 私钥（留在本地，绝对不要发给别人）
+└── id_ed25519.pub  ← 公钥（放到服务器上）</code></pre>
 
-<h4>❌ 方法三：ssh-copy-id</h4>
-<pre><code class="language-bash">ssh-copy-id -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
-<p><strong>失败原因：</strong> Windows PowerShell 没有 <code>ssh-copy-id</code> 命令。即使手动安装，它同样需要交互式输入密码，Bash 工具没有 TTY。</p>
+                <hr />
 
-<h4>❌ 方法四：PowerShell 管道一行命令</h4>
-<pre><code class="language-powershell">type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh -p 42144 root@connect.cqa1.seetacloud.com "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"</code></pre>
-<p><strong>失败原因：</strong> PowerShell 把 <code>&gt;&gt;</code> 解析坏了，报 <code>syntax error near unexpected token 'newline'</code>。</p>
+                <h2 id="ssh-upload">第二步：把公钥上传到 AutoDL 服务器</h2>
 
-<h4>✅ 最终方案：scp + ssh 分两步</h4>
+                <p><strong>这是最容易踩坑的一步。</strong>Windows 下有好几种方法，但大部分都会失败。我把自己踩过的坑列出来，你可以直接跳到最后的<strong>可行方案</strong>。</p>
 
-<p><strong>第一步：用 scp 上传公钥</strong></p>
-<p>在本地 PowerShell 里执行（注意 scp 用大写 <code>-P</code> 指定端口）：</p>
-<pre><code class="language-powershell">scp -P 42144 $env:USERPROFILE\.ssh\id_ed25519.pub root@connect.cqa1.seetacloud.com:/tmp/</code></pre>
-<p>输入密码后，公钥文件就传到了服务器的 <code>/tmp/</code> 目录。</p>
+                <h3>❌ 踩坑记录（可以跳过）</h3>
 
-<p><strong>第二步：SSH 进去把公钥写入 authorized_keys</strong></p>
-<pre><code class="language-powershell">ssh -p 42144 root@connect.cqa1.seetacloud.com "mkdir -p ~/.ssh && cat /tmp/id_ed25519.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"</code></pre>
-<p>再输一次密码即可完成配置。</p>
+                <h4>失败 1：在 Claude Code 里直接 SSH</h4>
+                <pre><code>! ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
+                <p><strong>失败原因：</strong>Claude Code 的 Bash 工具没有交互式终端（TTY），无法输入密码。报 <code>Permission denied</code>。</p>
 
-<h3>1.3 验证免密登录</h3>
+                <h4>失败 2：用 sshpass 自动输密码</h4>
+                <pre><code>sshpass -p '你的密码' ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
+                <p><strong>失败原因：</strong>Windows 根本没有 <code>sshpass</code> 这个命令。</p>
 
-<p>配置完成后，试试免密连接：</p>
-<pre><code class="language-bash">ssh -p 42144 root@connect.cqa1.seetacloud.com "echo CONNECTED && hostname && uname -a"</code></pre>
+                <h4>失败 3：用 ssh-copy-id</h4>
+                <pre><code>ssh-copy-id -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
+                <p><strong>失败原因：</strong>Windows PowerShell 没有 <code>ssh-copy-id</code>，即使用 Git Bash 也有同样的问题——它需要交互式输入密码。</p>
 
-<p>如果能直接看到服务器的主机名和系统信息，说明密钥配置成功。</p>
+                <h4>失败 4：PowerShell 一行命令管道</h4>
+                <pre><code>type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh -p 42144 root@connect.cqa1.seetacloud.com "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"</code></pre>
+                <p><strong>失败原因：</strong>PowerShell 把 <code>>></code> 解析坏了，服务器端报语法错误。</p>
 
-<hr />
+                <h3>✅ 可行方案：scp + ssh 两步走</h3>
 
-<h2 id="connect">2. 用 Claude Code 连接远程服务器</h2>
+                <div class="tutorial-good">
+                    <strong>核心思路：</strong>先用 <code>scp</code>（SSH 文件传输）把公钥传到服务器，再连上服务器手动写入。每一步都要输入密码，但不会卡在交互式 TTY 上。
+                </div>
 
-<h3>2.1 前提条件</h3>
-<ul>
-<li>✅ 本地 Claude Code 能正常使用</li>
-<li>✅ SSH 密钥已配置，可以免密登录</li>
-<li>✅ AutoDL 服务器已开机，拿到 SSH 连接信息</li>
-</ul>
+                <p><strong>第 1 小步：用 scp 上传公钥文件</strong></p>
+                <p>在 PowerShell 中执行（<strong>注意：scp 的端口参数是大写 -P</strong>）：</p>
+                <pre><code>scp -P 42144 $env:USERPROFILE\.ssh\id_ed25519.pub root@connect.cqa1.seetacloud.com:/tmp/</code></pre>
+                <p>系统会提示你输入密码（AutoDL 控制台可以看到 root 密码），输入后回车。看到传输进度条就说明上传成功。</p>
 
-<h3>2.2 直接在 Claude Code 中连接</h3>
+                <p><strong>第 2 小步：连上服务器，把公钥写入 authorized_keys</strong></p>
+                <pre><code>ssh -p 42144 root@connect.cqa1.seetacloud.com "mkdir -p ~/.ssh && cat /tmp/id_ed25519.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"</code></pre>
+                <p>再输一次密码。这条命令做了三件事：</p>
+                <ol>
+                    <li><code>mkdir -p ~/.ssh</code> —— 创建 <code>.ssh</code> 目录（如果已存在则跳过）</li>
+                    <li><code>cat /tmp/id_ed25519.pub >> ~/.ssh/authorized_keys</code> —— 把公钥内容追加到授权文件</li>
+                    <li><code>chmod 600 ~/.ssh/authorized_keys</code> —— 设置权限（SSH 要求只有文件所有者能读写）</li>
+                </ol>
 
-<p>在 Claude Code 中输入：</p>
+                <div class="tutorial-tip">
+                    <strong>总结：</strong>你的公钥现在已经在服务器的 <code>~/.ssh/authorized_keys</code> 里了。以后 SSH 连接时，服务器会用这个公钥验证你的身份，不再需要密码。
+                </div>
 
-<pre><code>帮我连接上这台 SSH 服务器：ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
+                <hr />
 
-<p>由于已经配置了免密登录，Claude Code 可以直接通过 Bash 工具连上服务器。</p>
+                <h2 id="ssh-verify">第三步：验证免密登录</h2>
 
-<p><strong>连接成功后的环境确认示例：</strong></p>
-<pre><code>服务器信息：
-- 主机名： autodl-container-508440a921-2f6c65c5
-- 系统： Ubuntu，x86_64，Linux 5.15.0
-- GPU： NVIDIA GeForce RTX 4090 D, 24GB VRAM
-- 内存： ~1TB 总，~944GB 可用
-- 磁盘： 30GB（已用 1.3GB）</code></pre>
+                <p>在 PowerShell 中测试免密连接：</p>
+                <pre><code>ssh -p 42144 root@connect.cqa1.seetacloud.com "echo 连接成功！ && hostname && uname -a"</code></pre>
 
-<p>此时 Claude Code 已经「身处」远程服务器——它能读写远程文件、执行远程命令、调用远程 GPU，但 API 请求依然走本地网络。</p>
+                <p><strong>如果成功</strong>，你会看到类似这样的输出（不用输密码）：</p>
+                <pre><code>连接成功！
+autodl-container-508440a921-2f6c65c5
+Linux autodl-container 5.15.0 #1 SMP x86_64 GNU/Linux</code></pre>
 
-<hr />
+                <div class="tutorial-warn">
+                    <strong>如果还是提示输入密码：</strong>检查 <code>~/.ssh/authorized_keys</code> 文件是否有正确的权限。连上服务器执行 <code>chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh</code> 然后重试。
+                </div>
 
-<h2 id="usage">3. 连上之后怎么用？</h2>
+                <hr />
 
-<h3>3.1 第一句话交代环境</h3>
+                <h2 id="cc-connect">第四步：用 Claude Code 连接远程服务器</h2>
 
-<p>告诉 Claude Code 它现在操作的是什么环境，避免误判：</p>
+                <p>现在密钥配好了，打开 Claude Code，直接对它说：</p>
 
-<pre><code>你现在在一台 AutoDL 服务器上，Ubuntu 系统，已安装 Python 3.10 和 CUDA 12.1。请帮我把 /root/my-project 目录下的项目跑起来。</code></pre>
+                <pre><code>帮我连接上这台 SSH 服务器：
+ssh -p 42144 root@connect.cqa1.seetacloud.com</code></pre>
 
-<h3>3.2 一个完整的任务示例</h3>
+                <p>因为已经免密，Claude Code 可以直接通过 Bash 工具连上。它会告诉你连接成功，并且列出服务器的基本信息：</p>
 
-<pre><code>帮我完成以下操作：
+                <pre><code>已成功连接！服务器信息：
+• 主机名：autodl-container-508440a921-2f6c65c5
+• 系统：Ubuntu 22.04，x86_64，Linux 5.15.0
+• GPU：NVIDIA GeForce RTX 4090 D，24GB VRAM（1 卡）
+• 内存：~1TB 总，~944GB 可用
+• 磁盘：30GB（已用 1.3GB）</code></pre>
 
-1. 克隆仓库 https://github.com/xxx/my-project.git
-2. 安装 requirements.txt 中的依赖
-3. 运行 python train.py --epochs 5
-4. 训练完成后告诉我最终的 loss 和 accuracy</code></pre>
+                <p><strong>此时 Claude Code 已经「身处」远程服务器了。</strong>它能读写远程文件、执行远程命令、用远程 GPU 跑训练。但 API 请求依然走你的本地网络——代理问题根本不存在。</p>
 
-<p>Claude Code 会逐步执行，中间遇到报错还会自己排查——比如 pip 安装超时，它会主动尝试换国内镜像源。</p>
+                <hr />
 
-<h3>3.3 常见操作</h3>
+                <h2 id="usage">第五步：连上之后怎么用？</h2>
 
-<table>
-<thead><tr><th>场景</th><th>提示词示例</th></tr></thead>
-<tbody>
-<tr><td>查看 GPU 状态</td><td><code>帮我看下 GPU 使用情况</code></td></tr>
-<tr><td>安装环境</td><td><code>帮我装 Python 3.10 + CUDA 12.1 + PyTorch</code></td></tr>
-<tr><td>运行实验</td><td><code>跑 python train.py，把日志存到 /root/logs/</code></td></tr>
-<tr><td>下载数据集</td><td><code>下载 xxx 数据集到 /root/data/，太大的话用 aria2c</code></td></tr>
-<tr><td>代码调试</td><td><code>报错 CUDA out of memory，帮我优化一下 batch size</code></td></tr>
-</tbody>
-</table>
+                <h3>第一次对话：先交代环境</h3>
 
-<hr />
+                <p>连接成功后，让 Claude Code 了解它现在操作的是远程环境：</p>
 
-<h2 id="tips">4. 进阶技巧</h2>
+                <pre><code>你现在通过 SSH 连在一台 AutoDL 远程服务器上。
+系统：Ubuntu 22.04
+Python：3.10
+CUDA：12.1
+磁盘空间：30GB
+GPU：RTX 4090D（24GB）
 
-<h3>4.1 用 tmux 后台运行，断开也不怕</h3>
+请先确认环境是否正确，然后帮我做以下事情：
+1. 检查是否已安装 PyTorch（能用 CUDA 的版本）
+2. 如果没装，用 conda 安装 PyTorch 2.x + CUDA 12.1
+3. 装好后跑 nvidia-smi 确认 GPU 可用</code></pre>
 
-<p>AutoDL 的 SSH 连接可能因为网络波动断开，用 tmux 把任务放到后台运行：</p>
+                <h3>完整任务示例：训练模型</h3>
 
-<pre><code class="language-bash"># Ubuntu 安装 tmux
+                <pre><code>帮我完成以下操作：
+1. cd /root 然后 git clone https://github.com/xxx/my-project.git
+2. 阅读 README.md 了解项目
+3. 用 pip 安装 requirements.txt（下载慢就换清华源）
+4. 运行 python train.py --epochs 5 --batch_size 32
+5. 训练结束后告诉我最终的 loss 和 accuracy
+6. 把训练日志、模型权重存到 /root/output/ 目录</code></pre>
+
+                <p>Claude Code 会逐步执行，<strong>中间遇到报错它会自己排查</strong>。比如 pip 下载超时，它会主动换清华镜像源；CUDA 版本不对，它会重装对应版本。</p>
+
+                <h3>常用操作速查</h3>
+                <table>
+                    <thead><tr><th>你想做的事</th><th>对 Claude Code 这样说</th></tr></thead>
+                    <tbody>
+                        <tr><td>查看 GPU 状态</td><td><code>帮我看下 nvidia-smi，GPU 有没有被占用</code></td></tr>
+                        <tr><td>安装深度学习环境</td><td><code>装 PyTorch 2.3 + CUDA 12.1，用 conda 装，如果慢换清华源</code></td></tr>
+                        <tr><td>运行训练</td><td><code>跑 python train.py，把 stdout 和 stderr 都存到 /root/logs/train.log</code></td></tr>
+                        <tr><td>下载数据集</td><td><code>从 https://xxx.com/data.zip 下载数据集到 /root/data/，如果太大用 aria2c 多线程下载</code></td></tr>
+                        <tr><td>调试错误</td><td><code>报错了：RuntimeError: CUDA out of memory. 帮我分析原因并优化 batch size 或梯度累积</code></td></tr>
+                        <tr><td>查看训练进度</td><td><code>帮我看 /root/logs/train.log 最后 30 行，分析当前的 loss 趋势</code></td></tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h2 id="tmux">第六步：用 tmux 保持任务不中断（重要）</h2>
+
+                <p>AutoDL 的 SSH 连接可能因为网络波动断开——如果你正在跑训练，断开意味着任务中断，半天白等。</p>
+
+                <p><strong>tmux 就像一个「后台房间」：</strong>你把任务放进去，然后你可以离开（断开连接），过段时间回来（重连），任务还在跑。</p>
+
+                <h3>安装和基本使用</h3>
+                <pre><code># 在服务器上安装 tmux
 sudo apt update
 sudo apt install tmux -y
 
-# 启动 tmux
-tmux</code></pre>
+# 创建一个新的 tmux 会话（起个名字好找）
+tmux new -s training
 
-<p><strong>tmux 三命令速记：</strong></p>
-<table>
-<thead><tr><th>操作</th><th>命令</th></tr></thead>
-<tbody>
-<tr><td>新建会话</td><td><code>tmux new -s 名字</code></td></tr>
-<tr><td>后台挂起</td><td><code>Ctrl + B</code> 松开后按 <code>D</code></td></tr>
-<tr><td>重新进入</td><td><code>tmux a -t 名字</code></td></tr>
-</tbody>
-</table>
+# 在这个 tmux 会话里，运行你的训练
+python train.py --epochs 100
 
-<h3>4.2 pip / git 下载慢</h3>
+# 按 Ctrl+B 然后按 D  —— 你会退出 tmux，但训练继续在后台跑
 
-<p>让 Claude Code 配国内镜像源：</p>
-<pre><code>pip install -i https://pypi.tuna.tsinghua.edu.cn/simple 包名</code></pre>
+# 断开 SSH 也没关系，训练不会停。下次连上服务器后：
+tmux attach -t training    # 恢复之前的 tmux 会话，看到你的训练还在跑</code></pre>
 
-<h3>4.3 把 SSH 信息存到文件</h3>
+                <table>
+                    <thead><tr><th>你需要的操作</th><th>命令</th></tr></thead>
+                    <tbody>
+                        <tr><td>新建会话</td><td><code>tmux new -s 名字</code></td></tr>
+                        <tr><td>后台挂起</td><td>先按 <code>Ctrl + B</code>，松开后按 <code>D</code></td></tr>
+                        <tr><td>重新进入</td><td><code>tmux attach -t 名字</code></td></tr>
+                        <tr><td>查看所有会话</td><td><code>tmux ls</code></td></tr>
+                        <tr><td>关闭会话</td><td>在 tmux 里输入 <code>exit</code> 或按 <code>Ctrl + D</code></td></tr>
+                        <tr><td>上下滚动看历史</td><td>先按 <code>Ctrl + B</code>，松开后按 <code>[</code>（然后用方向键翻页，按 <code>q</code> 退出）</td></tr>
+                    </tbody>
+                </table>
 
-<p>把 SSH 连接信息写到一个文件（如 <code>host.md</code>），然后让 Claude 自己读：</p>
-<pre><code>请阅读 host.md 文件，然后登录远程服务器</code></pre>
+                <div class="tutorial-tip">
+                    <strong>好习惯：</strong>凡是运行时间超过 5 分钟的任务（训练、下载大数据集），一律在 tmux 里跑。多花 10 秒，省你几小时重跑。
+                </div>
 
-<h3>4.4 同样的思路适用于其他 AI 工具</h3>
+                <hr />
 
-<table>
-<thead><tr><th>工具</th><th>原理</th></tr></thead>
-<tbody>
-<tr><td>OpenAI Codex / GitHub Copilot CLI</td><td>本地跑客户端，SSH 连远程操作</td></tr>
-<tr><td>Google Gemini CLI</td><td>同上，本地跑客户端，远程跑代码</td></tr>
-<tr><td>Cursor / Windsurf</td><td>本地连 API，通过 Remote SSH 操作远程文件</td></tr>
-</tbody>
-</table>
+                <h2 id="tips">进阶技巧</h2>
 
-<p><strong>本质：</strong> 客户端在哪跑，API 请求就从哪出。只要本地网络能访问 API，远程服务器就不需要任何代理配置。</p>
+                <h3>pip / git 下载慢？用国内镜像</h3>
+                <pre><code># pip 清华源（推荐，带宽大）
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple 包名
 
-<hr />
+# 永久设置 pip 镜像（不需要每次加 -i）
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-<h2 id="troubleshooting">5. 常见问题</h2>
+# Git 克隆慢也可以用镜像
+git clone https://ghproxy.com/https://github.com/xxx/repo.git</code></pre>
 
-<table>
-<thead><tr><th>问题</th><th>原因</th><th>解决</th></tr></thead>
-<tbody>
-<tr>
-<td>Host key verification failed</td>
-<td>SSH 首次连接需确认指纹</td>
-<td>先在本地终端手动 SSH 一次，输入 yes 确认</td>
-</tr>
-<tr>
-<td>Permission denied</td>
-<td>密钥未正确配置</td>
-<td>重新按「最终方案」走 scp + ssh 两步</td>
-</tr>
-<tr>
-<td>pip 安装超时</td>
-<td>默认 PyPI 源慢</td>
-<td>让 Claude 换清华源 <code>-i https://pypi.tuna.tsinghua.edu.cn/simple</code></td>
-</tr>
-<tr>
-<td>git clone 慢</td>
-<td>GitHub 直连慢</td>
-<td>让 Claude 换镜像或配置代理</td>
-</tr>
-<tr>
-<td>SSH 断开，任务中断</td>
-<td>网络波动</td>
-<td>使用 tmux 把任务放后台</td>
-</tr>
-<tr>
-<td>权限不够</td>
-<td>非 root 操作受限</td>
-<td>提醒 Claude 用 <code>sudo</code>（AutoDL 默认 root 用户一般不会遇到）</td>
-</tr>
-</tbody>
-</table>
+                <h3>把 SSH 信息存到文件里，让 Claude 自己读</h3>
+                <p>在项目根目录创建 <code>host.md</code> 文件：</p>
+                <pre><code># 远程服务器
+SSH命令：ssh -p 42144 root@connect.cqa1.seetacloud.com
+别名：4090-server
+GPU：RTX 4090D × 1
+OS：Ubuntu 22.04</code></pre>
+                <p>然后直接说：</p>
+                <pre><code>请读 host.md，连上 4090-server</code></pre>
 
-<hr />
+                <h3>同样的方法适用其他 AI 编程工具</h3>
+                <table>
+                    <thead><tr><th>工具</th><th>方式</th></tr></thead>
+                    <tbody>
+                        <tr><td>OpenAI Codex CLI</td><td>本地跑客户端，SSH 连远程</td></tr>
+                        <tr><td>GitHub Copilot CLI</td><td>同上</td></tr>
+                        <tr><td>Cursor / Windsurf</td><td>本地连 API，Remote SSH 插件操作远程文件</td></tr>
+                        <tr><td>Google Gemini CLI</td><td>本地跑，远程执行</td></tr>
+                    </tbody>
+                </table>
 
-<h2 id="summary">总结</h2>
+                <p><strong>本质不变：</strong>客户端在哪跑，API 请求就从哪出。只要本地网络能访问 API，远程服务器就不需要任何代理配置。</p>
 
-<blockquote>
-<p>回到最初的问题：怎么在 AutoDL 上用 Claude Code？<br><br>
-答案不是「在服务器上装代理」，而是换个方向——<strong>Claude Code 留在本地，用 SSH 连过去</strong>。<br><br>
-远程开发很多问题都是这样，想清楚「谁在调 API、谁在执行命令」，就不会绕弯路。</p>
-</blockquote>
+                <hr />
 
-<p><strong>核心步骤回顾：</strong></p>
-<ol>
-<li>本地生成 SSH 密钥：<code>ssh-keygen -t ed25519</code></li>
-<li>上传公钥（Windows 用 scp + ssh 两步法）</li>
-<li>Claude Code 里直接让 AI 连接服务器</li>
-<li>交代环境，开始干活</li>
-</ol>
+                <h2 id="troubleshooting">常见问题排查</h2>
 
+                <table>
+                    <thead><tr><th>你遇到的问题</th><th>可能原因</th><th>怎么解决</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>Host key verification failed</td>
+                            <td>第一次连这台服务器，SSH 要你确认指纹</td>
+                            <td>先在 PowerShell 里手动 <code>ssh -p XXXX user@host</code> 一次，输入 <code>yes</code></td>
+                        </tr>
+                        <tr>
+                            <td>Permission denied (publickey,password)</td>
+                            <td>密钥没配好</td>
+                            <td>回到第二步，重新走一遍 scp + ssh 流程</td>
+                        </tr>
+                        <tr>
+                            <td>pip install 超时 / 极慢</td>
+                            <td>默认 PyPI 源在海外</td>
+                            <td>加 <code>-i https://pypi.tuna.tsinghua.edu.cn/simple</code></td>
+                        </tr>
+                        <tr>
+                            <td>git clone 卡住不动</td>
+                            <td>GitHub 国内直连慢</td>
+                            <td>用 <code>ghproxy.com</code> 代理或在 Claude Code 里让它重试</td>
+                        </tr>
+                        <tr>
+                            <td>跑着跑着 SSH 断了，训练没了</td>
+                            <td>网络波动导致连接断开</td>
+                            <td>下次记得用 <strong>tmux</strong>！所有长时间任务必须在 tmux 里跑</td>
+                        </tr>
+                        <tr>
+                            <td>scp 报 <code>invalid port</code></td>
+                            <td>用了小写 <code>-p</code></td>
+                            <td>scp 的端口参数是大写 <strong><code>-P</code></strong>（ssh 是小写 <code>-p</code>）</td>
+                        </tr>
+                        <tr>
+                            <td>服务器磁盘满了</td>
+                            <td>数据集 / 模型权重太多</td>
+                            <td><code>df -h</code> 检查；<code>du -sh /root/*</code> 看谁占空间；清理不需要的文件</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <h2>总结</h2>
+
+                <blockquote>
+                    <p>回到最初的问题：<strong>怎么在 AutoDL 上用 Claude Code？</strong></p>
+                    <p>答案不是「在服务器上装代理」，而是——<strong>Claude Code 留在本地，用 SSH 连过去。</strong></p>
+                    <p>远程开发很多问题都是这样，想清楚「谁在调 API、谁在执行命令」，就不会绕弯路。</p>
+                </blockquote>
+
+                <p><strong>全程回顾：</strong></p>
+                <ol>
+                    <li>本地生成 SSH 密钥：<code>ssh-keygen -t ed25519</code></li>
+                    <li>scp + ssh 两步上传公钥到服务器</li>
+                    <li>验证免密登录</li>
+                    <li>Claude Code 里让 AI 连服务器</li>
+                    <li>交代清楚环境，开始干活</li>
+                    <li>长时间任务记得用 tmux</li>
+                </ol>
+
+                <a href="index.html" class="tutorial-back">← 返回主页</a>
+
+            </div>
         </div>
-    </div>
+    </main>
 
-    <footer class="site-footer">
-        <div class="footer-text">
-            <a href="index.html">← 返回主页</a>
-        </div>
-    </footer>
-
-    <!-- Code Particles Background -->
+    <!-- Theme Toggle + Nav Scroll -->
     <script>
         (function() {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let W, H;
-            const PARTICLE_COUNT = 100;
-            const particles = [];
-            const chars = '01{}[]()<>/\\|#*+-=~^λΣΠΩΔΘΞΨΦ23456789ABCDEFｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ░▒▓█▀▄■□▪▫●○◆◇▲△▼▽importexportconstasyncawaitfunctionreturnclass田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'.split('');
-            const colors = ['rgba(129,140,248,ALPHA)','rgba(99,102,241,ALPHA)','rgba(79,70,229,ALPHA)','rgba(6,182,212,ALPHA)','rgba(34,211,238,ALPHA)','rgba(139,92,246,ALPHA)','rgba(167,139,250,ALPHA)','rgba(148,163,184,ALPHA)'];
-            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-            resize();
-            window.addEventListener('resize', resize);
-            function createParticle() {
-                return { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, char: chars[Math.floor(Math.random() * chars.length)], size: 10 + Math.random() * 18, baseAlpha: 0.15 + Math.random() * 0.5, alpha: 0, targetAlpha: 0.15 + Math.random() * 0.5, color: colors[Math.floor(Math.random() * colors.length)], glowColor: colors[Math.floor(Math.random() * 3)], phase: Math.random() * Math.PI * 2, pulseSpeed: 0.003 + Math.random() * 0.008, driftForce: 0.001 + Math.random() * 0.004, wobbleAmp: 0.1 + Math.random() * 0.3 };
+            var html = document.documentElement;
+            var toggle = document.getElementById('themeToggle');
+            function getTheme() {
+                var s = localStorage.getItem('theme');
+                return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
             }
-            for (let i = 0; i < PARTICLE_COUNT; i++) { const p = createParticle(); p.alpha = p.targetAlpha; particles.push(p); }
-            let mouseX = -1000, mouseY = -1000;
-            document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
-            document.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
-            function draw(time) {
-                ctx.clearRect(0, 0, W, H);
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const p = particles[i];
-                    p.vx += (Math.sin(time * p.driftForce + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vy += (Math.cos(time * p.driftForce * 1.3 + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vx += (Math.random() - 0.5) * 0.02;
-                    p.vy += (Math.random() - 0.5) * 0.02;
-                    const dx = mouseX - p.x, dy = mouseY - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 200 && dist > 0) { const force = (200 - dist) / 200 * 0.003; p.vx += (dx / dist) * force; p.vy += (dy / dist) * force; }
-                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                    if (speed > 0.8) { p.vx = (p.vx / speed) * 0.8; p.vy = (p.vy / speed) * 0.8; }
-                    if (speed < 0.05) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04; }
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
-                    if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
-                    p.targetAlpha = p.baseAlpha + Math.sin(time * p.pulseSpeed + p.phase) * 0.15;
-                    p.alpha += (p.targetAlpha - p.alpha) * 0.02;
-                    const alpha = Math.max(0.05, Math.min(0.8, p.alpha));
-                    ctx.save();
-                    ctx.shadowBlur = 8;
-                    ctx.shadowColor = p.glowColor.replace('ALPHA', '0.4');
-                    ctx.globalAlpha = alpha * 0.5;
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.glowColor.replace('ALPHA', '1');
-                    ctx.fillText(p.char, p.x, p.y);
-                    ctx.restore();
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.color.replace('ALPHA', String(alpha));
-                    ctx.fillText(p.char, p.x, p.y);
-                }
-                if (Math.random() < 0.02) { const idx = Math.floor(Math.random() * PARTICLE_COUNT); particles[idx] = createParticle(); }
-                requestAnimationFrame(draw);
+            function apply(t) {
+                if (t === 'light') html.setAttribute('data-theme', 'light');
+                else html.removeAttribute('data-theme');
             }
-            requestAnimationFrame(draw);
+            apply(getTheme());
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    apply(n);
+                    localStorage.setItem('theme', n);
+                });
+            }
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark');
+            });
+            var nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', function() {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
         })();
     </script>
 
