@@ -1053,10 +1053,10 @@ a:hover { color: var(--accent-hover); }
 }
 
 .tutorial-sidebar {
-  position: fixed;
+  position: sticky;
   top: calc(var(--nav-height) + 48px);
-  left: max(24px, calc((100vw - 1100px) / 2));
   width: 180px;
+  flex-shrink: 0;
   max-height: calc(100vh - var(--nav-height) - 80px);
   overflow-y: auto;
   scrollbar-width: none;
@@ -1113,9 +1113,10 @@ a:hover { color: var(--accent-hover); }
 }
 
 .tutorial-layout .tutorial-container {
-  margin-left: 228px;
   flex: 1;
   min-width: 0;
+  max-width: none;
+  margin: 0;
 }
 
 /* Hide sidebar on smaller screens, show inline TOC instead */
