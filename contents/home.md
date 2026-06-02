@@ -13,6 +13,4 @@ Baidu Scholar: [https://xueshu.baidu.com/scholarID/CN-B4O7QYFK](https://xueshu.b
 M.S., Information and Communication Engineering, University of Electronic Science and Technology of China (UESTC).\
 B.S., Information and Communication Engineering, Beijing University of Posts and Telecommunications (BUPT).
 
-#### Research Interests
-Large Language Models (LLM); Vision-Language Models (VLM); Multi-modal Learning; Computer Vision
 
