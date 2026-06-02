@@ -609,6 +609,15 @@ a:hover { color: var(--accent-hover); }
   pointer-events: none;
 }
 
+.footer-motto {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
 /* ---- Scroll Reveal ---- */
 .reveal {
   opacity: 0;

@@ -27,7 +27,8 @@
       "Bash(Select-Object FullName, Length)",
       "Bash(Format-Table -AutoSize)",
       "WebFetch(domain:www.apple.com.cn)",
-      "WebFetch(domain:www.xihuannio.cn)"
+      "WebFetch(domain:www.xihuannio.cn)",
+      "PowerShell(Move-Item *)"
     ]
   }
 }
