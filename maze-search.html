@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>迷宫寻路可视化</title>
+<link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+<link type="text/css" href="static/css/main.css" rel="stylesheet" />
+<style>
+    .maze-page {
+        min-height: 100vh;
+        padding: calc(var(--nav-height) + 32px) 16px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .maze-title {
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--text-primary);
+        letter-spacing: -0.015em;
+        margin-bottom: 4px;
+    }
+
+    .maze-subtitle {
+        font-size: 14px;
+        color: var(--text-tertiary);
+        margin-bottom: 20px;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    .maze-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .maze-btn {
+        padding: 8px 18px;
+        font-size: 13px;
+        font-family: var(--font-system);
+        font-weight: 500;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all var(--ease-out);
+        border: 1px solid var(--border);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        white-space: nowrap;
+    }
+    .maze-btn:hover { background: var(--bg-secondary); }
+    .maze-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .maze-btn.primary:hover { background: var(--accent-hover); }
+    .maze-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .maze-btn.btn-start { border-color: #22c55e; color: #15803d; background: #f0fdf4; }
+    .maze-btn.btn-start.active { background: #22c55e; color: #fff; border-color: #22c55e; }
+    .maze-btn.btn-end   { border-color: #ef4444; color: #b91c1c; background: #fef2f2; }
+    .maze-btn.btn-end.active   { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    [data-theme="dark"] .maze-btn.btn-start,
+    :root:not([data-theme="light"]) .maze-btn.btn-start { background: #052e16; color: #4ade80; }
+    [data-theme="dark"] .maze-btn.btn-end,
+    :root:not([data-theme="light"]) .maze-btn.btn-end { background: #450a0a; color: #f87171; }
+
+    .maze-mode { display: flex; gap: 0; }
+    .maze-mode .maze-btn { border-radius: 0; margin: 0; }
+    .maze-mode .maze-btn:first-child { border-radius: 8px 0 0 8px; }
+    .maze-mode .maze-btn:last-child { border-radius: 0 8px 8px 0; }
+
+    .maze-legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
+    .maze-legend span { display: flex; align-items: center; gap: 4px; }
+    .maze-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    .maze-canvas-wrap {
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        box-shadow: var(--shadow-card);
+        background: #fff;
+        max-width: 100%;
+    }
+    [data-theme="dark"] .maze-canvas-wrap,
+    :root:not([data-theme="light"]) .maze-canvas-wrap { background: #1c1c1c; }
+
+    #mazeCanvas { display: block; cursor: crosshair; max-width: 100%; height: auto; }
+
+    .maze-stats {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .maze-back {
+        display: inline-block;
+        margin-top: 16px;
+        color: var(--text-tertiary);
+        font-size: 14px;
+        text-decoration: none;
+        transition: color var(--ease-out);
+    }
+    .maze-back:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+        .maze-toolbar { gap: 5px; }
+        .maze-btn { padding: 6px 12px; font-size: 11px; }
+        .maze-legend { gap: 8px; font-size: 10px; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+    <div class="nav-inner">
+        <a class="nav-brand" href="index.html">Li Zhijiang</a>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<main class="maze-page">
+    <h1 class="maze-title">迷宫寻路可视化</h1>
+    <p class="maze-subtitle">左键放置<strong style="color:#22c55e;">起点</strong>和<strong style="color:#ef4444;">终点</strong> · 右键快速放置终点 · 选择算法观察不同搜索策略</p>
+
+    <div class="maze-toolbar">
+        <button class="maze-btn btn-start active" id="btnSetStart">🟢 放置起点</button>
+        <button class="maze-btn btn-end" id="btnSetEnd">🔴 放置终点</button>
+        <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
+        <div class="maze-mode">
+            <button class="maze-btn active" id="btnDFS">深度优先 DFS</button>
+            <button class="maze-btn" id="btnBFS">广度优先 BFS</button>
+        </div>
+        <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
+        <button class="maze-btn primary" id="btnSearch">▶ 开始搜索</button>
+        <button class="maze-btn" id="btnReset">↺ 重置</button>
+        <button class="maze-btn" id="btnNewMaze">🎲 新迷宫</button>
+    </div>
+
+    <div class="maze-legend">
+        <span><span class="dot" style="background:#e2e8f0;"></span>通路</span>
+        <span><span class="dot" style="background:#1e293b;"></span>墙壁</span>
+        <span><span class="dot" style="background:#22c55e;"></span>起点</span>
+        <span><span class="dot" style="background:#ef4444;"></span>终点</span>
+        <span><span class="dot" style="background:#fbbf24;"></span>待探索</span>
+        <span><span class="dot" style="background:#f97316;"></span>已探索</span>
+        <span><span class="dot" style="background:#3b82f6;"></span>最短路径</span>
+        <span><span class="dot" style="background:#f59e0b;"></span>路径行走</span>
+    </div>
+
+    <div class="maze-canvas-wrap">
+        <canvas id="mazeCanvas"></canvas>
+    </div>
+
+    <div class="maze-stats" id="stats"></div>
+
+    <a href="index.html" class="maze-back">← 返回主页</a>
+</main>
+
+<script>
+(function() {
+
+// ---- Constants: larger denser grid ----
+var COLS = 89;
+var ROWS = 61;
+var CELL = 9;
+var canvas = document.getElementById('mazeCanvas');
+var ctx = canvas.getContext('2d');
+var W = COLS * CELL;
+var H = ROWS * CELL;
+canvas.width = W;
+canvas.height = H;
+
+// ---- State ----
+var grid = [];           // 0=path, 1=wall
+var start = null;        // {r, c}
+var end = null;
+var mode = 'start';      // 'start' | 'end'
+var algorithm = 'dfs';
+var searching = false;
+var paused = false;
+var animIndex = 0;
+var exploredSet = null;
+var frontierCells = null;
+var finalPath = null;
+var tracedPath = null;    // Set of "r,c" — path cells already animated
+var traceHead = null;     // {r,c} — current walking position on the path
+var searchSteps = [];
+var animTimer = null;
+var rootStyle = getComputedStyle(document.documentElement);
+
+// ---- Better Maze Generation: Hunt-and-Kill ----
+function generateMaze() {
+    // All walls
+    grid = [];
+    for (var r = 0; r < ROWS; r++) {
+        grid[r] = [];
+        for (var c = 0; c < COLS; c++) {
+            grid[r][c] = 1;
+        }
+    }
+
+    // Hunt-and-Kill algorithm — organic, branching passages
+    var dirs = [[-2,0],[0,2],[2,0],[0,-2]];
+    var r = 1 + 2 * Math.floor(Math.random() * Math.floor((ROWS-2)/2));
+    var c = 1 + 2 * Math.floor(Math.random() * Math.floor((COLS-2)/2));
+    grid[r][c] = 0;
+
+    while (true) {
+        // Walk: pick random unvisited neighbours
+        var neighbours = [];
+        for (var d = 0; d < 4; d++) {
+            var nr = r + dirs[d][0];
+            var nc = c + dirs[d][1];
+            if (nr > 0 && nr < ROWS-1 && nc > 0 && nc < COLS-1 && grid[nr][nc] === 1) {
+                neighbours.push({r: nr, c: nc, wr: r + dirs[d][0]/2, wc: c + dirs[d][1]/2});
+            }
+        }
+
+        if (neighbours.length > 0) {
+            var pick = neighbours[Math.floor(Math.random() * neighbours.length)];
+            grid[pick.wr][pick.wc] = 0;
+            grid[pick.r][pick.c] = 0;
+            r = pick.r;
+            c = pick.c;
+        } else {
+            // Hunt: scan for unvisited cell adjacent to visited
+            var found = false;
+            hunt:
+            for (var hr = 1; hr < ROWS-1; hr += 2) {
+                for (var hc = 1; hc < COLS-1; hc += 2) {
+                    if (grid[hr][hc] === 1) {
+                        // Check if adjacent to a carved cell
+                        var adj = [];
+                        for (var d = 0; d < 4; d++) {
+                            var ar = hr + dirs[d][0];
+                            var ac = hc + dirs[d][1];
+                            if (ar > 0 && ar < ROWS-1 && ac > 0 && ac < COLS-1 && grid[ar][ac] === 0) {
+                                adj.push({wr: hr + dirs[d][0]/2, wc: hc + dirs[d][1]/2});
+                            }
+                        }
+                        if (adj.length > 0) {
+                            var pick2 = adj[Math.floor(Math.random() * adj.length)];
+                            grid[pick2.wr][pick2.wc] = 0;
+                            grid[hr][hc] = 0;
+                            r = hr; c = hc;
+                            found = true;
+                            break hunt;
+                        }
+                    }
+                }
+            }
+            if (!found) break; // Maze complete
+        }
+    }
+
+    // Randomly punch extra openings for more interconnection (10% of internal walls)
+    for (var rr = 2; rr < ROWS-2; rr++) {
+        for (var cc = 2; cc < COLS-2; cc++) {
+            if (grid[rr][cc] === 1 && Math.random() < 0.06) {
+                // Count adjacent path cells
+                var adjPaths = 0;
+                if (grid[rr-1][cc] === 0) adjPaths++;
+                if (grid[rr+1][cc] === 0) adjPaths++;
+                if (grid[rr][cc-1] === 0) adjPaths++;
+                if (grid[rr][cc+1] === 0) adjPaths++;
+                if (adjPaths >= 2) grid[rr][cc] = 0;
+            }
+        }
+    }
+
+    // Place start/end far apart
+    start = pickRandomPath();
+    end = pickRandomPath();
+    var minDist = Math.floor(Math.min(ROWS, COLS) * 0.7);
+    while (manhattan(start, end) < minDist) end = pickRandomPath();
+
+    resetSearch();
+    updateStats();
+    draw();
+}
+
+function pickRandomPath() {
+    for (var i = 0; i < 1000; i++) {
+        var r = 1 + Math.floor(Math.random() * (ROWS - 2));
+        var c = 1 + Math.floor(Math.random() * (COLS - 2));
+        if (grid[r][c] === 0) return {r: r, c: c};
+    }
+    // Fallback scan
+    for (var r = 1; r < ROWS-1; r++) for (var c = 1; c < COLS-1; c++) if (grid[r][c] === 0) return {r: r, c: c};
+    return {r: 1, c: 1};
+}
+
+function manhattan(a, b) { return Math.abs(a.r - b.r) + Math.abs(a.c - b.c); }
+
+function resetSearch() {
+    stopAnimation();
+    exploredSet = new Set();
+    frontierCells = [];
+    finalPath = null;
+    tracedPath = null;
+    traceHead = null;
+    searchSteps = [];
+    searching = false;
+    paused = false;
+    animIndex = 0;
+    updateButtonState();
+}
+
+function stopAnimation() { if (animTimer) { clearTimeout(animTimer); animTimer = null; } }
+
+// ---- Search (start / pause / resume) ----
+function runSearch() {
+    if (searching && !paused) {
+        // Running → pause
+        paused = true;
+        stopAnimation();
+        updateButtonState();
+        return;
+    }
+
+    if (searching && paused) {
+        // Paused → resume
+        paused = false;
+        updateButtonState();
+        animateFrom(animIndex);
+        return;
+    }
+
+    // Fresh start
+    if (!start || !end) return;
+    resetSearch();
+    searching = true;
+    paused = false;
+    updateButtonState();
+    algorithm === 'dfs' ? dfsSearch() : bfsSearch();
+}
+
+function updateButtonState() {
+    var btn = document.getElementById('btnSearch');
+    if (searching && !paused) {
+        btn.textContent = '⏸ 暂停';
+    } else if (searching && paused) {
+        btn.textContent = '▶ 继续';
+    } else {
+        btn.textContent = '▶ 开始搜索';
+    }
+}
+
+function dfsSearch() {
+    var stack = [{r: start.r, c: start.c, parent: null}];
+    var parentMap = {}; parentMap[start.r + ',' + start.c] = null;
+    var visited = new Set();
+
+    while (stack.length > 0) {
+        var node = stack.pop();
+        var key = node.r + ',' + node.c;
+        if (visited.has(key)) continue;
+        visited.add(key);
+
+        searchSteps.push({
+            type: 'explore', r: node.r, c: node.c,
+            frontier: stack.map(function(s) { return {r: s.r, c: s.c}; })
+        });
+
+        if (node.r === end.r && node.c === end.c) {
+            finalPath = rebuild(parentMap, node);
+            // Append path-tracing steps so the path walks from start→end
+            for (var pi = 0; pi < finalPath.length; pi++) {
+                searchSteps.push({ type: 'trace', r: finalPath[pi].r, c: finalPath[pi].c });
+            }
+            searchSteps.push({ type: 'done' });
+            animateSearch(); return;
+        }
+
+        var dirs = [[-1,0],[0,1],[1,0],[0,-1]];
+        for (var d = dirs.length - 1; d >= 0; d--) {
+            var nr = node.r + dirs[d][0], nc = node.c + dirs[d][1];
+            var nk = nr + ',' + nc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 0 && !visited.has(nk)) {
+                parentMap[nk] = node;
+                stack.push({r: nr, c: nc, parent: node});
+            }
+        }
+    }
+    searchSteps.push({ type: 'done' });
+    animateSearch();
+}
+
+function bfsSearch() {
+    var queue = [{r: start.r, c: start.c, parent: null}];
+    var parentMap = {}; parentMap[start.r + ',' + start.c] = null;
+    var visited = new Set();
+    var head = 0;
+
+    while (head < queue.length) {
+        var node = queue[head++];
+        var key = node.r + ',' + node.c;
+        if (visited.has(key)) continue;
+        visited.add(key);
+
+        searchSteps.push({
+            type: 'explore', r: node.r, c: node.c,
+            frontier: queue.slice(head).map(function(s) { return {r: s.r, c: s.c}; })
+        });
+
+        if (node.r === end.r && node.c === end.c) {
+            finalPath = rebuild(parentMap, node);
+            // Append path-tracing steps
+            for (var pi = 0; pi < finalPath.length; pi++) {
+                searchSteps.push({ type: 'trace', r: finalPath[pi].r, c: finalPath[pi].c });
+            }
+            searchSteps.push({ type: 'done' });
+            animateSearch(); return;
+        }
+
+        var dirs = [[-1,0],[0,1],[1,0],[0,-1]];
+        for (var d = 0; d < 4; d++) {
+            var nr = node.r + dirs[d][0], nc = node.c + dirs[d][1];
+            var nk = nr + ',' + nc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 0 && !visited.has(nk)) {
+                parentMap[nk] = node;
+                queue.push({r: nr, c: nc, parent: node});
+            }
+        }
+    }
+    searchSteps.push({ type: 'done' });
+    animateSearch();
+}
+
+function rebuild(parentMap, goal) {
+    var path = [], cur = goal;
+    while (cur) { path.unshift({r: cur.r, c: cur.c}); cur = parentMap[cur.r + ',' + cur.c]; }
+    return path;
+}
+
+// ---- Animation ----
+function animateSearch() {
+    animIndex = 0;
+    animateFrom(0);
+}
+
+function animateFrom(startIdx) {
+    var total = searchSteps.length;
+    if (total === 0) { searching = false; paused = false; updateButtonState(); draw(); updateStats(); return; }
+
+    animIndex = startIdx;
+
+    function tick() {
+        if (paused) return;
+        if (animIndex >= total) {
+            searching = false;
+            paused = false;
+            updateButtonState();
+            draw();
+            updateStats();
+            return;
+        }
+        var s = searchSteps[animIndex++];
+        if (s.type === 'explore') {
+            exploredSet.add(s.r + ',' + s.c);
+            frontierCells = s.frontier || [];
+        } else if (s.type === 'trace') {
+            if (!tracedPath) tracedPath = new Set();
+            tracedPath.add(s.r + ',' + s.c);
+            traceHead = {r: s.r, c: s.c};
+        }
+        draw();
+
+        var delay = s.type === 'trace' ? 18 : Math.max(1, Math.floor(8000 / total));
+        delay = Math.min(delay, 35);
+        animTimer = setTimeout(tick, delay);
+    }
+    tick();
+}
+
+// ---- Rendering ----
+function draw() {
+    var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    var wallCol   = isDark ? '#2d3a4f' : '#1e293b';
+    var wallHi    = isDark ? '#3d4f6b' : '#334155';
+    var pathCol   = isDark ? '#262626' : '#f1f5f9';
+    var exploredC = '#f97316';
+    var frontierC = '#fbbf24';
+    var pathC     = '#3b82f6';
+    var pathC2    = '#2563eb';
+
+    ctx.fillStyle = isDark ? '#171717' : '#f8fafc';
+    ctx.fillRect(0, 0, W, H);
+
+    for (var r = 0; r < ROWS; r++) {
+        for (var c = 0; c < COLS; c++) {
+            var x = c * CELL, y = r * CELL;
+            var key = r + ',' + c;
+
+            if (grid[r][c] === 1) {
+                ctx.fillStyle = wallCol;
+                ctx.fillRect(x, y, CELL, CELL);
+                // Inner highlight for 3D-ish look
+                ctx.fillStyle = wallHi;
+                ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
+            } else {
+                var isTraceHead = traceHead && traceHead.r === r && traceHead.c === c;
+                var isTraced    = tracedPath && tracedPath.has(key);
+                var isFinalPath = finalPath && finalPath.some(function(p) { return p.r === r && p.c === c; });
+                var isExplored  = exploredSet && exploredSet.has(key);
+                var isFrontier  = frontierCells && frontierCells.some(function(f) { return f.r === r && f.c === c; });
+
+                if (isTraceHead) {
+                    // Blue path base + bright walking marker on top
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(x, y, CELL, CELL);
+                    var cx2 = x + CELL/2, cy2 = y + CELL/2;
+                    var grad = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, CELL * 0.75);
+                    grad.addColorStop(0, '#ffffff');
+                    grad.addColorStop(0.25, '#fef3c7');
+                    grad.addColorStop(0.6, '#f59e0b');
+                    grad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(x - CELL*0.35, y - CELL*0.35, CELL*1.7, CELL*1.7);
+                } else if (isTraced) {
+                    // Already-walked — solid blue
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(x, y, CELL, CELL);
+                } else if (isFinalPath && !animTimer) {
+                    // Idle (animation done) — full path blue
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(x, y, CELL, CELL);
+                } else if (isExplored) {
+                    ctx.fillStyle = exploredC;
+                    ctx.fillRect(x, y, CELL, CELL);
+                } else if (isFrontier) {
+                    ctx.fillStyle = frontierC;
+                    ctx.fillRect(x, y, CELL, CELL);
+                } else {
+                    ctx.fillStyle = pathCol;
+                    ctx.fillRect(x, y, CELL, CELL);
+                }
+            }
+        }
+    }
+
+    // Subtle dot grid
+    ctx.fillStyle = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)';
+    for (var rr = 0; rr < ROWS; rr++) {
+        for (var cc = 0; cc < COLS; cc++) {
+            if ((rr + cc) % 2 === 0 && grid[rr][cc] === 0) {
+                ctx.fillRect(cc * CELL + CELL/2 - 0.5, rr * CELL + CELL/2 - 0.5, 1, 1);
+            }
+        }
+    }
+
+    // Markers
+    if (start) drawMarker(start.r, start.c, '#22c55e', 'S');
+    if (end)   drawMarker(end.r, end.c, '#ef4444', 'E');
+}
+
+function drawMarker(r, c, color, label) {
+    var cx2 = c * CELL + CELL/2, cy2 = r * CELL + CELL/2;
+    var rad = CELL * 0.45;
+    ctx.beginPath();
+    ctx.arc(cx2, cy2, rad, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold ' + (CELL * 0.55) + 'px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, cx2, cy2 + 0.5);
+}
+
+function updateStats() {
+    var ec = exploredSet ? exploredSet.size : 0;
+    var pl = finalPath ? finalPath.length : 0;
+    var el = document.getElementById('stats');
+    el.innerHTML =
+        '<span>已探索：<strong>' + ec + '</strong> 格</span>' +
+        (pl > 0 ? '<span>最短路径：<strong>' + pl + '</strong> 步</span>' : '') +
+        '<span>算法：<strong>' + (algorithm === 'dfs' ? '深度优先（一头扎到底）' : '广度优先（层层展开）') + '</strong></span>';
+}
+
+// ---- Mouse ----
+canvas.addEventListener('click', function(e) {
+    if (searching) return;
+    var rect = canvas.getBoundingClientRect();
+    var sx = W / rect.width, sy = H / rect.height;
+    var c = Math.floor((e.clientX - rect.left) * sx / CELL);
+    var r = Math.floor((e.clientY - rect.top) * sy / CELL);
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS || grid[r][c] === 1) return;
+
+    if (mode === 'start') {
+        if (end && end.r === r && end.c === c) return;
+        start = {r: r, c: c};
+    } else {
+        if (start && start.r === r && start.c === c) return;
+        end = {r: r, c: c};
+    }
+    resetSearch();
+    updateStats();
+    draw();
+});
+
+canvas.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    if (searching) return;
+    var rect = canvas.getBoundingClientRect();
+    var sx = W / rect.width, sy = H / rect.height;
+    var c = Math.floor((e.clientX - rect.left) * sx / CELL);
+    var r = Math.floor((e.clientY - rect.top) * sy / CELL);
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS || grid[r][c] === 1) return;
+    if (start && start.r === r && start.c === c) return;
+    end = {r: r, c: c};
+    resetSearch();
+    updateStats();
+    draw();
+});
+
+// ---- Buttons ----
+document.getElementById('btnSetStart').addEventListener('click', function() {
+    if (searching) return;
+    mode = 'start';
+    this.classList.add('active');
+    document.getElementById('btnSetEnd').classList.remove('active');
+});
+
+document.getElementById('btnSetEnd').addEventListener('click', function() {
+    if (searching) return;
+    mode = 'end';
+    this.classList.add('active');
+    document.getElementById('btnSetStart').classList.remove('active');
+});
+
+document.getElementById('btnDFS').addEventListener('click', function() {
+    if (searching) return;
+    algorithm = 'dfs';
+    this.classList.add('active');
+    document.getElementById('btnBFS').classList.remove('active');
+    resetSearch(); updateStats(); draw();
+});
+
+document.getElementById('btnBFS').addEventListener('click', function() {
+    if (searching) return;
+    algorithm = 'bfs';
+    this.classList.add('active');
+    document.getElementById('btnDFS').classList.remove('active');
+    resetSearch(); updateStats(); draw();
+});
+
+document.getElementById('btnSearch').addEventListener('click', runSearch);
+document.getElementById('btnReset').addEventListener('click', function() { resetSearch(); updateStats(); draw(); });
+document.getElementById('btnNewMaze').addEventListener('click', generateMaze);
+
+// ---- Theme + Nav ----
+(function() {
+    var html = document.documentElement;
+    var toggle = document.getElementById('themeToggle');
+    function getTheme() {
+        var s = localStorage.getItem('theme');
+        return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    }
+    function apply(t) {
+        if (t === 'light') html.setAttribute('data-theme', 'light');
+        else html.removeAttribute('data-theme');
+        draw();
+    }
+    apply(getTheme());
+    if (toggle) toggle.addEventListener('click', function() {
+        var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        apply(n); localStorage.setItem('theme', n);
+    });
+    var nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', function() {
+        nav.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+})();
+
+// ---- Init ----
+mode = 'start';
+generateMaze();
+draw();
+updateStats();
+
+})();
+</script>
+</body>
+</html>

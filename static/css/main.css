@@ -341,7 +341,7 @@ a:hover { color: var(--accent-hover); }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(36px, 5vw, 48px);
+  font-size: clamp(28px, 4vw, 38px);
   font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.1;
@@ -1255,7 +1255,7 @@ a:hover { color: var(--accent-hover); }
   }
 
   .hero h1 {
-    font-size: 32px;
+    font-size: 26px;
   }
 }
 
