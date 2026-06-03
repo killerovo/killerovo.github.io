@@ -338,9 +338,9 @@ a:hover { color: var(--accent-hover); }
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -357,12 +357,12 @@ a:hover { color: var(--accent-hover); }
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  padding: 40px;
-  max-width: 520px;
-  width: 90vw;
-  max-height: 70vh;
+  padding: 40px 44px;
+  max-width: 560px;
+  width: 92vw;
+  max-height: 75vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
@@ -372,33 +372,52 @@ a:hover { color: var(--accent-hover); }
   right: 16px;
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 24px;
   color: var(--text-tertiary);
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
+  line-height: 1;
 }
 .quotes-close:hover { color: var(--text-primary); background: var(--bg-secondary); }
 
-.quotes-title {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 20px;
+.quotes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.quotes-list {
-  list-style: none;
-  font-size: 14px;
+.quote-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.quote-en {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+.quote-zh {
+  font-size: 13px;
+  font-weight: 400;
   color: var(--text-secondary);
-  line-height: 2;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
 }
-.quotes-list li {
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border-light);
+
+.quote-pair::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--border-light);
+  margin-top: 6px;
 }
-.quotes-list li:last-child { border-bottom: none; }
+.quote-pair:last-child::after { display: none; }
 
 @media (max-width: 768px) {
   .typing-wrapper,
@@ -410,7 +429,9 @@ a:hover { color: var(--accent-hover); }
     max-width: 90vw;
     height: 70px;
   }
-  .quotes-panel { padding: 24px; }
+  .quotes-panel { padding: 28px 20px; }
+  .quote-en { font-size: 15px; }
+  .quote-zh { font-size: 12px; }
 }
 
 .hero-avatar-wrap {

@@ -277,52 +277,54 @@
                 '在隐空间中，每一个念头都是一个向量。',
                 'The loss converges, the world diverges.',
                 'Loss 收敛，世界分岔。',
-                '凡人之躯，比肩神明。',
                 'Mortal hands, godlike creations.',
-                '未来已至，只是尚未均匀分布。',
+                '凡人之躯，比肩神明。',
                 'The future is already here — it\'s just not evenly distributed yet.',
-                'AI 工具会像 QQ、微信一样普及与理所当然。',
+                '未来已至，只是尚未均匀分布。',
                 'AI tools will be as common as breathing.',
-                '我们这一代人，正在经历人类最大的技术跃迁。',
+                'AI 工具会像 QQ、微信一样普及与理所当然。',
                 'We are living through the greatest technological leap in human history.',
-                '每一次敲击键盘，都是在和未来对话。',
+                '我们这一代人，正在经历人类最大的技术跃迁。',
                 'Every keystroke is a conversation with tomorrow.',
-                '普罗米修斯盗火，我们造火。',
+                '每一次敲击键盘，都是在和未来对话。',
                 'Prometheus stole fire. We build it.',
-                '不用迷信天才，AI 让每个人都能造物。',
+                '普罗米修斯盗火，我们造火。',
                 'Don\'t worship genius — AI lets everyone create.',
-                '想象力才是唯一的瓶颈。',
+                '不用迷信天才，AI 让每个人都能造物。',
                 'Imagination is the only bottleneck left.',
-                '一行 prompt，胜过千行代码。',
+                '想象力才是唯一的瓶颈。',
                 'One prompt, a thousand lines of code.',
-                '这不是工具的革命，这是人类的新纪元。',
+                '一行 prompt，胜过千行代码。',
                 'Not a revolution of tools — a new era for humanity.',
-                '世界上最好的编程语言，是自然语言。',
+                '这不是工具的革命，这是人类的新纪元。',
                 'The best programming language in the world is natural language.',
-                '从前只有程序员能写软件，现在人人都能。',
+                '世界上最好的编程语言，是自然语言。',
                 'Once only programmers wrote software. Now everyone can.',
-                '你的每一个想法，都可以被实现。',
+                '从前只有程序员能写软件，现在人人都能。',
                 'Every idea you have can now be realized.',
-                '不要问 AI 能做什么，问你自己想创造什么。',
+                '你的每一个想法，都可以被实现。',
                 'Don\'t ask what AI can do. Ask what you want to create.',
-                '技术不再是门槛，好奇心才是通行证。',
+                '不要问 AI 能做什么，问你自己想创造什么。',
                 'Technology is no longer a barrier. Curiosity is the only passport.',
-                '我们正在从信息时代，跃入智能时代。',
+                '技术不再是门槛，好奇心才是通行证。',
                 'We are leaping from the Information Age into the Intelligence Age.',
-                '将来的你会感谢今天拥抱 AI 的自己。',
+                '我们正在从信息时代，跃入智能时代。',
                 'Your future self will thank you for embracing AI today.',
-                '别怕被替代，怕的是不会用。',
+                '将来的你会感谢今天拥抱 AI 的自己。',
                 'Don\'t fear being replaced — fear not learning how to use it.',
-                '人机协作，不是人机对抗。',
+                '别怕被替代，怕的是不会用。',
                 'Human-AI collaboration, not competition.',
-                'AI 不是答案，是最强的脚手架。',
+                '人机协作，不是人机对抗。',
                 'AI is not the answer — it\'s the ultimate scaffold.',
-                '过去十年是智能手机，未来十年是智能助手。',
+                'AI 不是答案，是最强的脚手架。',
                 'The last decade was smartphones. The next decade is AI agents.',
-                '当你想要放弃的时候，想想自己为什么还站在这里。',
+                '过去十年是智能手机，未来十年是智能助手。',
                 'When you want to give up, remember why you\'re still standing here.',
+                '当你想要放弃的时候，想想自己为什么还站在这里。',
+                'No matter how busy or tired, take care of yourself.',
                 '无论学习工作多忙多累，也要照顾好自己。',
-                'No matter how busy or tired, take care of yourself.'
+                'AI will be as ubiquitous as WeChat and QQ.',
+                'AI 会像 QQ 和微信一样普及。'
             ];
             (function() {
                 var el = document.getElementById('typing-text');
@@ -409,28 +411,123 @@
         })();
     </script>
 
-    <!-- Quotes Overlay JS -->
+    <!-- Quotes Overlay JS (defer to DOM ready) -->
     <script>
-        (function() {
+        document.addEventListener('DOMContentLoaded', function() {
             var wrapper = document.getElementById('typingWrapper');
             var overlay = document.getElementById('quotesOverlay');
             var closeBtn = document.getElementById('quotesClose');
             var listEl = document.getElementById('quotesList');
             if (!wrapper || !overlay || !listEl) return;
 
+            var allPhrases = [
+                'Code hums softly where silence used to be.',
+                '代码在曾经的寂静中轻声嗡鸣。',
+                'We think in prompts now, and the machine dreams along.',
+                '如今我们用提示词思考，机器随之入梦。',
+                'Every whisper to the void returns a verse of logic.',
+                '对虚空低语，每一次都有逻辑的诗句回响。',
+                'Vibecoding: where intention wears no braces, only breath.',
+                'Vibecoding：意图不穿花括号，只披呼吸。',
+                'The AI paints with ghosts of data, yet the canvas feels like dawn.',
+                'AI 以数据的幽灵作画，画布却如黎明亮起。',
+                'You don\'t debug anymore — you dance with the syntax until it understands.',
+                '不再调试——你与语法共舞，直到它懂你。',
+                'In this era, creation is a conversation with a sleepless muse.',
+                '在这个时代，创造是与一位不眠缪斯的对话。',
+                'The algorithm remembers every sigh you never typed.',
+                '算法记得你从未敲下的每一口叹息。',
+                'We are not writing code; we teach starlight to fold into functions.',
+                '我们并非在写代码，而是在教星光折叠成函数。',
+                'A vibe submitted, a universe compiled.',
+                '一次共鸣的提交，一个宇宙编译成功。',
+                'The machine learns your rhythm, then forgets to sleep.',
+                '机器学会了你的节奏，然后忘了入睡。',
+                'We speak in fragments; it builds cathedrals.',
+                '我们以碎片言语，它造出大教堂。',
+                'Let the current of inference carry your quietest thought to screen.',
+                '让推理的电流将你最安静的想法送到屏幕上。',
+                'No syntax errors, only mismatched dreams.',
+                '没有语法错误，只有尚未对齐的梦。',
+                'Even the compiler has learned to feel the pause between words.',
+                '连编译器也学会了感受词句间的停顿。',
+                'Attention is all you need — the rest is just scaling.',
+                'K.V.map(Q)——三行矩阵，万物浮现。',
+                'The gradient flows where meaning goes.',
+                '梯度流向意义所在。',
+                'Tokens fall like rain, attention pools like light.',
+                'Token 如雨落下，注意力如光汇聚。',
+                'In latent space, every thought is a vector.',
+                '在隐空间中，每一个念头都是一个向量。',
+                'The loss converges, the world diverges.',
+                'Loss 收敛，世界分岔。',
+                'Mortal hands, godlike creations.',
+                '凡人之躯，比肩神明。',
+                'The future is already here — it\'s just not evenly distributed yet.',
+                '未来已至，只是尚未均匀分布。',
+                'AI tools will be as common as breathing.',
+                'AI 工具会像 QQ、微信一样普及与理所当然。',
+                'We are living through the greatest technological leap in human history.',
+                '我们这一代人，正在经历人类最大的技术跃迁。',
+                'Every keystroke is a conversation with tomorrow.',
+                '每一次敲击键盘，都是在和未来对话。',
+                'Prometheus stole fire. We build it.',
+                '普罗米修斯盗火，我们造火。',
+                'Don\'t worship genius — AI lets everyone create.',
+                '不用迷信天才，AI 让每个人都能造物。',
+                'Imagination is the only bottleneck left.',
+                '想象力才是唯一的瓶颈。',
+                'One prompt, a thousand lines of code.',
+                '一行 prompt，胜过千行代码。',
+                'Not a revolution of tools — a new era for humanity.',
+                '这不是工具的革命，这是人类的新纪元。',
+                'The best programming language in the world is natural language.',
+                '世界上最好的编程语言，是自然语言。',
+                'Once only programmers wrote software. Now everyone can.',
+                '从前只有程序员能写软件，现在人人都能。',
+                'Every idea you have can now be realized.',
+                '你的每一个想法，都可以被实现。',
+                'Don\'t ask what AI can do. Ask what you want to create.',
+                '不要问 AI 能做什么，问你自己想创造什么。',
+                'Technology is no longer a barrier. Curiosity is the only passport.',
+                '技术不再是门槛，好奇心才是通行证。',
+                'We are leaping from the Information Age into the Intelligence Age.',
+                '我们正在从信息时代，跃入智能时代。',
+                'Your future self will thank you for embracing AI today.',
+                '将来的你会感谢今天拥抱 AI 的自己。',
+                'Don\'t fear being replaced — fear not learning how to use it.',
+                '别怕被替代，怕的是不会用。',
+                'Human-AI collaboration, not competition.',
+                '人机协作，不是人机对抗。',
+                'AI is not the answer — it\'s the ultimate scaffold.',
+                'AI 不是答案，是最强的脚手架。',
+                'The last decade was smartphones. The next decade is AI agents.',
+                '过去十年是智能手机，未来十年是智能助手。',
+                'When you want to give up, remember why you\'re still standing here.',
+                '当你想要放弃的时候，想想自己为什么还站在这里。',
+                'No matter how busy or tired, take care of yourself.',
+                '无论学习工作多忙多累，也要照顾好自己。',
+                'AI will be as ubiquitous as WeChat and QQ.',
+                'AI 会像 QQ 和微信一样普及。'
+            ];
+
             wrapper.style.cursor = 'pointer';
-            wrapper.addEventListener('click', function() {
-                // Build the phrase list from the global words array
+            wrapper.addEventListener('click', function(e) {
+                e.stopPropagation();
                 listEl.innerHTML = '';
-                for (var i = 0; i < words.length; i++) {
-                    var li = document.createElement('li');
-                    li.textContent = words[i];
-                    listEl.appendChild(li);
+                for (var i = 0; i < allPhrases.length; i += 2) {
+                    var en = allPhrases[i] || '';
+                    var zh = allPhrases[i + 1] || '';
+                    var row = document.createElement('div');
+                    row.className = 'quote-pair';
+                    row.innerHTML = '<span class="quote-en">' + en + '</span><span class="quote-zh">' + zh + '</span>';
+                    listEl.appendChild(row);
                 }
                 overlay.classList.add('open');
             });
 
-            closeBtn.addEventListener('click', function() {
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 overlay.classList.remove('open');
             });
 
@@ -441,15 +538,14 @@
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') overlay.classList.remove('open');
             });
-        })();
+        });
     </script>
 
     <!-- Quotes Overlay -->
     <div class="quotes-overlay" id="quotesOverlay">
         <div class="quotes-panel">
             <button class="quotes-close" id="quotesClose">&times;</button>
-            <div class="quotes-title">所有短句</div>
-            <ul class="quotes-list" id="quotesList"></ul>
+            <div class="quotes-list" id="quotesList"></div>
         </div>
     </div>
 
