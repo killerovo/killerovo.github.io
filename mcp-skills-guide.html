@@ -3,556 +3,483 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP 与 Skills 入门指南：让 AI 能力翻倍</title>
+    <title>MCP 与 Skills 入门指南</title>
     <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
     <link type="text/css" href="static/css/main.css" rel="stylesheet" />
-
-    <style>
-        .tutorial-hero {
-            position: relative;
-            z-index: 10;
-            padding: 100px 32px 40px;
-            text-align: center;
-        }
-        .tutorial-hero h1 {
-            font-family: "Kanit", sans-serif;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            background: linear-gradient(135deg, #f59e0b, #ef4444, #8b5cf6);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 5s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .tutorial-tip {
-            max-width: 800px;
-            margin: 16px auto 0;
-            padding: 12px 20px;
-            border-radius: 12px;
-            background: rgba(139, 92, 246, 0.08);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            color: #c4b5fd;
-            font-size: 0.9rem;
-        }
-        .tutorial-body {
-            position: relative;
-            z-index: 10;
-            max-width: 900px;
-            margin: 0 auto 60px;
-            padding: 0 32px;
-        }
-        .tutorial-body .glass-card { padding: 40px 48px; }
-        .tutorial-body h2 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.6rem;
-            color: #e8e8f0;
-            margin: 36px 0 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body h3 {
-            font-family: "Kanit", sans-serif;
-            font-size: 1.2rem;
-            color: #a5b4fc;
-            margin: 28px 0 12px;
-        }
-        .tutorial-body h4 {
-            font-size: 1rem;
-            color: #f59e0b;
-            margin: 20px 0 8px;
-        }
-        .tutorial-body p {
-            color: #9494b8;
-            line-height: 1.85;
-            margin-bottom: 12px;
-        }
-        .tutorial-body strong { color: #e8e8f0; font-weight: 600; }
-        .tutorial-body a { color: #f59e0b; }
-        .tutorial-body a:hover { color: #ef4444; }
-        .tutorial-body ul, .tutorial-body ol {
-            color: #9494b8;
-            margin: 8px 0 16px 24px;
-            line-height: 1.8;
-        }
-        .tutorial-body li { margin-bottom: 4px; }
-        .tutorial-body code {
-            background: rgba(255,255,255,0.06);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: "Courier New", monospace;
-            font-size: 0.9em;
-            color: #e8e8f0;
-        }
-        .tutorial-body pre {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 20px 24px;
-            overflow-x: auto;
-            margin: 16px 0;
-            line-height: 1.6;
-        }
-        .tutorial-body pre code {
-            background: none;
-            padding: 0;
-            font-size: 0.85rem;
-            color: #c9d1d9;
-        }
-        .tutorial-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.9rem;
-        }
-        .tutorial-body th {
-            background: rgba(139, 92, 246, 0.1);
-            color: #e8e8f0;
-            padding: 10px 14px;
-            text-align: left;
-            border: 1px solid rgba(255,255,255,0.06);
-            font-weight: 600;
-        }
-        .tutorial-body td {
-            color: #9494b8;
-            padding: 8px 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .tutorial-body hr {
-            border: none;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            margin: 32px 0;
-        }
-        .tutorial-body blockquote {
-            border-left: 3px solid #f59e0b;
-            padding: 12px 20px;
-            margin: 16px 0;
-            background: rgba(245, 158, 11, 0.05);
-            border-radius: 0 8px 8px 0;
-            color: #fcd34d;
-        }
-        .mcp-badge {
-            display: inline-block;
-            background: rgba(59, 130, 246, 0.15);
-            color: #93c5fd;
-            padding: 2px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 0 4px;
-        }
-        .skill-badge {
-            display: inline-block;
-            background: rgba(245, 158, 11, 0.15);
-            color: #fcd34d;
-            padding: 2px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 0 4px;
-        }
-        @media (max-width: 640px) {
-            .tutorial-body .glass-card { padding: 20px; }
-            .tutorial-body pre { padding: 14px 16px; }
-            .tutorial-body table { font-size: 0.75rem; }
-        }
-    </style>
 </head>
-<body id="page-top">
+<body>
 
-    <canvas id="particle-canvas"></canvas>
-    <div class="noise-overlay"></div>
-    <div class="glow-orbs">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-    </div>
-
+    <!-- Navigation -->
     <nav class="nav" id="mainNav">
         <div class="nav-inner">
             <a class="nav-brand" href="index.html">Li Zhijiang</a>
-            <a href="index.html" style="color:#9494b8;font-size:0.85rem;">← 返回主页</a>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <section class="tutorial-hero">
-        <h1>MCP 与 Skills 入门指南：让 AI 能力翻倍</h1>
-        <div class="tutorial-tip">
-            💡 MCP 像「厨房系统」，Skills 像「菜谱」——一个解决"AI 能接什么"，一个解决"AI 该怎么做"。
-        </div>
-    </section>
+    <!-- Content -->
+    <main class="tutorial-page">
+        <div class="tutorial-layout">
 
-    <div class="tutorial-body">
-        <div class="glass-card" id="tutorial-content">
+            <aside class="tutorial-sidebar" id="sidebar">
+                <div class="tutorial-sidebar-title">目录</div>
+                <a href="#what-is-mcp">MCP 是什么</a>
+                <a href="#what-is-mcp" class="sub">一句话解释</a>
+                <a href="#what-is-mcp" class="sub">通俗理解</a>
+                <a href="#what-is-mcp" class="sub">为什么需要 MCP</a>
+                <a href="#what-is-mcp" class="sub">常见 MCP Server</a>
+                <a href="#what-is-skill">Skills 是什么</a>
+                <a href="#what-is-skill" class="sub">一句话解释</a>
+                <a href="#what-is-skill" class="sub">核心特征</a>
+                <a href="#what-is-skill" class="sub">Skills 能做什么</a>
+                <a href="#mcp-vs-skill">MCP vs Skills</a>
+                <a href="#mcpmarket">MCP 市场</a>
+                <a href="#mcpmarket" class="sub">mcpmarket.com</a>
+                <a href="#mcpmarket" class="sub">排行榜</a>
+                <a href="#skillhub">Skills 市场</a>
+                <a href="#skillhub" class="sub">skillhub.cn</a>
+                <a href="#how-to-install">安装和使用</a>
+                <a href="#how-to-install" class="sub">安装 MCP Server</a>
+                <a href="#how-to-install" class="sub">安装 Skills</a>
+                <a href="#how-to-install" class="sub">自己写 Skill</a>
+                <a href="#how-to-install" class="sub">管理 Skills</a>
+                <a href="#recommend">推荐入手</a>
+                <a href="#recommend" class="sub">热门 Top 5</a>
+                <a href="#recommend" class="sub">新手安装顺序</a>
+            </aside>
 
-<h2 id="toc">目录</h2>
-<ul>
-<li><a href="#what-is-mcp">1. MCP 是什么？</a></li>
-<li><a href="#what-is-skill">2. Skills 是什么？</a></li>
-<li><a href="#mcp-vs-skill">3. MCP vs Skills：核心区别</a></li>
-<li><a href="#mcpmarket">4. MCP 市场 — mcpmarket.com</a></li>
-<li><a href="#skillhub">5. 技能中心 — skillhub.cn</a></li>
-<li><a href="#how-to-install">6. 怎么安装和使用？</a></li>
-<li><a href="#recommend">7. 推荐入手的 MCP 和 Skills</a></li>
-</ul>
-<hr />
+            <div class="tutorial-container">
+            <div class="content-card">
 
-<h2 id="what-is-mcp">1. MCP 是什么？</h2>
+                <h1>MCP 与 Skills 入门指南</h1>
+                <p style="font-size:16px;color:var(--text-tertiary);margin-bottom:40px;">MCP 让 AI 能连接外部世界，Skills 教 AI 在每个场景中怎么做才是对的。两者协作，让你的 AI 能力翻倍。</p>
 
-<h3>一句话解释</h3>
+                <!-- 目录 -->
+                <div class="tutorial-toc">
+                    <p>目录</p>
+                    <ul>
+                        <li><a href="#what-is-mcp">MCP 是什么？</a></li>
+                        <li><a href="#what-is-skill">Skills 是什么？</a></li>
+                        <li><a href="#mcp-vs-skill">MCP vs Skills：核心区别</a></li>
+                        <li><a href="#mcpmarket">MCP 市场 — mcpmarket.com</a></li>
+                        <li><a href="#skillhub">技能中心 — skillhub.cn</a></li>
+                        <li><a href="#how-to-install">怎么安装和使用？</a></li>
+                        <li><a href="#recommend">推荐入手的 MCP 和 Skills</a></li>
+                    </ul>
+                </div>
 
-<blockquote><strong>MCP（Model Context Protocol，模型上下文协议）</strong>是 Anthropic 于 2024 年 11 月开源的开放协议，用于标准化 AI 模型与外部工具/数据源之间的通信。</blockquote>
+                <hr />
 
-<h3>通俗理解</h3>
+                <!-- ========== 1. MCP ========== -->
+                <h2 id="what-is-mcp">MCP 是什么？</h2>
 
-<p>想象一下：AI 模型就像一个聪明的大脑，但它「困」在对话框里，不能直接读写你的文件、访问数据库、调 GitHub API。MCP 就是给这个大脑安装 <strong>「USB 接口」</strong>——插上什么设备，就能用什么功能。</p>
+                <h3>一句话解释</h3>
+                <blockquote><p><strong>MCP（Model Context Protocol，模型上下文协议）</strong>是 Anthropic 于 2024 年 11 月开源的开放协议。它定义了一套统一的标准，让 AI 模型可以连接和使用外部工具与数据源——就像 USB 接口统一了电脑和外部设备的连接方式。</p></blockquote>
 
-<h3>为什么要 MCP？</h3>
+                <h3>通俗理解</h3>
+                <p>想象一下：AI 模型就像一个非常聪明的大脑，但它"困"在对话框里——不能直接读写你的文件、不能访问数据库、不能调 GitHub API、不能操作浏览器。</p>
+                <p>MCP 就是给这个大脑装上<strong>标准化的接口</strong>。就像你电脑的 USB-C 口，插上 U 盘就能读文件，插上显示器就能投屏，插上充电器就能供电——MCP 也是一样，接上什么 Server，AI 就能多一种能力。</p>
 
-<p>以前，N 个 AI 模型 × M 个工具，需要 N×M 个适配器。MCP 把这个变成了<strong>一个标准接口</strong>：所有模型只要实现了 MCP 客户端，就能调所有实现了 MCP 协议的工具。</p>
+                <h3>为什么需要 MCP？</h3>
+                <p>在 MCP 出现之前，情况是这样的：有 N 种 AI 模型，有 M 种外部工具。如果想让每一种 AI 都能用每一种工具，需要写 <strong>N × M</strong> 个适配器。每新增一个工具，所有 AI 模型都要重写集成代码。</p>
+                <p>MCP 把这个模型变成了<strong>一对接</strong>：所有 AI 模型只需要实现 MCP 客户端，就能调用所有实现了 MCP 协议的工具。就像一个标准插座——你不需要为每个电器专门拉一根电线。</p>
 
-<table>
-<thead><tr><th>指标</th><th>数据（2026 年）</th></tr></thead>
-<tbody>
-<tr><td>月 SDK 下载量</td><td>9,700 万次</td></tr>
-<tr><td>活跃 MCP Server</td><td>10,000+</td></tr>
-<tr><td>支持方</td><td>OpenAI、Google、Microsoft、AWS</td></tr>
-<tr><td>治理</td><td>已移交 Linux Foundation 旗下 Agentic AI Foundation</td></tr>
-</tbody>
-</table>
+                <table>
+                    <thead><tr><th>指标</th><th>数据（截至 2026 年）</th></tr></thead>
+                    <tbody>
+                        <tr><td>月 SDK 下载量</td><td>9,700 万次</td></tr>
+                        <tr><td>活跃 MCP Server</td><td>10,000+</td></tr>
+                        <tr><td>官方支持方</td><td>OpenAI、Google、Microsoft、AWS</td></tr>
+                        <tr><td>治理归属</td><td>已移交 Linux Foundation 旗下 Agentic AI Foundation</td></tr>
+                        <tr><td>协议状态</td><td>开放标准，任何人可自由实现</td></tr>
+                    </tbody>
+                </table>
 
-<h3>常见 MCP Server 举例</h3>
+                <h3>常见 MCP Server 举例</h3>
+                <table>
+                    <thead><tr><th>MCP Server</th><th>让 AI 能做什么</th><th>典型场景</th></tr></thead>
+                    <tbody>
+                        <tr><td>文件系统 MCP</td><td>读取、创建、编辑、删除本地文件</td><td>AI 直接帮你改项目文件</td></tr>
+                        <tr><td>GitHub MCP</td><td>管理仓库、创建 Issue/PR、查看代码差异</td><td>AI 帮你 Code Review、提交 PR</td></tr>
+                        <tr><td>PostgreSQL MCP</td><td>查询数据库、分析表结构、执行 SQL</td><td>AI 帮你查数据、分析报表</td></tr>
+                        <tr><td>飞书 / 钉钉 MCP</td><td>收发消息、操作文档、管理日程</td><td>AI 帮你回消息、写文档</td></tr>
+                        <tr><td>Puppeteer MCP</td><td>打开网页、截图、抓取数据、填表单</td><td>AI 帮你爬数据、做自动化测试</td></tr>
+                        <tr><td>Slack MCP</td><td>收发频道消息、搜索历史记录</td><td>AI 帮你总结未读消息</td></tr>
+                    </tbody>
+                </table>
 
-<table>
-<thead><tr><th>MCP Server</th><th>能做什么</th></tr></thead>
-<tbody>
-<tr><td>文件系统 MCP</td><td>让 AI 读取、编辑、创建本地文件</td></tr>
-<tr><td>GitHub MCP</td><td>让 AI 管理仓库、创建 Issue/PR、查看代码</td></tr>
-<tr><td>数据库 MCP（PostgreSQL / MySQL）</td><td>让 AI 查询数据库、分析表结构</td></tr>
-<tr><td>飞书/钉钉 MCP</td><td>让 AI 收发消息、操作文档</td></tr>
-<tr><td>浏览器 MCP（Puppeteer）</td><td>让 AI 打开网页、截图、抓取数据</td></tr>
-</tbody>
-</table>
+                <hr />
 
-<hr />
+                <!-- ========== 2. Skills ========== -->
+                <h2 id="what-is-skill">Skills 是什么？</h2>
 
-<h2 id="what-is-skill">2. Skills 是什么？</h2>
+                <h3>一句话解释</h3>
+                <blockquote><p><strong>Skills（技能）</strong>是 Claude Code 提供的模块化能力扩展机制。本质是一个 Markdown 文件（<code>SKILL.md</code>），将特定领域的知识、流程、规范固化为 AI 可按需加载的"操作手册"。</p></blockquote>
 
-<h3>一句话解释</h3>
+                <h3>通俗理解</h3>
+                <p>如果 MCP 是<strong>给 AI 接工具的接口</strong>（硬件层），那 Skills 就是<strong>教 AI 怎么做的指南</strong>（软件层）。</p>
+                <p>举个例子：你想要 AI 按你团队的代码风格写 Python 代码。没有 Skills 的时候，你每次都要啰嗦一遍："类名用 PascalCase，函数用 snake_case，每行不超过 100 字符……"。有了 Skills，你把这些规则写成一个 Markdown 文件，放在项目里，Claude Code 会自动读取并遵循——你一句话都不用多说。</p>
 
-<blockquote><strong>Skills（技能）</strong>是 Claude Code 提供的模块化能力扩展机制。本质是 Markdown 文件（<code>SKILL.md</code>），将专业知识和工作流固化为 AI 可自动加载执行的能力包。</blockquote>
+                <h3>Skills 的核心特征</h3>
+                <table>
+                    <thead><tr><th>特征</th><th>说明</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>模块化封装</strong></td><td>把知识、步骤、规范打包成独立的 Skill 文件</td></tr>
+                        <tr><td><strong>自动触发</strong></td><td>Claude 根据你当前的任务上下文，自动发现并调用合适的 Skill</td></tr>
+                        <tr><td><strong>极简创建</strong></td><td>只需要写 Markdown，不需要写一行代码</td></tr>
+                        <tr><td><strong>渐进式加载</strong></td><td>初始只占用约 400 tokens（对比 MCP 一次性 ~8,000 tokens），按需展开</td></tr>
+                        <tr><td><strong>可组合</strong></td><td>多个 Skill 可以像流水线一样串联，组成完整的自动化工作流</td></tr>
+                        <tr><td><strong>跨项目复用</strong></td><td>一次编写，所有项目都能用；也可以分享给团队</td></tr>
+                    </tbody>
+                </table>
 
-<h3>通俗理解</h3>
+                <h3>Skills 能做什么？</h3>
+                <table>
+                    <thead><tr><th>场景</th><th>Skill 示例</th><th>效果</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>编码规范</strong></td><td>强制执行命名约定、文件结构、错误处理模式</td><td>团队代码风格 100% 一致</td></tr>
+                        <tr><td><strong>测试生成</strong></td><td>按项目测试框架自动生成单测、Mock 策略</td><td>不用手写测试样板代码</td></tr>
+                        <tr><td><strong>Git 工作流</strong></td><td>规范化 commit message、分支命名、PR 模板</td><td>Git 历史清晰可读</td></tr>
+                        <tr><td><strong>代码审查</strong></td><td>按自查清单逐项检查质量、安全、性能</td><td>Bug 率显著下降</td></tr>
+                        <tr><td><strong>API 设计</strong></td><td>规范 RESTful 路由命名、请求/响应格式</td><td>接口设计标准化</td></tr>
+                        <tr><td><strong>部署流程</strong></td><td>固化 Docker 构建、K8s 部署、CI/CD 步骤</td><td>一键部署不出错</td></tr>
+                        <tr><td><strong>文档生成</strong></td><td>按团队模板自动生成 API 文档、README</td><td>文档不再缺失</td></tr>
+                    </tbody>
+                </table>
 
-<p>如果 MCP 是给 AI 接外部设备的 USB 接口，那 <strong>Skill 就是给 AI 写的「操作手册」</strong>。比如你想让 AI 按你们团队的代码风格写代码，你不需要每次都啰嗦一遍——写一个 Skill 文件，AI 会自动加载并按规范执行。</p>
+                <hr />
 
-<h3>Skills 的核心特征</h3>
+                <!-- ========== 3. MCP vs Skills ========== -->
+                <h2 id="mcp-vs-skill">MCP vs Skills：核心区别</h2>
 
-<table>
-<thead><tr><th>特征</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>模块化封装</td><td>把知识、步骤、规范固化为独立 Skill</td></tr>
-<tr><td>自动触发</td><td>Claude 根据上下文自动发现并调用合适 Skill</td></tr>
-<tr><td>轻量</td><td>只需 Markdown，不需要写代码</td></tr>
-<tr><td>渐进式加载</td><td>初始只占 ~400 tokens，按需展开，不像 MCP 一次性 ~8,000 tokens</td></tr>
-<tr><td>可组合</td><td>多个 Skill 可以串成完整工作流</td></tr>
-</tbody>
-</table>
+                <div class="tutorial-tip">
+                    <strong>直观比喻：</strong>MCP 像<strong>厨房系统</strong>——锅碗瓢盆灶台通风。Skills 像<strong>菜谱</strong>——宫保鸡丁放什么料、火候多少、先放什么后放什么。有了厨房（MCP）你才能做菜，有了菜谱（Skills）你才知道怎么做才好吃。
+                </div>
 
-<h3>Skills 能做什么？</h3>
+                <table>
+                    <thead><tr><th>对比维度</th><th>MCP</th><th>Skills</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>本质</strong></td><td>通信协议 / 开放标准</td><td>知识封装 / 操作手册</td></tr>
+                        <tr><td><strong>物理形式</strong></td><td>服务端程序（需写代码）</td><td>Markdown 文件（写文档即可）</td></tr>
+                        <tr><td><strong>技术门槛</strong></td><td>较高（需写 Server + 配置认证）</td><td>极低（会用 Markdown 就行）</td></tr>
+                        <tr><td><strong>Token 开销</strong></td><td>~8,000 tokens（启动时加载所有工具定义）</td><td>~400 tokens（渐进式按需加载）</td></tr>
+                        <tr><td><strong>可组合性</strong></td><td>一般（每个工具相对独立）</td><td>强（可串联成完整工作流）</td></tr>
+                        <tr><td><strong>适用场景</strong></td><td>持久连接、复杂认证、企业级集成</td><td>知识固化、工作流规范、编码风格</td></tr>
+                        <tr><td><strong>维护成本</strong></td><td>需维护服务器代码</td><td>更新 Markdown 即可</td></tr>
+                    </tbody>
+                </table>
 
-<table>
-<thead><tr><th>场景</th><th>Skill 示例</th></tr></thead>
-<tbody>
-<tr><td>编码规范</td><td>强制执行团队命名约定、文件结构、错误处理模式</td></tr>
-<tr><td>测试生成</td><td>自动按项目测试框架生成单测、Mock 策略</td></tr>
-<tr><td>Git 工作流</td><td>规范化 commit message、分支命名、PR 模板</td></tr>
-<tr><td>代码审查</td><td>按团队 checklist 逐项检查质量、安全、性能</td></tr>
-<tr><td>DevOps 部署</td><td>固化 Docker 构建、K8s 部署、CI/CD 流程</td></tr>
-</tbody>
-</table>
+                <p><strong>两者并非替代关系，而是互补协作。</strong>你可以用 GitHub MCP Server 让 AI 访问你的仓库，再加载一个 "PR Review Skill" 告诉 AI：按什么标准审代码、重点检查哪些问题、回复模板是什么。</p>
 
-<hr />
+                <hr />
 
-<h2 id="mcp-vs-skill">3. MCP vs Skills：核心区别</h2>
+                <!-- ========== 4. mcpmarket ========== -->
+                <h2 id="mcpmarket">MCP 市场 — mcpmarket.com</h2>
 
-<blockquote>MCP 是「厨房系统」——锅碗瓢盆灶台通风。Skills 是「菜谱」——宫保鸡丁怎么做、火候多少、先放什么后放什么。</blockquote>
+                <p><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank" rel="noopener">mcpmarket.com</a> 是目前全球最活跃的社区策展型 AI 工具与 Skills 目录，相当于<strong>AI 的"应用商店"</strong>。</p>
 
-<p><strong>MCP 解决「模型能用什么工具」，Skills 解决「模型该怎么用这些工具」。</strong></p>
+                <h3>提供什么？</h3>
+                <ul>
+                    <li><strong>150+ Skills</strong>：覆盖编码、测试、部署、文档、安全等场景，大部分免费，少数付费 €5–15</li>
+                    <li><strong>100+ MCP Server</strong>：持续更新，涵盖数据库、云服务、通讯工具、浏览器自动化等</li>
+                    <li><strong>评分与排行</strong>：按安装量、用户评分排序，一眼看出哪些最受欢迎</li>
+                    <li><strong>一键安装</strong>：每个工具都提供复制即用的安装命令</li>
+                    <li><strong>多平台支持</strong>：Claude Code、ChatGPT、Codex、Cursor 等</li>
+                </ul>
 
-<table>
-<thead>
-<tr><th>维度</th><th><span class="mcp-badge">MCP</span></th><th><span class="skill-badge">Skill</span></th></tr>
-</thead>
-<tbody>
-<tr><td><strong>本质</strong></td><td>开放协议 / 通信标准</td><td>能力封装 / 操作手册</td></tr>
-<tr><td><strong>形式</strong></td><td>服务端程序（需写代码）</td><td>Markdown 文件（写文档即可）</td></tr>
-<tr><td><strong>技术难度</strong></td><td>高（需写 Server + 配认证）</td><td>低（写 Markdown）</td></tr>
-<tr><td><strong>Token 消耗</strong></td><td>~8,000 tokens（加载所有工具定义）</td><td>~400 tokens（渐进式按需加载）</td></tr>
-<tr><td><strong>可组合性</strong></td><td>弱（每个工具独立）</td><td>强（可串成工作流）</td></tr>
-<tr><td><strong>适用场景</strong></td><td>持久连接、复杂认证、企业集成</td><td>知识固化、工作流规范、代码风格</td></tr>
-</tbody>
-</table>
+                <h3>排行榜怎么用？</h3>
+                <p>打开 <a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank" rel="noopener">Leaderboard 页面</a>，可以看到按安装量排行的 Skills 和 MCP 工具。新手建议从这里开始——排名靠前的通常质量最高、社区最活跃、文档最完善。</p>
+                <p>你也可以按分类筛选（前端、后端、DevOps、数据科学……），或者直接搜索关键词。</p>
 
-<p><strong>两者不是替代关系，是协作关系。</strong> 比如你可以用一个 GitHub MCP Server 让 AI 访问仓库，再用一个 "PR Review Skill" 告诉 AI 按什么标准审查代码。</p>
+                <h3>安装流程</h3>
+                <ol>
+                    <li>在 mcpmarket 上找到想要的 Skill 或 MCP</li>
+                    <li>复制页面上的安装命令</li>
+                    <li>粘贴到 Claude Code 终端中回车执行</li>
+                    <li>如果是 MCP Server，可能需要重启 Claude Code</li>
+                    <li>如果是 Skill，安装后立即生效</li>
+                </ol>
 
-<hr />
+                <hr />
 
-<h2 id="mcpmarket">4. MCP 市场 — mcpmarket.com</h2>
+                <!-- ========== 5. skillhub ========== -->
+                <h2 id="skillhub">技能中心 — skillhub.cn</h2>
 
-<p><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a> 是目前最活跃的社区策展型 AI 工具/Skills 目录，类似「AI 应用商店」。</p>
+                <p><a href="https://www.skillhub.cn/" target="_blank" rel="noopener">skillhub.cn</a> 是国内本土化的 AI 技能中心，由国内开发者社区维护，专为中国用户优化。</p>
 
-<h3>提供什么？</h3>
-<ul>
-<li><strong>150+ Skills</strong>：覆盖编码、测试、部署、文档等场景，免费为主，付费 5-15 欧元</li>
-<li><strong>100+ MCP Server</strong>：持续更新，涵盖数据库、云服务、通讯工具等</li>
-<li>技能评分、安装量排行、一键安装</li>
-<li>支持 Claude Code、ChatGPT、Codex 等多平台</li>
-</ul>
+                <h3>提供什么？</h3>
+                <ul>
+                    <li><strong>13,000+ Skills</strong>：数量远超海外平台，覆盖更广</li>
+                    <li><strong>中文搜索与中文说明</strong>：不需要英文基础</li>
+                    <li><strong>国内节点加速</strong>：下载安装速度快，不受网络限制</li>
+                    <li><strong>分类完善</strong>：前端、后端、DevOps、数据分析、安全、AI/ML 等</li>
+                    <li><strong>本土化内容</strong>：涵盖飞书、钉钉、企业微信、腾讯云等国内产品</li>
+                </ul>
 
-<h3>热度排行（Leaderboard）</h3>
-<p>榜单上可以看到当前最热门的 Skills 和 MCP 工具，按安装量、评分排序。适合新手从这里开始探索。</p>
+                <h3>和 mcpmarket 的区别</h3>
+                <table>
+                    <thead><tr><th>对比</th><th>mcpmarket.com</th><th>skillhub.cn</th></tr></thead>
+                    <tbody>
+                        <tr><td>语言</td><td>英文为主</td><td>中文优先</td></tr>
+                        <tr><td>规模</td><td>150+ Skills, 100+ MCP</td><td>13,000+ Skills</td></tr>
+                        <tr><td>访问速度</td><td>海外服务器，可能较慢</td><td>国内节点，速度很快</td></tr>
+                        <tr><td>内容侧重</td><td>全球社区，英文生态</td><td>本土化，适配国内工具链</td></tr>
+                        <tr><td>适合人群</td><td>英文 OK、需要海外工具</td><td>中文用户、国内开发场景</td></tr>
+                    </tbody>
+                </table>
 
-<h3>怎么用？</h3>
-<ol>
-<li>打开 <a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a></li>
-<li>浏览排行榜或按分类搜索</li>
-<li>找到想要的 Skill/MCP，复制安装命令</li>
-<li>在 Claude Code 里粘贴执行即可</li>
-</ol>
+                <div class="tutorial-tip">
+                    <strong>建议：</strong>两个平台都看看。mcpmarket 看全球趋势，skillhub 找国内实用技能。很多热门 Skill 两个平台都有。
+                </div>
 
-<hr />
+                <hr />
 
-<h2 id="skillhub">5. 技能中心 — skillhub.cn</h2>
+                <!-- ========== 6. 安装使用 ========== -->
+                <h2 id="how-to-install">怎么安装和使用？</h2>
 
-<p><a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> 是国内本土化的 AI 技能中心，专为中国用户优化。</p>
+                <h3>安装 MCP Server</h3>
+                <p>以最基础的<strong>文件系统 MCP</strong>为例，10 分钟就能跑通：</p>
 
-<h3>提供什么？</h3>
-<ul>
-<li><strong>13,000+ Skills</strong>：中文搜索、本土化适配</li>
-<li>国内节点加速：下载安装更快，不受网络限制</li>
-<li>分类清晰：前端、后端、DevOps、数据分析、安全等</li>
-<li>社区贡献：国内开发者上传和维护的技能</li>
-</ul>
+                <p><strong>第一步：创建配置文件</strong></p>
+                <p>在 Claude Code 的项目或用户配置目录中，创建（或编辑）<code>.mcp.json</code> 文件：</p>
+                <p>Windows 路径：<code>C:\Users\你的用户名\.claude\.mcp.json</code></p>
+                <p>macOS / Linux 路径：<code>~/.claude/.mcp.json</code></p>
 
-<h3>和 mcpmarket 的区别</h3>
-<table>
-<thead><tr><th></th><th>mcpmarket.com</th><th>skillhub.cn</th></tr></thead>
-<tbody>
-<tr><td>语言</td><td>英文为主</td><td>中文优先</td></tr>
-<tr><td>规模</td><td>150+ Skills, 100+ MCP</td><td>13,000+ Skills</td></tr>
-<tr><td>访问</td><td>海外，可能慢</td><td>国内节点，速度快</td></tr>
-<tr><td>内容</td><td>全球社区</td><td>本土化 + 腾讯等国内产品技能化</td></tr>
-</tbody>
-</table>
-
-<hr />
-
-<h2 id="how-to-install">6. 怎么安装和使用？</h2>
-
-<h3>6.1 安装 MCP Server</h3>
-
-<p>以 <strong>文件系统 MCP</strong> 为例（最基础的，10 分钟就能跑通）：</p>
-
-<p><strong>Step 1：</strong> 在 Claude Code 设置中注册 MCP Server。编辑 <code>~/.claude/.mcp.json</code>（Windows 为 <code>用户目录/.claude/.mcp.json</code>）：</p>
-
-<pre><code class="language-json">{
+                <pre><code>{
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/path/to/allowed/dir"]
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-filesystem",
+        "/path/to/allowed/dir"
+      ]
     }
   }
 }</code></pre>
 
-<p><strong>Step 2：</strong> 重启 Claude Code，MCP Server 自动启动。现在 AI 就能直接读写你指定的目录了。</p>
+                <p><strong>参数说明：</strong></p>
+                <ul>
+                    <li><code>"filesystem"</code>：给你这个 MCP Server 起的名字，随便取</li>
+                    <li><code>"command": "npx"</code>：用 npx 运行（不需要全局安装）</li>
+                    <li><code>"/path/to/allowed/dir"</code>：<strong>重要！</strong>改成你想让 AI 访问的目录绝对路径。AI 只能访问这个目录及其子目录，不能超出范围</li>
+                </ul>
 
-<p><strong>更多 MCP Server：</strong></p>
-<ul>
-<li>GitHub MCP：<code>npx -y @anthropic-ai/mcp-server-github</code></li>
-<li>PostgreSQL MCP：<code>npx -y @anthropic-ai/mcp-server-postgres</code></li>
-<li>浏览器 MCP：<code>npx -y @anthropic-ai/mcp-server-puppeteer</code></li>
-<li>去 <a href="https://mcpmarket.com" target="_blank">mcpmarket.com</a> 搜更多</li>
-</ul>
+                <p><strong>第二步：重启 Claude Code</strong></p>
+                <p>关掉 Claude Code 终端，重新打开。启动时你应该能在日志中看到 MCP Server 已连接的提示。现在你可以对 AI 说：</p>
+                <pre><code>帮我把 /project/src/utils.js 里的所有 console.log 删掉</code></pre>
+                <p>AI 会直接读写你的文件。</p>
 
-<h3>6.2 安装 Skills</h3>
+                <p><strong>常用 MCP Server 安装命令速查：</strong></p>
+                <table>
+                    <thead><tr><th>MCP Server</th><th>.mcp.json 中的 command 和 args</th></tr></thead>
+                    <tbody>
+                        <tr><td>GitHub</td><td><code>"command": "npx", "args": ["-y", "@anthropic-ai/mcp-server-github"]</code></td></tr>
+                        <tr><td>PostgreSQL</td><td><code>"command": "npx", "args": ["-y", "@anthropic-ai/mcp-server-postgres", "postgresql://user:pass@host/db"]</code></td></tr>
+                        <tr><td>Puppeteer</td><td><code>"command": "npx", "args": ["-y", "@anthropic-ai/mcp-server-puppeteer"]</code></td></tr>
+                        <tr><td>Slack</td><td><code>"command": "npx", "args": ["-y", "@anthropic-ai/mcp-server-slack"]</code></td></tr>
+                        <tr><td>Memory</td><td><code>"command": "npx", "args": ["-y", "@anthropic-ai/mcp-server-memory"]</code></td></tr>
+                    </tbody>
+                </table>
 
-<p><strong>方式一：从 Skill 市场安装（最简单）</strong></p>
-<p>在 Claude Code 里直接运行：</p>
-<pre><code class="language-bash">npx skills add &lt;技能名&gt; -y</code></pre>
-<p>比如：</p>
-<pre><code class="language-bash"># 安装 find-skills 搜索引擎（累计安装 579K+）
+                <hr />
+
+                <h3>安装 Skills</h3>
+
+                <p><strong>方式一：从 Skill 市场一键安装（推荐新手）</strong></p>
+                <p>在 Claude Code 终端里直接运行：</p>
+                <pre><code>npx skills add 技能名 -y</code></pre>
+                <p>具体例子：</p>
+                <pre><code># 安装 find-skills（技能搜索引擎，累计安装 579,000+）
 npx skills add find-skills -y
 
-# 安装 caveman 压缩 token
+# 安装 caveman（压缩 token 消耗，省钱提速）
 npx skills add caveman -y
 
-# 安装 Anthropic 官方 skill-creator
+# 安装 Anthropic 官方的 skill-creator（用自然语言生成新 Skill）
 npx skills add skill-creator -y</code></pre>
 
-<p><strong>方式二：从 skillhub.cn 浏览安装</strong></p>
-<ol>
-<li>打开 <a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a></li>
-<li>搜索想要的技能类型，比如「测试」「部署」</li>
-<li>复制安装命令，到 Claude Code 里运行</li>
-</ol>
+                <div class="tutorial-tip">
+                    <strong>加 <code>-g</code> 可以全局安装：</strong><code>npx skills add 技能名 -y -g</code>，这样所有项目都能用。<br>
+                    不加 <code>-g</code> 则只安装在当前项目。
+                </div>
 
-<p><strong>方式三：自己写 Skill（非常容易）</strong></p>
-<p>在项目目录新建 <code>.claude/skills/my-skill/SKILL.md</code>：</p>
-<pre><code class="language-markdown">---
+                <p><strong>方式二：从 skillhub.cn 浏览安装</strong></p>
+                <ol>
+                    <li>打开 <a href="https://www.skillhub.cn/" target="_blank" rel="noopener">skillhub.cn</a></li>
+                    <li>搜索你需要的技能类型，比如「React」「测试」「部署」</li>
+                    <li>进入技能详情页，复制安装命令</li>
+                    <li>到 Claude Code 终端里粘贴执行</li>
+                </ol>
+
+                <p><strong>方式三：自己写一个 Skill（零代码）</strong></p>
+                <p>只需要创建一个 Markdown 文件。在你的项目根目录下：</p>
+                <pre><code>mkdir -p .claude/skills/my-coding-standard</code></pre>
+                <p>然后创建 <code>.claude/skills/my-coding-standard/SKILL.md</code>：</p>
+                <pre><code>---
 name: my-coding-standard
-description: 强制执行团队的 Python 编码规范
+description: 强制执行团队的 Python 编码规范。当用户要求写 Python 代码时自动生效。
 ---
 
-# Python 编码规范
+# Python 编码规范 v2.0
 
 ## 命名规则
-- 类名用 PascalCase
-- 函数和变量用 snake_case
-- 常量用 UPPER_SNAKE_CASE
+- 类名用 PascalCase：`class UserManager`
+- 函数和变量用 snake_case：`def get_user_by_id()`
+- 常量用 UPPER_SNAKE_CASE：`MAX_RETRY_COUNT = 3`
+- 私有方法以单下划线开头：`def _validate_input()`
 
 ## 代码风格
 - 每行不超过 100 字符
-- 函数不超过 50 行
-- 使用 type hints
+- 每个函数不超过 50 行（超过需拆分）
+- 所有公共函数必须有 type hints
+- 用 f-string 而非 % 或 .format()
 
 ## 错误处理
-- 不裸捕 Exception
-- 自定义异常类继承自项目基类</code></pre>
+- 禁止裸捕 Exception：必须指定具体异常类型
+- 自定义异常类继承自项目基类 `AppError`
+- 关键操作加 try/except 并记录日志
 
-<p>保存后 Claude Code 会自动加载，之后写代码时会自动遵循这些规范。</p>
+## 测试规范
+- 每个模块对应一个 test_ 文件
+- 用 pytest 框架
+- 关键路径覆盖率不低于 80%
+- Mock 外部依赖，不 Mock 内部逻辑</code></pre>
 
-<h3>6.3 在聊天中切换和查看</h3>
+                <p>保存后，Claude Code 会自动检测并加载。之后你让它写 Python 代码时，不用多说一句话，它会自动按这些规范执行。</p>
 
-<pre><code class="language-bash"># 查看当前已加载的 Skills
-/skills
+                <h3>管理已安装的 Skills</h3>
+                <table>
+                    <thead><tr><th>操作</th><th>命令</th></tr></thead>
+                    <tbody>
+                        <tr><td>查看已加载的 Skills</td><td><code>/skills</code></td></tr>
+                        <tr><td>临时禁用某个 Skill</td><td><code>/skills disable 技能名</code></td></tr>
+                        <tr><td>重新启用</td><td><code>/skills enable 技能名</code></td></tr>
+                        <tr><td>列出所有可用 Skill</td><td><code>/skills list</code></td></tr>
+                        <tr><td>查看 Skill 详情</td><td><code>/skills show 技能名</code></td></tr>
+                    </tbody>
+                </table>
 
-# 临时禁用某个 Skill
-/skills disable my-coding-standard
+                <hr />
 
-# 启用
-/skills enable my-coding-standard</code></pre>
+                <!-- ========== 7. 推荐 ========== -->
+                <h2 id="recommend">推荐入手的 MCP 和 Skills</h2>
 
-<hr />
+                <h3>2026 年 5 月最热 Skills Top 5</h3>
+                <table>
+                    <thead><tr><th>#</th><th>Skill</th><th>亮点</th><th>热度</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><strong>find-skills</strong></td><td>技能生态的"搜索引擎"——在终端里搜索和发现需要的 Skill</td><td>579K+ 安装</td></tr>
+                        <tr><td>2</td><td><strong>caveman</strong></td><td>智能压缩 token 消耗，省钱又提速</td><td>53.6K Stars</td></tr>
+                        <tr><td>3</td><td><strong>Superpowers</strong></td><td>20+ 子技能全家桶：TDD、调试、代码审查、重构一应俱全</td><td>热门</td></tr>
+                        <tr><td>4</td><td><strong>vercel-react-best-practices</strong></td><td>45+ 条 React 最佳实践规则，Bug 率下降约 40%</td><td>热门</td></tr>
+                        <tr><td>5</td><td><strong>skill-creator</strong></td><td>Anthropic 官方"元技能"——用自然语言描述需求，自动生成新 Skill</td><td>官方维护</td></tr>
+                    </tbody>
+                </table>
 
-<h2 id="recommend">7. 推荐入手的 MCP 和 Skills</h2>
+                <h3>推荐新手安装顺序</h3>
+                <ol>
+                    <li>
+                        <p><strong>第一步：装 find-skills</strong>——相当于有了一个技能搜索引擎，以后找 Skill 不用开浏览器</p>
+                        <pre><code>npx skills add find-skills -y -g</code></pre>
+                    </li>
+                    <li>
+                        <p><strong>第二步：装 skill-creator</strong>——把你们团队的编码规范、工作流程自动变成 Skill</p>
+                        <pre><code>npx skills add skill-creator -y -g</code></pre>
+                    </li>
+                    <li>
+                        <p><strong>第三步：逛市场，按需安装</strong></p>
+                        <ul>
+                            <li><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank" rel="noopener">mcpmarket.com</a> — 看全球热度榜</li>
+                            <li><a href="https://www.skillhub.cn/" target="_blank" rel="noopener">skillhub.cn</a> — 搜中文本土化技能</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p><strong>第四步：把你团队最常用的流程写成 Skill</strong></p>
+                        <p>不需要编程，打开记事本写 Markdown。参考上面的 Python 规范示例，换成你团队的规则就行。放到项目 <code>.claude/skills/</code> 目录下，全组共享。</p>
+                    </li>
+                </ol>
 
-<h3>🔥 2026 年 5 月最热 Skills Top 5</h3>
+                <hr />
 
-<table>
-<thead><tr><th>排名</th><th>Skill</th><th>亮点</th><th>安装量</th></tr></thead>
-<tbody>
-<tr><td>1</td><td><strong>find-skills</strong></td><td>技能生态的「搜索引擎」，帮你找到需要的 Skill</td><td>579K+</td></tr>
-<tr><td>2</td><td><strong>caveman</strong></td><td>压缩 token 消耗，省钱提速</td><td>53.6K Stars</td></tr>
-<tr><td>3</td><td><strong>Superpowers</strong></td><td>20+ 子技能全家桶（TDD、调试、代码审查）</td><td>热门</td></tr>
-<tr><td>4</td><td><strong>vercel-react-best-practices</strong></td><td>45+ 条 React 规则，Bug 率下降 40%</td><td>热门</td></tr>
-<tr><td>5</td><td><strong>skill-creator</strong></td><td>Anthropic 官方「元技能」——用自然语言生成新 Skill</td><td>官方</td></tr>
-</tbody>
-</table>
+                <h2>总结</h2>
 
-<h3>推荐新手安装顺序</h3>
+                <blockquote>
+                    <p><strong>MCP</strong> = 给 AI 接工具的接口（协议层，需写服务端代码）</p>
+                    <p><strong>Skills</strong> = 教 AI 怎么做的指南（应用层，写 Markdown 就行）</p>
+                    <p>两者的关系不是替代，是<strong>协作</strong>。MCP 让 AI 能连接外部世界，Skills 教 AI 在每个场景中怎么做才是对的。</p>
+                    <p><strong>入门路径：</strong>先逛 mcpmarket 和 skillhub 看看别人做了什么 → 安装两三个热门的试试 → 把你团队的规范写成 Skill → 分享给团队一起用。</p>
+                </blockquote>
 
-<ol>
-<li>
-    <p><strong>先装 find-skills</strong>——相当于有了一个技能搜索引擎：</p>
-    <pre><code class="language-bash">npx skills add find-skills -y -g</code></pre>
-</li>
-<li>
-    <p><strong>再装 skill-creator</strong>——把你们团队的规范变成 Skill：</p>
-    <pre><code class="language-bash">npx skills add skill-creator -y -g</code></pre>
-</li>
-<li>
-    <p><strong>然后去逛市场</strong>：</p>
-    <ul>
-        <li><a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket.com</a> — 看全球热度榜</li>
-        <li><a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> — 搜中文本土化技能</li>
-    </ul>
-</li>
-</ol>
+                <a href="index.html" class="tutorial-back">← 返回主页</a>
 
-<hr />
-
-<h2 id="summary">总结</h2>
-
-<blockquote>
-<p><strong>MCP</strong> = 给 AI 接工具的 USB 接口（协议层，需要写代码）<br>
-<strong>Skills</strong> = 给 AI 写的操作手册（应用层，Markdown 即可）</p>
-
-<p>两者的关系不是替代，是<strong>协作</strong>。MCP 让 AI 能连接外部世界，Skills 教 AI 在每个场景中怎么做才是对的。</p>
-
-<p>入门路径：先逛 <a href="https://mcpmarket.com/zh/tools/skills/leaderboard" target="_blank">mcpmarket</a> 和 <a href="https://www.skillhub.cn/" target="_blank">skillhub.cn</a> 看看别人做了什么，再安装几个热门的试试，最后把你自己团队的规范写成 Skill。</p>
-</blockquote>
-
+            </div>
+            </div>
         </div>
-    </div>
+    </main>
 
-    <footer class="site-footer">
-        <div class="footer-text">
-            <a href="index.html">← 返回主页</a>
-        </div>
-    </footer>
-
+    <!-- Theme Toggle + Nav Scroll -->
     <script>
         (function() {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let W, H;
-            const PARTICLE_COUNT = 100;
-            const particles = [];
-            const chars = '01{}[]()<>/\\|#*+-=~^λΣΠΩΔΘΞΨΦ23456789ABCDEFｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿ░▒▓█▀▄■□▪▫●○◆◇▲△▼▽importexportconstasyncawaitfunctionreturnclass田由甲申甶电甴男甸甹町画甼甽甾甿畀畁畂畃'.split('');
-            const colors = ['rgba(129,140,248,ALPHA)','rgba(99,102,241,ALPHA)','rgba(79,70,229,ALPHA)','rgba(6,182,212,ALPHA)','rgba(34,211,238,ALPHA)','rgba(139,92,246,ALPHA)','rgba(167,139,250,ALPHA)','rgba(148,163,184,ALPHA)'];
-            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-            resize();
-            window.addEventListener('resize', resize);
-            function createParticle() {
-                return { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, char: chars[Math.floor(Math.random() * chars.length)], size: 10 + Math.random() * 18, baseAlpha: 0.15 + Math.random() * 0.5, alpha: 0, targetAlpha: 0.15 + Math.random() * 0.5, color: colors[Math.floor(Math.random() * colors.length)], glowColor: colors[Math.floor(Math.random() * 3)], phase: Math.random() * Math.PI * 2, pulseSpeed: 0.003 + Math.random() * 0.008, driftForce: 0.001 + Math.random() * 0.004, wobbleAmp: 0.1 + Math.random() * 0.3 };
+            var html = document.documentElement;
+            var toggle = document.getElementById('themeToggle');
+            function getTheme() {
+                var s = localStorage.getItem('theme');
+                return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
             }
-            for (let i = 0; i < PARTICLE_COUNT; i++) { const p = createParticle(); p.alpha = p.targetAlpha; particles.push(p); }
-            let mouseX = -1000, mouseY = -1000;
-            document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
-            document.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
-            function draw(time) {
-                ctx.clearRect(0, 0, W, H);
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const p = particles[i];
-                    p.vx += (Math.sin(time * p.driftForce + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vy += (Math.cos(time * p.driftForce * 1.3 + p.phase) * p.wobbleAmp) * 0.01;
-                    p.vx += (Math.random() - 0.5) * 0.02;
-                    p.vy += (Math.random() - 0.5) * 0.02;
-                    const dx = mouseX - p.x, dy = mouseY - p.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 200 && dist > 0) { const force = (200 - dist) / 200 * 0.003; p.vx += (dx / dist) * force; p.vy += (dy / dist) * force; }
-                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                    if (speed > 0.8) { p.vx = (p.vx / speed) * 0.8; p.vy = (p.vy / speed) * 0.8; }
-                    if (speed < 0.05) { p.vx += (Math.random() - 0.5) * 0.04; p.vy += (Math.random() - 0.5) * 0.04; }
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
-                    if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
-                    p.targetAlpha = p.baseAlpha + Math.sin(time * p.pulseSpeed + p.phase) * 0.15;
-                    p.alpha += (p.targetAlpha - p.alpha) * 0.02;
-                    const alpha = Math.max(0.05, Math.min(0.8, p.alpha));
-                    ctx.save();
-                    ctx.shadowBlur = 8;
-                    ctx.shadowColor = p.glowColor.replace('ALPHA', '0.4');
-                    ctx.globalAlpha = alpha * 0.5;
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.glowColor.replace('ALPHA', '1');
-                    ctx.fillText(p.char, p.x, p.y);
-                    ctx.restore();
-                    ctx.font = 'bold ' + p.size + 'px "Courier New", monospace';
-                    ctx.fillStyle = p.color.replace('ALPHA', String(alpha));
-                    ctx.fillText(p.char, p.x, p.y);
-                }
-                if (Math.random() < 0.02) { const idx = Math.floor(Math.random() * PARTICLE_COUNT); particles[idx] = createParticle(); }
-                requestAnimationFrame(draw);
+            function apply(t) {
+                if (t === 'light') html.setAttribute('data-theme', 'light');
+                else html.removeAttribute('data-theme');
             }
-            requestAnimationFrame(draw);
+            apply(getTheme());
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    apply(n);
+                    localStorage.setItem('theme', n);
+                });
+            }
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark');
+            });
+            var nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', function() {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
+        })();
+
+        // Sidebar scroll spy
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            if (!sidebar) return;
+            var links = sidebar.querySelectorAll('a');
+            var headings = [];
+            links.forEach(function(a) {
+                var id = a.getAttribute('href').substring(1);
+                var h = document.getElementById(id);
+                if (h) headings.push({ el: h, link: a });
+            });
+            if (!headings.length) return;
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        links.forEach(function(l) { l.classList.remove('active'); });
+                        var match = headings.find(function(h) { return h.el === e.target; });
+                        if (match) match.link.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+            headings.forEach(function(h) { observer.observe(h.el); });
         })();
     </script>
 
