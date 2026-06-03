@@ -1,326 +1,581 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>解压魔方</title>
-<link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-<link type="text/css" href="static/css/main.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<style>
-    .cube-page {
-        min-height: 100vh;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        padding: calc(var(--nav-height) + 32px) 24px 48px;
-    }
-    .cube-stage {
-        width: min(420px, 85vw); height: min(420px, 85vw); position: relative; cursor: grab;
-    }
-    .cube-stage:active { cursor: grabbing; }
-    .cube-stage canvas { display: block; width: 100% !important; height: 100% !important; }
-    .cube-hint { margin-top: 24px; font-size: 14px; color: var(--text-tertiary); text-align: center; }
-    .cube-back { display: inline-block; margin-top: 8px; color: var(--text-tertiary); font-size: 14px; text-decoration: none; transition: color var(--ease-out); }
-    .cube-back:hover { color: var(--accent); }
-    .cube-selector { display: flex; flex-direction: column; align-items: center; gap: 32px; }
-    .cube-selector.hidden { display: none; }
-    .cube-selector h2 { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--text-primary); }
-    .cube-options { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-    .cube-option {
-        display: flex; flex-direction: column; align-items: center; gap: 12px;
-        padding: 24px 20px 20px; border-radius: var(--radius-md);
-        border: 1px solid var(--border-light); background: var(--bg-card);
-        cursor: pointer; transition: all var(--ease-out);
-    }
-    .cube-option:hover { border-color: var(--accent); box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
-    .cube-option canvas { width: 140px; height: 140px; display: block; border-radius: 8px; }
-    .cube-option span { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); }
-    .cube-select-btn { padding: 8px 18px; font-size: 13px; font-family: var(--font-system); font-weight: 500; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); margin-top: 4px; transition: all var(--ease-out); }
-    .cube-select-btn:hover { background: var(--bg-secondary); }
-    @media (max-width: 768px) {
-        .cube-options { gap: 12px; }
-        .cube-option { padding: 16px 12px 14px; }
-        .cube-option canvas { width: 100px; height: 100px; }
-        .cube-option span { font-size: 15px; }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解压魔方</title>
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <link type="text/css" href="static/css/main.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        .cube-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: calc(var(--nav-height) + 32px) 24px 48px;
+        }
+
+        .cube-stage {
+            width: min(420px, 85vw);
+            height: min(420px, 85vw);
+            position: relative;
+            cursor: grab;
+        }
+
+        .cube-stage:active { cursor: grabbing; }
+
+        .cube-stage canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .cube-hint {
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-tertiary);
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+
+        .cube-back {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+            text-decoration: none;
+            transition: color var(--ease-out);
+        }
+
+        .cube-back:hover { color: var(--accent); }
+
+        @media (max-width: 480px) {
+            .cube-stage {
+                width: 88vw;
+                height: 88vw;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<nav class="nav" id="mainNav">
-    <div class="nav-inner">
-        <a class="nav-brand" href="index.html">Li Zhijiang</a>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
-            <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
-                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a class="nav-brand" href="index.html">Li Zhijiang</a>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+                <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<main class="cube-page">
-    <div class="cube-selector" id="cubeSelector">
-        <h2>选择阶数</h2>
-        <div class="cube-options" id="cubeOptions">
-            <div class="cube-option" data-n="2"><canvas data-n="2"></canvas><span>2 × 2</span></div>
-            <div class="cube-option" data-n="3"><canvas data-n="3"></canvas><span>3 × 3</span></div>
-            <div class="cube-option" data-n="4"><canvas data-n="4"></canvas><span>4 × 4</span></div>
-        </div>
-    </div>
-    <div id="cubeStage" style="display:none;">
-        <div class="cube-stage" id="cubeContainer"></div>
-        <p class="cube-hint" id="cubeStatus"></p>
-        <button class="cube-select-btn" id="btnBack">↩ 选择阶数</button>
+    <!-- Cube -->
+    <main class="cube-page">
+        <div class="cube-stage" id="cube-stage"></div>
+        <p class="cube-hint" id="cube-status">准备打乱…</p>
         <a href="index.html" class="cube-back">← 返回主页</a>
-    </div>
-</main>
+    </main>
 
-<script>
-(function() {
+    <script>
+    (function() {
+        var container = document.getElementById('cube-stage');
+        var statusEl = document.getElementById('cube-status');
+        if (!container) return;
 
-var COLORS = { R:0xb71234, L:0xff5800, U:0xffffff, D:0xffd500, F:0x009b48, B:0x0046ad };
-var CUBIE = 0.85, GAP = 0.08;
-var N = 3, cubies = [], scene, camera, renderer, pivot;
-var isAnim = false, curMove = null, animDur = 200, animStart = 0;
-var moveHist = [], seqTimer = null;
-var mainLoopId = null, updateCam = null;
+        // ---- Colors ----
+        var COLORS = {
+            R: 0xb71234, // red
+            L: 0xff5800, // orange
+            U: 0xffffff, // white
+            D: 0xffd500, // yellow
+            F: 0x009b48, // green
+            B: 0x0046ad, // blue
+            inner: 0x111111
+        };
 
-function offsets() { var a=[]; for (var i=0;i<N;i++) a.push(i-(N-1)/2); return a; }
+        var CUBIE_SIZE = 0.85;
+        var GAP = 0.08;
+        var STICKER_SIZE = 0.7;
+        var STICKER_DEPTH = 0.02;
+        var cubies = [];
+        var scene, camera, renderer, pivot;
 
-// Shared geometry for all cubies (only size varies by N, but we create per cubie for simplicity)
-// Use ONE box per cubie + 6-face material array: no separate sticker = no z-fighting
-function blackMat() { return new THREE.MeshStandardMaterial({color:0x111111, roughness:0.55, metalness:0.05}); }
+        // ---- Three.js Setup ----
+        function initThree() {
+            var size = container.clientWidth || 400;
+            scene = new THREE.Scene();
 
-function buildCube(s) {
-    cubies = [];
-    var off = offsets(), lim = (N-1)/2;
-    for (var xi=0;xi<N;xi++) for (var yi=0;yi<N;yi++) for (var zi=0;zi<N;zi++) {
-        var x=off[xi], y=off[yi], z=off[zi];
-        if (N%2===1 && x===0 && y===0 && z===0) continue;
+            camera = new THREE.PerspectiveCamera(35, size / size, 0.1, 50);
+            camera.position.set(7, 5.5, 8);
+            camera.lookAt(0, 0, 0);
 
-        // Each face gets its own material: colored if on outside, black if internal
-        var mats = [
-            (x >= lim - 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.R, roughness:0.25, metalness:0.05}) : blackMat(), // +x
-            (x <= -lim + 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.L, roughness:0.25, metalness:0.05}) : blackMat(), // -x
-            (y >= lim - 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.U, roughness:0.25, metalness:0.05}) : blackMat(), // +y
-            (y <= -lim + 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.D, roughness:0.25, metalness:0.05}) : blackMat(), // -y
-            (z >= lim - 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.F, roughness:0.25, metalness:0.05}) : blackMat(), // +z
-            (z <= -lim + 0.01) ? new THREE.MeshStandardMaterial({color:COLORS.B, roughness:0.25, metalness:0.05}) : blackMat()  // -z
-        ];
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(size, size);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
 
-        var geo = new THREE.BoxGeometry(CUBIE, CUBIE, CUBIE);
-        var cube = new THREE.Mesh(geo, mats);
+            // Lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+            var key = new THREE.DirectionalLight(0xffffff, 0.7);
+            key.position.set(8, 12, 6);
+            scene.add(key);
+            var fill = new THREE.DirectionalLight(0xffffff, 0.35);
+            fill.position.set(-5, 2, -4);
+            scene.add(fill);
+            var rim = new THREE.DirectionalLight(0xffffff, 0.25);
+            rim.position.set(0, -3, 8);
+            scene.add(rim);
 
-        // Thin dark frame edges — draw slightly raised border lines (using EdgesGeometry does this cleanly)
-        var edges = new THREE.EdgesGeometry(geo);
-        var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color:0x000000, linewidth: 1}));
+            // Pivot group
+            pivot = new THREE.Group();
+            scene.add(pivot);
 
-        var g = new THREE.Group();
-        g.add(cube);
-        g.add(line);
-        g.position.set(x*(CUBIE+GAP), y*(CUBIE+GAP), z*(CUBIE+GAP));
-        g.userData = {ix:x, iy:y, iz:z};
-        s.add(g); cubies.push(g);
-    }
-}
+            // Build cube
+            buildCube();
 
-// ---- Face cubies ----
-function faceCubies(axis, layer) {
-    var r=[], th=0.3;
-    cubies.forEach(function(c) {
-        var wp = new THREE.Vector3(); c.getWorldPosition(wp);
-        var v = axis==='x'?wp.x:(axis==='y'?wp.y:wp.z);
-        if (Math.abs(v - layer*(CUBIE+GAP)) < th) r.push(c);
-    });
-    return r;
-}
+            // Orbit controls (simple drag)
+            setupDrag();
 
-// ---- Random move ----
-function randMove(last) {
-    var layers=offsets(), axes=['x','y','z'], ang=[Math.PI/2,-Math.PI/2];
-    for (var i=0;i<30;i++) {
-        var ax=axes[Math.floor(Math.random()*3)], la=layers[Math.floor(Math.random()*layers.length)], an=ang[Math.floor(Math.random()*2)];
-        if (last&&last.axis===ax&&last.layer===la&&last.angle===-an) continue;
-        return {axis:ax,layer:la,angle:an};
-    }
-    return {axis:'y',layer:layers[0],angle:Math.PI/2};
-}
-
-// ---- Animated move ----
-function startMove(move, dur, cb) {
-    curMove=move; animDur=dur; animStart=performance.now(); isAnim=true;
-    faceCubies(move.axis, move.layer).forEach(function(c){pivot.attach(c);});
-    pivot.rotation.set(0,0,0);
-    curMove._cb=cb;
-}
-
-function finishMove() {
-    if (!curMove) return;
-    if (curMove.axis==='x') pivot.rotation.x=curMove.angle;
-    if (curMove.axis==='y') pivot.rotation.y=curMove.angle;
-    if (curMove.axis==='z') pivot.rotation.z=curMove.angle;
-    while(pivot.children.length>0) scene.attach(pivot.children[0]);
-    pivot.rotation.set(0,0,0);
-    isAnim=false;
-    var cb=curMove._cb; curMove=null;
-    if (cb) cb();
-}
-
-function playMoves(moves, speed, done) {
-    var i=0;
-    function next(){ if(i>=moves.length){if(done)done();return;} startMove(moves[i++],speed,next); }
-    next();
-}
-
-// ---- Sequence ----
-function startSeq() {
-    moveHist=[]; var last=null;
-    var total=24+(N-3)*10;
-    for(var i=0;i<total;i++){var m=randMove(last);moveHist.push(m);last=m;}
-    document.getElementById('cubeStatus').textContent='打乱中…';
-    playMoves(moveHist.slice(),150,function(){
-        document.getElementById('cubeStatus').textContent='已打乱，准备还原…';
-        seqTimer=setTimeout(function(){
-            document.getElementById('cubeStatus').textContent='还原中…';
-            var solve=moveHist.slice().reverse().map(function(m){return{axis:m.axis,layer:m.layer,angle:-m.angle};});
-            playMoves(solve,200,function(){
-                document.getElementById('cubeStatus').textContent='六面还原！';
-                seqTimer=setTimeout(startSeq,2000);
+            window.addEventListener('resize', function() {
+                var s = container.clientWidth || 400;
+                camera.aspect = s / s;
+                camera.updateProjectionMatrix();
+                renderer.setSize(s, s);
             });
-        },1500);
-    });
-}
+        }
 
-// ---- Drag ----
-function setupDrag() {
-    var d=false,px=0,py=0,yaw=0,pitch=0,tY=0,tP=0,aY=0;
-    var el=renderer.domElement;
-    el.addEventListener('mousedown',function(e){d=true;px=e.clientX;py=e.clientY;});
-    window.addEventListener('mousemove',function(e){if(!d)return;tY+=(e.clientX-px)*0.005;tP+=(e.clientY-py)*0.005;tP=Math.max(-1.2,Math.min(1.2,tP));px=e.clientX;py=e.clientY;});
-    window.addEventListener('mouseup',function(){d=false;});
-    el.addEventListener('touchstart',function(e){if(e.touches.length===1){d=true;px=e.touches[0].clientX;py=e.touches[0].clientY;}},{passive:true});
-    window.addEventListener('touchmove',function(e){if(!d||e.touches.length!==1)return;tY+=(e.touches[0].clientX-px)*0.005;tP+=(e.touches[0].clientY-py)*0.005;tP=Math.max(-1.2,Math.min(1.2,tP));px=e.touches[0].clientX;py=e.touches[0].clientY;},{passive:true});
-    window.addEventListener('touchend',function(){d=false;});
-    updateCam=function(){
-        yaw+=(tY-yaw)*0.1;pitch+=(tP-pitch)*0.1;aY+=0.0015;
-        var r=10,cy2=Math.sin(pitch)*r,h=Math.cos(pitch)*r;
-        camera.position.lerp(new THREE.Vector3(Math.sin(yaw+aY)*h,cy2,Math.cos(yaw+aY)*h),0.05);
-        camera.lookAt(0,0,0);
-    };
-}
+        // ---- Build 27 cubies (skip center) ----
+        function buildCube() {
+            cubies = [];
+            // Remove old cubies from scene
+            while(pivot.children.length > 0) {
+                pivot.remove(pivot.children[0]);
+            }
+            while(scene.children.length > 5) { // keep lights + pivot
+                var c = scene.children[5];
+                if (c === pivot) { break; }
+                scene.remove(c);
+            }
 
-// ---- Main loop ----
-function mainLoop(time) {
-    mainLoopId=requestAnimationFrame(mainLoop);
-    if(updateCam)updateCam();
-    if(isAnim&&curMove){
-        var e=time-animStart,p=Math.min(1,e/animDur);
-        var t=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
-        var a=curMove.angle*t;
-        if(curMove.axis==='x')pivot.rotation.x=a;
-        if(curMove.axis==='y')pivot.rotation.y=a;
-        if(curMove.axis==='z')pivot.rotation.z=a;
-        if(p>=1)finishMove();
-    }
-    if(renderer&&scene&&camera)renderer.render(scene,camera);
-}
+            for (var x = -1; x <= 1; x++) {
+                for (var y = -1; y <= 1; y++) {
+                    for (var z = -1; z <= 1; z++) {
+                        if (x === 0 && y === 0 && z === 0) continue; // skip center
+                        var cubie = createCubie(x, y, z);
+                        cubie.userData = { ix: x, iy: y, iz: z };
+                        scene.add(cubie);
+                        cubies.push(cubie);
+                    }
+                }
+            }
+        }
 
-// ---- Init game ----
-function initGame(size) {
-    N=size;
-    var ct=document.getElementById('cubeContainer'); ct.innerHTML='';
-    var s=ct.clientWidth||400;
-    scene=new THREE.Scene();
-    camera=new THREE.PerspectiveCamera(35,s/s,0.1,50);
-    camera.position.set(7,5.5,8);camera.lookAt(0,0,0);
-    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-    renderer.setSize(s,s);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    ct.appendChild(renderer.domElement);
-    scene.add(new THREE.AmbientLight(0xffffff,0.55));
-    var k=new THREE.DirectionalLight(0xffffff,0.7);k.position.set(8,12,6);scene.add(k);
-    var f=new THREE.DirectionalLight(0xffffff,0.35);f.position.set(-5,2,-4);scene.add(f);
-    var r2=new THREE.DirectionalLight(0xffffff,0.25);r2.position.set(0,-3,8);scene.add(r2);
-    pivot=new THREE.Group();scene.add(pivot);
-    buildCube(scene);
-    setupDrag();
-    window.addEventListener('resize',function(){var sz=ct.clientWidth||400;camera.aspect=sz/sz;camera.updateProjectionMatrix();renderer.setSize(sz,sz);});
-    // Cancel any existing loop & start fresh
-    if(mainLoopId){cancelAnimationFrame(mainLoopId);mainLoopId=null;}
-    mainLoopId=requestAnimationFrame(mainLoop);
-}
+        function createCubie(cx, cy, cz) {
+            var group = new THREE.Group();
 
-// ---- Preview (completely separate, no shared rAF) ----
-var previewData=[], previewId=null;
+            // Black body
+            var bodyGeo = new THREE.BoxGeometry(CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+            var bodyMat = new THREE.MeshStandardMaterial({
+                color: 0x0a0a0a,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            var body = new THREE.Mesh(bodyGeo, bodyMat);
+            group.add(body);
 
-function makePreview(canvas,pN){
-    var w=canvas.clientWidth||140,h=canvas.clientHeight||140;
-    canvas.width=w;canvas.height=h;
-    var s=new THREE.Scene();
-    var cam=new THREE.PerspectiveCamera(30,w/h,0.1,50);
-    cam.position.set(5,3.5,5.5);cam.lookAt(0,0,0);
-    var rdr=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
-    rdr.setSize(w,h);rdr.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    s.add(new THREE.AmbientLight(0xffffff,0.55));
-    var k=new THREE.DirectionalLight(0xffffff,0.7);k.position.set(8,12,6);s.add(k);
-    var f=new THREE.DirectionalLight(0xffffff,0.35);f.position.set(-5,2,-4);s.add(f);
-    var r2=new THREE.DirectionalLight(0xffffff,0.25);r2.position.set(0,-3,8);s.add(r2);
-    var oldN=N,oldC=cubies,oldS=scene;
-    N=pN;cubies=[];scene=s;buildCube(s);
-    N=oldN;cubies=oldC;scene=oldS;
-    return{scene:s,cam:cam,renderer:rdr};
-}
+            // Colored stickers on each face
+            var stickerGeo = new THREE.PlaneGeometry(STICKER_SIZE, STICKER_SIZE);
 
-function startPreviews(){
-    previewData=[];
-    document.querySelectorAll('.cube-option canvas').forEach(function(c){previewData.push(makePreview(c,parseInt(c.getAttribute('data-n'))));});
-    function tick(){previewId=requestAnimationFrame(tick);previewData.forEach(function(p){p.scene.rotation.y+=0.008;p.renderer.render(p.scene,p.cam);});}
-    tick();
-}
+            var faces = [
+                { axis: 'x', val: 1, color: COLORS.R, pos: [ (CUBIE_SIZE/2 + STICKER_DEPTH), 0, 0 ], rot: [0, Math.PI/2, 0] },
+                { axis: 'x', val: -1, color: COLORS.L, pos: [-(CUBIE_SIZE/2 + STICKER_DEPTH), 0, 0 ], rot: [0, -Math.PI/2, 0] },
+                { axis: 'y', val: 1, color: COLORS.U, pos: [0, (CUBIE_SIZE/2 + STICKER_DEPTH), 0 ], rot: [-Math.PI/2, 0, 0] },
+                { axis: 'y', val: -1, color: COLORS.D, pos: [0, -(CUBIE_SIZE/2 + STICKER_DEPTH), 0 ], rot: [Math.PI/2, 0, 0] },
+                { axis: 'z', val: 1, color: COLORS.F, pos: [0, 0, (CUBIE_SIZE/2 + STICKER_DEPTH) ], rot: [0, 0, 0] },
+                { axis: 'z', val: -1, color: COLORS.B, pos: [0, 0, -(CUBIE_SIZE/2 + STICKER_DEPTH) ], rot: [0, Math.PI, 0] }
+            ];
 
-function stopPreviews(){
-    if(previewId){cancelAnimationFrame(previewId);previewId=null;}
-    previewData.forEach(function(p){try{p.renderer.dispose();}catch(e){}});
-    previewData=[];
-}
+            faces.forEach(function(f) {
+                var mat = new THREE.MeshStandardMaterial({
+                    color: f.color,
+                    roughness: 0.3,
+                    metalness: 0.05
+                });
+                var sticker = new THREE.Mesh(stickerGeo, mat);
+                sticker.position.set(f.pos[0], f.pos[1], f.pos[2]);
+                sticker.rotation.set(f.rot[0], f.rot[1], f.rot[2]);
+                group.add(sticker);
 
-// ---- UI ----
-document.getElementById('cubeOptions').addEventListener('click',function(e){
-    var opt=e.target.closest('.cube-option');if(!opt)return;
-    var size=parseInt(opt.getAttribute('data-n'));
-    stopPreviews();
-    document.getElementById('cubeSelector').classList.add('hidden');
-    document.getElementById('cubeStage').style.display='';
-    initGame(size);
-    setTimeout(startSeq,800);
-    document.getElementById('cubeStatus').textContent='准备打乱…';
-});
+                // Thin black border around sticker (slightly larger dark plane behind)
+                var borderGeo = new THREE.PlaneGeometry(STICKER_SIZE + 0.04, STICKER_SIZE + 0.04);
+                var borderMat = new THREE.MeshStandardMaterial({
+                    color: 0x111111,
+                    roughness: 0.5,
+                    metalness: 0.1
+                });
+                var border = new THREE.Mesh(borderGeo, borderMat);
+                border.position.copy(sticker.position);
+                border.position.set(
+                    f.pos[0] - (f.pos[0] > 0 ? 0.005 : f.pos[0] < 0 ? -0.005 : 0),
+                    f.pos[1] - (f.pos[1] > 0 ? 0.005 : f.pos[1] < 0 ? -0.005 : 0),
+                    f.pos[2] - (f.pos[2] > 0 ? 0.005 : f.pos[2] < 0 ? -0.005 : 0)
+                );
+                border.rotation.copy(sticker.rotation);
+                // Insert border before sticker so sticker is on top
+                group.add(border);
+            });
 
-document.getElementById('btnBack').addEventListener('click',function(){
-    if(mainLoopId){cancelAnimationFrame(mainLoopId);mainLoopId=null;}
-    if(seqTimer)clearTimeout(seqTimer);
-    if(renderer){try{renderer.dispose();}catch(e){}renderer=null;}
-    scene=null;pivot=null;cubies=[];updateCam=null;isAnim=false;curMove=null;moveHist=[];
-    document.getElementById('cubeContainer').innerHTML='';
-    document.getElementById('cubeSelector').classList.remove('hidden');
-    document.getElementById('cubeStage').style.display='none';
-    startPreviews();
-});
+            group.position.set(cx * (CUBIE_SIZE + GAP), cy * (CUBIE_SIZE + GAP), cz * (CUBIE_SIZE + GAP));
+            return group;
+        }
 
-// ---- Theme + Nav ----
-(function(){
-    var html=document.documentElement,toggle=document.getElementById('themeToggle');
-    function getT(){var s=localStorage.getItem('theme');return s||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');}
-    function apply(t){if(t==='light')html.setAttribute('data-theme','light');else html.removeAttribute('data-theme');}
-    apply(getT());
-    if(toggle)toggle.addEventListener('click',function(){var n=html.getAttribute('data-theme')==='light'?'dark':'light';apply(n);localStorage.setItem('theme',n);});
-    window.addEventListener('scroll',function(){document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>10);},{passive:true});
-})();
+        // ---- Face Rotation Logic ----
+        function getCubiesOnFace(axis, layer) {
+            // layer: -1, 0, or 1 for that axis
+            var result = [];
+            var threshold = 0.3;
+            cubies.forEach(function(c) {
+                var wp = new THREE.Vector3();
+                c.getWorldPosition(wp);
+                // Transform world position back relative to scene origin
+                // Since cubies are direct children of scene (or pivot), world pos works
+                var coord = axis === 'x' ? wp.x : (axis === 'y' ? wp.y : wp.z);
+                var target = layer * (CUBIE_SIZE + GAP);
+                if (Math.abs(coord - target) < threshold) {
+                    result.push(c);
+                }
+            });
+            return result;
+        }
 
-// ---- Boot ----
-startPreviews();
+        // ---- Animation State ----
+        var isAnimating = false;
+        var moveQueue = [];
+        var currentMove = null;
+        var animProgress = 0;
+        var animDuration = 200; // ms per move
+        var animStartTime = 0;
 
-})();
-</script>
+        // Move history for solving
+        var moveHistory = [];
+
+        // Sequence state
+        var mode = 'idle'; // idle | scramble | pause-before-solve | solve | pause-before-scramble
+        var sequenceTimer = null;
+        var SCRAMBLE_MOVES = 22;
+        var PAUSE_AFTER_SCRAMBLE = 1500;
+        var PAUSE_AFTER_SOLVE = 2000;
+
+        function getOppositeMove(move) {
+            return {
+                axis: move.axis,
+                layer: move.layer,
+                angle: -move.angle
+            };
+        }
+
+        function randomMove(lastMove) {
+            var axes = ['x', 'y', 'z'];
+            var layers = [-1, 0, 1];
+            var angles = [Math.PI / 2, -Math.PI / 2];
+
+            // Pick random axis, layer, angle
+            var axis, layer, angle;
+            for (var attempt = 0; attempt < 20; attempt++) {
+                axis = axes[Math.floor(Math.random() * 3)];
+                layer = layers[Math.floor(Math.random() * 3)];
+                angle = angles[Math.floor(Math.random() * 2)];
+
+                // Avoid repeating same face
+                if (lastMove && lastMove.axis === axis && lastMove.layer === layer) continue;
+                // Avoid opposite of last move
+                if (lastMove && lastMove.axis === axis && lastMove.layer === layer) continue;
+                // Avoid same-axis adjacent layers in same direction (they cancel)
+                if (lastMove && lastMove.axis === axis && lastMove.angle === -angle && lastMove.layer !== layer) continue;
+
+                break;
+            }
+
+            return { axis: axis, layer: layer, angle: angle };
+        }
+
+        // ---- Execute a single move (no animation, instant) ----
+        function applyMoveInstant(move) {
+            var face = getCubiesOnFace(move.axis, move.layer);
+            // Use a temp pivot
+            var tempPivot = new THREE.Group();
+            scene.add(tempPivot);
+
+            face.forEach(function(c) {
+                tempPivot.attach(c);
+            });
+
+            // Apply rotation
+            if (move.axis === 'x') tempPivot.rotation.x = move.angle;
+            if (move.axis === 'y') tempPivot.rotation.y = move.angle;
+            if (move.axis === 'z') tempPivot.rotation.z = move.angle;
+
+            // Detach back
+            while(tempPivot.children.length > 0) {
+                scene.attach(tempPivot.children[0]);
+            }
+            scene.remove(tempPivot);
+        }
+
+        // ---- Start an animated move ----
+        function startMove(move, duration, callback) {
+            currentMove = move;
+            animProgress = 0;
+            animDuration = duration;
+            animStartTime = performance.now();
+            isAnimating = true;
+
+            // Find cubies and attach to pivot
+            var face = getCubiesOnFace(move.axis, move.layer);
+            face.forEach(function(c) {
+                pivot.attach(c);
+            });
+
+            // Reset pivot rotation
+            pivot.rotation.set(0, 0, 0);
+
+            // Store callback
+            currentMove._callback = callback;
+            currentMove._face = face;
+        }
+
+        function finishCurrentMove() {
+            if (!currentMove) return;
+
+            // Apply full rotation
+            var move = currentMove;
+            if (move.axis === 'x') pivot.rotation.x = move.angle;
+            if (move.axis === 'y') pivot.rotation.y = move.angle;
+            if (move.axis === 'z') pivot.rotation.z = move.angle;
+
+            // Detach cubies back to scene
+            while(pivot.children.length > 0) {
+                scene.attach(pivot.children[0]);
+            }
+            pivot.rotation.set(0, 0, 0);
+
+            isAnimating = false;
+            var cb = currentMove._callback;
+            currentMove = null;
+
+            if (cb) cb();
+        }
+
+        // ---- Drag to orbit ----
+        function setupDrag() {
+            var isDragging = false;
+            var prev = { x: 0, y: 0 };
+            var yaw = 0, pitch = 0;
+            var targetYaw = 0, targetPitch = 0;
+            var autoYaw = 0;
+
+            renderer.domElement.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                prev.x = e.clientX;
+                prev.y = e.clientY;
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                var dx = e.clientX - prev.x;
+                var dy = e.clientY - prev.y;
+                targetYaw += dx * 0.005;
+                targetPitch += dy * 0.005;
+                targetPitch = Math.max(-1.2, Math.min(1.2, targetPitch));
+                prev.x = e.clientX;
+                prev.y = e.clientY;
+            });
+
+            window.addEventListener('mouseup', function() { isDragging = false; });
+
+            renderer.domElement.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    prev.x = e.touches[0].clientX;
+                    prev.y = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', function(e) {
+                if (!isDragging || e.touches.length !== 1) return;
+                var dx = e.touches[0].clientX - prev.x;
+                var dy = e.touches[0].clientY - prev.y;
+                targetYaw += dx * 0.005;
+                targetPitch += dy * 0.005;
+                targetPitch = Math.max(-1.2, Math.min(1.2, targetPitch));
+                prev.x = e.touches[0].clientX;
+                prev.y = e.touches[0].clientY;
+            }, { passive: true });
+
+            window.addEventListener('touchend', function() { isDragging = false; });
+
+            // Camera orbit in render loop
+            function updateCamera() {
+                yaw += (targetYaw - yaw) * 0.1;
+                pitch += (targetPitch - pitch) * 0.1;
+                autoYaw += 0.0015;
+
+                var r = 10;
+                var cy = Math.sin(pitch) * r;
+                var h = Math.cos(pitch) * r;
+                var cx = Math.sin(yaw + autoYaw) * h;
+                var cz = Math.cos(yaw + autoYaw) * h;
+
+                camera.position.lerp(
+                    new THREE.Vector3(cx, cy, cz),
+                    0.05
+                );
+                camera.lookAt(0, 0, 0);
+            }
+
+            // Hook into main animation loop
+            var origAnimate = animate;
+            // We'll just add the camera update to the animate function
+            animate = function(t) {
+                updateCamera();
+                origAnimate(t);
+            };
+        }
+
+        // ---- Main Loop ----
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            // Handle animation
+            if (isAnimating && currentMove) {
+                var elapsed = time - animStartTime;
+                animProgress = Math.min(1, elapsed / animDuration);
+
+                // Ease in-out
+                var t = animProgress < 0.5
+                    ? 2 * animProgress * animProgress
+                    : 1 - Math.pow(-2 * animProgress + 2, 2) / 2;
+
+                var angle = currentMove.angle * t;
+                if (currentMove.axis === 'x') pivot.rotation.x = angle;
+                if (currentMove.axis === 'y') pivot.rotation.y = angle;
+                if (currentMove.axis === 'z') pivot.rotation.z = angle;
+
+                if (animProgress >= 1) {
+                    finishCurrentMove();
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // ---- Sequence: Scramble → Solve → Loop ----
+        function startSequence() {
+            mode = 'scramble';
+            moveHistory = [];
+            statusEl.textContent = '打乱中…';
+
+            // Generate scramble moves
+            var lastMove = null;
+            for (var i = 0; i < SCRAMBLE_MOVES; i++) {
+                var m = randomMove(lastMove);
+                moveHistory.push(m);
+                lastMove = m;
+            }
+
+            // Play scramble
+            playMoveList(moveHistory.slice(), 150, function() {
+                mode = 'pause-before-solve';
+                statusEl.textContent = '拼好啦…';
+                sequenceTimer = setTimeout(startSolve, PAUSE_AFTER_SCRAMBLE);
+            });
+        }
+
+        function startSolve() {
+            mode = 'solve';
+            statusEl.textContent = '还原中…';
+
+            // Reverse the history
+            var solveMoves = moveHistory.slice().reverse().map(getOppositeMove);
+
+            playMoveList(solveMoves, 200, function() {
+                mode = 'pause-before-scramble';
+                statusEl.textContent = '六面还原！';
+                sequenceTimer = setTimeout(startSequence, PAUSE_AFTER_SOLVE);
+            });
+        }
+
+        function playMoveList(moves, speed, done) {
+            var i = 0;
+            function next() {
+                if (i >= moves.length) {
+                    if (done) done();
+                    return;
+                }
+                var m = moves[i];
+                i++;
+                startMove(m, speed, next);
+            }
+            next();
+        }
+
+        // ---- Init ----
+        initThree();
+
+        // Start the sequence after a short delay
+        setTimeout(startSequence, 800);
+        statusEl.textContent = '准备打乱…';
+
+        requestAnimationFrame(animate);
+
+        // ---- Theme + Nav ----
+        (function() {
+            var html = document.documentElement;
+            var toggle = document.getElementById('themeToggle');
+            function getTheme() {
+                var s = localStorage.getItem('theme');
+                return s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            }
+            function apply(t) {
+                if (t === 'light') html.setAttribute('data-theme', 'light');
+                else html.removeAttribute('data-theme');
+            }
+            apply(getTheme());
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    apply(n);
+                    localStorage.setItem('theme', n);
+                });
+            }
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark');
+            });
+            var nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', function() {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
+        })();
+    })();
+    </script>
 </body>
 </html>
