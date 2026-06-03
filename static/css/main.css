@@ -4,18 +4,18 @@
 
 /* ---- CSS Custom Properties ---- */
 :root {
-  /* Light theme — sides light gray, center bright white */
-  --bg-primary: #e8e8ed;
-  --bg-secondary: #e0e0e6;
-  --bg-card: #fafafc;
+  /* Light theme — sides much lighter, center darker for natural framing */
+  --bg-primary: #fcfcfe;
+  --bg-secondary: #f0f0f5;
+  --bg-card: #ececf2;
   --text-primary: #1d1d1f;
   --text-secondary: #5e5e64;
   --text-tertiary: #808087;
   --accent: #0066cc;
   --accent-hover: #005bb5;
   --border: #c8c8cf;
-  --border-light: #dddde2;
-  --nav-bg: rgba(232, 232, 237, 0.80);
+  --border-light: #dedee3;
+  --nav-bg: rgba(252, 252, 254, 0.85);
   --nav-height: 48px;
 
   /* Typography */
@@ -44,8 +44,8 @@
   --ease-spring: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 
   /* Backward compat aliases */
-  --bg-deep: #e8e8ed;
-  --bg-surface: #fafafc;
+  --bg-deep: #fcfcfe;
+  --bg-surface: #ececf2;
   --accent-1: #0066cc;
   --accent-2: #0077dd;
   --accent-3: #3390ee;
@@ -62,9 +62,9 @@
 /* Dark theme — deep charcoal, not pure black */
 [data-theme="dark"],
 :root:not([data-theme="light"]) {
-  --bg-primary: #050508;
-  --bg-secondary: #0e0e12;
-  --bg-card: #1e1e24;
+  --bg-primary: #2a2a34;
+  --bg-secondary: #22222a;
+  --bg-card: #24242d;
   --text-primary: #e4e4e8;
   --text-secondary: #9898a0;
   --text-tertiary: #6e6e76;
@@ -72,13 +72,13 @@
   --accent-hover: #4da8ff;
   --border: #333338;
   --border-light: #2a2a30;
-  --nav-bg: rgba(5, 5, 8, 0.80);
+  --nav-bg: rgba(24, 24, 29, 0.80);
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-card-hover: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 1px 4px rgba(0, 0, 0, 0.4);
 
   /* Dark backward compat aliases */
-  --bg-deep: #050508;
-  --bg-surface: #1e1e24;
+  --bg-deep: #22222a;
+  --bg-surface: #24242d;
   --accent-1: #3399ff;
   --accent-2: #4da8ff;
   --accent-3: #66b5ff;
@@ -334,12 +334,53 @@ a:hover { color: var(--accent-hover); }
   }
 }
 
+.hero-avatar-wrap {
+  position: relative;
+  width: 152px;
+  height: 152px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
 .hero-avatar {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Orbiting dots ring */
+.avatar-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 146px;
+  height: 146px;
+  margin-top: -73px;
+  margin-left: -73px;
+  border-radius: 50%;
+  animation: orbitSpin 12s linear infinite;
+  z-index: 1;
+}
+
+.orbit-dot {
+  position: absolute;
+  border-radius: 50%;
+  animation: dotFloat 2s ease-in-out infinite;
+}
+
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes dotFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
 }
 
 .hero h1 {
@@ -406,6 +447,8 @@ a:hover { color: var(--accent-hover); }
 .content-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 40px;
   transition: box-shadow var(--ease-out);
