@@ -67,7 +67,7 @@
 
     <!-- Hero Section -->
     <header class="hero">
-        <div class="typing-wrapper">
+        <div class="typing-wrapper" id="typingWrapper" title="点击查看所有">
             <span class="typing-prefix">$ </span>
             <span class="typing-text" id="typing-text"></span>
             <span class="typing-cursor">|</span>
@@ -236,8 +236,7 @@
 
     <!-- Typing Animation -->
     <script>
-        (function() {
-            var words = [
+        var words = [
                 'Code hums softly where silence used to be.',
                 '代码在曾经的寂静中轻声嗡鸣。',
                 'We think in prompts now, and the machine dreams along.',
@@ -319,46 +318,51 @@
                 'AI 不是答案，是最强的脚手架。',
                 'AI is not the answer — it\'s the ultimate scaffold.',
                 '过去十年是智能手机，未来十年是智能助手。',
-                'The last decade was smartphones. The next decade is AI agents.'
+                'The last decade was smartphones. The next decade is AI agents.',
+                '当你想要放弃的时候，想想自己为什么还站在这里。',
+                'When you want to give up, remember why you\'re still standing here.',
+                '无论学习工作多忙多累，也要照顾好自己。',
+                'No matter how busy or tired, take care of yourself.'
             ];
-            var el = document.getElementById('typing-text');
-            if (!el) return;
+            (function() {
+                var el = document.getElementById('typing-text');
+                if (!el) return;
 
-            var wordIndex = 0;
-            var charIndex = 0;
-            var isDeleting = false;
-            var typeSpeed = 50;
-            var deleteSpeed = 25;
-            var pauseEnd = 3000;
-            var pauseStart = 400;
+                var wordIndex = 0;
+                var charIndex = 0;
+                var isDeleting = false;
+                var typeSpeed = 50;
+                var deleteSpeed = 25;
+                var pauseEnd = 3000;
+                var pauseStart = 400;
 
-            function tick() {
-                var current = words[wordIndex];
+                function tick() {
+                    var current = words[wordIndex];
 
-                if (isDeleting) {
-                    charIndex--;
-                    if (charIndex < 0) {
-                        isDeleting = false;
-                        wordIndex = (wordIndex + 1) % words.length;
-                        setTimeout(tick, pauseStart);
-                        return;
+                    if (isDeleting) {
+                        charIndex--;
+                        if (charIndex < 0) {
+                            isDeleting = false;
+                            wordIndex = (wordIndex + 1) % words.length;
+                            setTimeout(tick, pauseStart);
+                            return;
+                        }
+                    } else {
+                        charIndex++;
+                        if (charIndex > current.length) {
+                            isDeleting = true;
+                            setTimeout(tick, pauseEnd);
+                            return;
+                        }
                     }
-                } else {
-                    charIndex++;
-                    if (charIndex > current.length) {
-                        isDeleting = true;
-                        setTimeout(tick, pauseEnd);
-                        return;
-                    }
+
+                    el.textContent = current.substring(0, charIndex);
+                    var delay = isDeleting ? deleteSpeed : typeSpeed;
+                    setTimeout(tick, delay);
                 }
 
-                el.textContent = current.substring(0, charIndex);
-                var delay = isDeleting ? deleteSpeed : typeSpeed;
-                setTimeout(tick, delay);
-            }
-
-            tick();
-        })();
+                tick();
+            })();
     </script>
 
     <!-- Dynamic Island Script -->
@@ -404,6 +408,50 @@
             setInterval(update, 10000);
         })();
     </script>
+
+    <!-- Quotes Overlay JS -->
+    <script>
+        (function() {
+            var wrapper = document.getElementById('typingWrapper');
+            var overlay = document.getElementById('quotesOverlay');
+            var closeBtn = document.getElementById('quotesClose');
+            var listEl = document.getElementById('quotesList');
+            if (!wrapper || !overlay || !listEl) return;
+
+            wrapper.style.cursor = 'pointer';
+            wrapper.addEventListener('click', function() {
+                // Build the phrase list from the global words array
+                listEl.innerHTML = '';
+                for (var i = 0; i < words.length; i++) {
+                    var li = document.createElement('li');
+                    li.textContent = words[i];
+                    listEl.appendChild(li);
+                }
+                overlay.classList.add('open');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                overlay.classList.remove('open');
+            });
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.classList.remove('open');
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') overlay.classList.remove('open');
+            });
+        })();
+    </script>
+
+    <!-- Quotes Overlay -->
+    <div class="quotes-overlay" id="quotesOverlay">
+        <div class="quotes-panel">
+            <button class="quotes-close" id="quotesClose">&times;</button>
+            <div class="quotes-title">所有短句</div>
+            <ul class="quotes-list" id="quotesList"></ul>
+        </div>
+    </div>
 
     <!-- Core Scripts -->
     <script type="text/javascript" src="static/js/scripts.js"></script>
