@@ -59,15 +59,49 @@
     .maze-btn.primary:hover { background: var(--accent-hover); }
     .maze-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    .maze-btn.btn-start { border-color: #22c55e; color: #15803d; background: #f0fdf4; }
-    .maze-btn.btn-start.active { background: #22c55e; color: #fff; border-color: #22c55e; }
-    .maze-btn.btn-end   { border-color: #ef4444; color: #b91c1c; background: #fef2f2; }
-    .maze-btn.btn-end.active   { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .maze-btn.btn-start,
+    .maze-btn.btn-end {
+        border-width: 1.5px;
+        font-weight: 500;
+    }
 
-    [data-theme="dark"] .maze-btn.btn-start,
-    :root:not([data-theme="light"]) .maze-btn.btn-start { background: #052e16; color: #4ade80; }
-    [data-theme="dark"] .maze-btn.btn-end,
-    :root:not([data-theme="light"]) .maze-btn.btn-end { background: #450a0a; color: #f87171; }
+    .maze-btn.btn-start {
+        border-color: #86efac;
+        color: #6b7280;
+        background: transparent;
+    }
+    .maze-btn.btn-start.active {
+        background: #22c55e;
+        color: #fff;
+        border-color: #16a34a;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+        transform: scale(1.04);
+    }
+
+    .maze-btn.btn-end {
+        border-color: #fca5a5;
+        color: #6b7280;
+        background: transparent;
+    }
+    .maze-btn.btn-end.active {
+        background: #ef4444;
+        color: #fff;
+        border-color: #dc2626;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+        transform: scale(1.04);
+    }
+
+    [data-theme="dark"] .maze-btn.btn-start { border-color: #166534; color: #6b7280; background: transparent; }
+    [data-theme="dark"] .maze-btn.btn-end   { border-color: #7f1d1d; color: #6b7280; background: transparent; }
+
+    [data-theme="dark"] .maze-btn.btn-start.active {
+        background: #22c55e; color: #fff; border-color: #16a34a;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.35);
+    }
+    [data-theme="dark"] .maze-btn.btn-end.active {
+        background: #ef4444; color: #fff; border-color: #dc2626;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.35);
+    }
 
     .maze-mode { display: flex; gap: 0; }
     .maze-mode .maze-btn { border-radius: 0; margin: 0; }
@@ -154,8 +188,10 @@
         <button class="maze-btn btn-end" id="btnSetEnd">🔴 放置终点</button>
         <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
         <div class="maze-mode">
-            <button class="maze-btn active" id="btnDFS">深度优先 DFS</button>
-            <button class="maze-btn" id="btnBFS">广度优先 BFS</button>
+            <button class="maze-btn active" id="btnDFS">DFS</button>
+            <button class="maze-btn" id="btnBFS">Dijkstra</button>
+            <button class="maze-btn" id="btnAStar">A*</button>
+            <button class="maze-btn" id="btnGreedy">Greedy</button>
         </div>
         <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
         <button class="maze-btn primary" id="btnSearch">▶ 开始搜索</button>
@@ -359,7 +395,10 @@ function runSearch() {
     searching = true;
     paused = false;
     updateButtonState();
-    algorithm === 'dfs' ? dfsSearch() : bfsSearch();
+    if (algorithm === 'dfs') dfsSearch();
+    else if (algorithm === 'bfs') bfsSearch();
+    else if (algorithm === 'greedy') greedySearch();
+    else aStarSearch();
 }
 
 function updateButtonState() {
@@ -450,6 +489,135 @@ function bfsSearch() {
             }
         }
     }
+    searchSteps.push({ type: 'done' });
+    animateSearch();
+}
+
+// Helper: linear scan to pop node with smallest f (or h for greedy)
+// Much faster than full .sort() on every iteration for large open sets
+function popMin(arr, key) {
+    if (arr.length <= 1) return arr.shift();
+    var best = 0;
+    for (var i = 1; i < arr.length; i++) {
+        if (arr[i][key] < arr[best][key]) best = i;
+    }
+    var node = arr[best];
+    // Swap with last and pop for O(1) removal
+    arr[best] = arr[arr.length - 1];
+    arr.pop();
+    return node;
+}
+
+// A*: f = g + h   (guaranteed shortest path, heuristic guides direction)
+function aStarSearch() {
+    var heuristic = function(r, c) {
+        return Math.abs(r - end.r) + Math.abs(c - end.c);
+    };
+
+    var openSet = [{r: start.r, c: start.c, g: 0, f: heuristic(start.r, start.c)}];
+    var parentMap = {};
+    parentMap[start.r + ',' + start.c] = null;
+    var gScores = {};
+    gScores[start.r + ',' + start.c] = 0;
+    var inOpen = {}; // track which keys are in the open set
+    inOpen[start.r + ',' + start.c] = true;
+
+    while (openSet.length > 0) {
+        var current = popMin(openSet, 'f');
+        var key = current.r + ',' + current.c;
+        inOpen[key] = false;
+
+        searchSteps.push({
+            type: 'explore',
+            r: current.r, c: current.c,
+            frontier: openSet.map(function(s) { return {r: s.r, c: s.c}; })
+        });
+
+        if (current.r === end.r && current.c === end.c) {
+            finalPath = rebuild(parentMap, current);
+            for (var pi = 0; pi < finalPath.length; pi++) {
+                searchSteps.push({ type: 'trace', r: finalPath[pi].r, c: finalPath[pi].c });
+            }
+            searchSteps.push({ type: 'done' });
+            animateSearch();
+            return;
+        }
+
+        var dirs = [[-1,0],[0,1],[1,0],[0,-1]];
+        for (var d = 0; d < 4; d++) {
+            var nr = current.r + dirs[d][0];
+            var nc = current.c + dirs[d][1];
+            var nk = nr + ',' + nc;
+
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 0) {
+                var curG = gScores[key] !== undefined ? gScores[key] : 0;
+                var tentativeG = curG + 1;
+
+                if (tentativeG < (gScores[nk] !== undefined ? gScores[nk] : Infinity)) {
+                    parentMap[nk] = current;
+                    gScores[nk] = tentativeG;
+                    var h = heuristic(nr, nc);
+                    if (!inOpen[nk]) {
+                        openSet.push({r: nr, c: nc, g: tentativeG, f: tentativeG + h});
+                        inOpen[nk] = true;
+                    }
+                }
+            }
+        }
+    }
+
+    searchSteps.push({ type: 'done' });
+    animateSearch();
+}
+
+// Greedy Best-First: f = h only   (fastest, but NOT guaranteed shortest)
+function greedySearch() {
+    var heuristic = function(r, c) {
+        return Math.abs(r - end.r) + Math.abs(c - end.c);
+    };
+
+    var openSet = [{r: start.r, c: start.c, h: heuristic(start.r, start.c)}];
+    var parentMap = {};
+    parentMap[start.r + ',' + start.c] = null;
+    var visited = new Set();
+
+    while (openSet.length > 0) {
+        var current = popMin(openSet, 'h');
+        var key = current.r + ',' + current.c;
+
+        if (visited.has(key)) continue;
+        visited.add(key);
+
+        searchSteps.push({
+            type: 'explore',
+            r: current.r, c: current.c,
+            frontier: openSet.map(function(s) { return {r: s.r, c: s.c}; })
+        });
+
+        if (current.r === end.r && current.c === end.c) {
+            finalPath = rebuild(parentMap, current);
+            for (var pi = 0; pi < finalPath.length; pi++) {
+                searchSteps.push({ type: 'trace', r: finalPath[pi].r, c: finalPath[pi].c });
+            }
+            searchSteps.push({ type: 'done' });
+            animateSearch();
+            return;
+        }
+
+        var dirs = [[-1,0],[0,1],[1,0],[0,-1]];
+        for (var d = 0; d < 4; d++) {
+            var nr = current.r + dirs[d][0];
+            var nc = current.c + dirs[d][1];
+            var nk = nr + ',' + nc;
+
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 0 && !visited.has(nk)) {
+                parentMap[nk] = current;
+                var h = heuristic(nr, nc);
+                openSet.push({r: nr, c: nc, h: h});
+            }
+        }
+    }
+
     searchSteps.push({ type: 'done' });
     animateSearch();
 }
@@ -607,7 +775,7 @@ function updateStats() {
     el.innerHTML =
         '<span>已探索：<strong>' + ec + '</strong> 格</span>' +
         (pl > 0 ? '<span>最短路径：<strong>' + pl + '</strong> 步</span>' : '') +
-        '<span>算法：<strong>' + (algorithm === 'dfs' ? '深度优先（一头扎到底）' : '广度优先（层层展开）') + '</strong></span>';
+        '<span>算法：<strong>' + (algorithm === 'dfs' ? 'DFS' : algorithm === 'bfs' ? 'Dijkstra (f=g)' : algorithm === 'astar' ? 'A* (f=g+h)' : 'Greedy (f=h)') + '</strong></span>';
 }
 
 // ---- Mouse ----
@@ -661,20 +829,33 @@ document.getElementById('btnSetEnd').addEventListener('click', function() {
     document.getElementById('btnSetStart').classList.remove('active');
 });
 
+function selectAlgorithm(algo) {
+    algorithm = algo;
+    document.getElementById('btnDFS').classList.toggle('active', algo === 'dfs');
+    document.getElementById('btnBFS').classList.toggle('active', algo === 'bfs');
+    document.getElementById('btnAStar').classList.toggle('active', algo === 'astar');
+    document.getElementById('btnGreedy').classList.toggle('active', algo === 'greedy');
+    resetSearch(); updateStats(); draw();
+}
+
 document.getElementById('btnDFS').addEventListener('click', function() {
     if (searching) return;
-    algorithm = 'dfs';
-    this.classList.add('active');
-    document.getElementById('btnBFS').classList.remove('active');
-    resetSearch(); updateStats(); draw();
+    selectAlgorithm('dfs');
 });
 
 document.getElementById('btnBFS').addEventListener('click', function() {
     if (searching) return;
-    algorithm = 'bfs';
-    this.classList.add('active');
-    document.getElementById('btnDFS').classList.remove('active');
-    resetSearch(); updateStats(); draw();
+    selectAlgorithm('bfs');
+});
+
+document.getElementById('btnAStar').addEventListener('click', function() {
+    if (searching) return;
+    selectAlgorithm('astar');
+});
+
+document.getElementById('btnGreedy').addEventListener('click', function() {
+    if (searching) return;
+    selectAlgorithm('greedy');
 });
 
 document.getElementById('btnSearch').addEventListener('click', runSearch);
