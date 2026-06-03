@@ -4,18 +4,18 @@
 
 /* ---- CSS Custom Properties ---- */
 :root {
-  /* Light theme — muted off-white, not pure white */
-  --bg-primary: #f0f0f3;
-  --bg-secondary: #e8e8ec;
-  --bg-card: #f7f7fa;
+  /* Light theme — sides light gray, center bright white */
+  --bg-primary: #e8e8ed;
+  --bg-secondary: #e0e0e6;
+  --bg-card: #fafafc;
   --text-primary: #1d1d1f;
   --text-secondary: #5e5e64;
   --text-tertiary: #808087;
   --accent: #0066cc;
   --accent-hover: #005bb5;
   --border: #c8c8cf;
-  --border-light: #dedee3;
-  --nav-bg: rgba(240, 240, 243, 0.78);
+  --border-light: #dddde2;
+  --nav-bg: rgba(232, 232, 237, 0.80);
   --nav-height: 48px;
 
   /* Typography */
@@ -44,13 +44,13 @@
   --ease-spring: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 
   /* Backward compat aliases */
-  --bg-deep: #f0f0f3;
-  --bg-surface: #f7f7fa;
+  --bg-deep: #e8e8ed;
+  --bg-surface: #fafafc;
   --accent-1: #0066cc;
   --accent-2: #0077dd;
   --accent-3: #3390ee;
   --accent-4: #d97706;
-  --border-subtle: #dedee3;
+  --border-subtle: #dddde2;
   --border-glow: rgba(0, 102, 204, 0.18);
   --border-cyan: rgba(0, 119, 221, 0.18);
   --glow-1: rgba(0, 102, 204, 0.08);
@@ -62,28 +62,28 @@
 /* Dark theme — deep charcoal, not pure black */
 [data-theme="dark"],
 :root:not([data-theme="light"]) {
-  --bg-primary: #121214;
-  --bg-secondary: #1c1c1f;
-  --bg-card: #18181b;
+  --bg-primary: #050508;
+  --bg-secondary: #0e0e12;
+  --bg-card: #1e1e24;
   --text-primary: #e4e4e8;
   --text-secondary: #9898a0;
   --text-tertiary: #6e6e76;
   --accent: #3399ff;
   --accent-hover: #4da8ff;
   --border: #333338;
-  --border-light: #28282d;
-  --nav-bg: rgba(18, 18, 20, 0.78);
+  --border-light: #2a2a30;
+  --nav-bg: rgba(5, 5, 8, 0.80);
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-card-hover: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 1px 4px rgba(0, 0, 0, 0.4);
 
   /* Dark backward compat aliases */
-  --bg-deep: #121214;
-  --bg-surface: #18181b;
+  --bg-deep: #050508;
+  --bg-surface: #1e1e24;
   --accent-1: #3399ff;
   --accent-2: #4da8ff;
   --accent-3: #66b5ff;
   --accent-4: #f59e0b;
-  --border-subtle: #28282d;
+  --border-subtle: #222228;
   --border-glow: rgba(51, 153, 255, 0.14);
   --border-cyan: rgba(77, 168, 255, 0.14);
   --glow-1: rgba(51, 153, 255, 0.07);
