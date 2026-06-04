@@ -16,6 +16,12 @@ DFS、Dijkstra、A*、Greedy——四种算法在迷宫中寻找出路。
 
 [打开](http://qjjlb.quanjian.com.cn/musicdl/)
 
+## 双人听歌
+
+创建房间共享歌单，边听歌边聊天。
+
+[打开](music-share.html)
+
 ## 万象归位
 
 乱序魔方自动旋转还原，方寸之间的秩序之美。
