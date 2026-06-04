@@ -3,28 +3,33 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>双人听歌</title>
+  <title>一起听歌</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta name="referrer" content="no-referrer" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- 圆润可爱字体 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link type="text/css" href="static/css/main.css" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #02030a;
-      --panel-glass: rgba(8, 10, 26, 0.26);
-      --panel-glass-soft: rgba(10, 14, 35, 0.26);
-      --accent: #f5c84c;
-      --accent-strong: #ffdd55;
-      --accent-pink: #ff7bb0;
-      --accent-blue: #4ac8ff;
-      --accent-green: #65f7c4;
-      --accent-red: #ff5c7a;
-      --text-main: #f5f6ff;
-      --text-sub: #a1a6d0;
-      --border-subtle: rgba(255, 255, 255, 0.12);
+      --bg-dark: #18181d;
+      --panel-bg: rgba(30,30,38,0.92);
+      --accent: #3b82f6;
+      --accent-strong: #60a5fa;
+      --accent-pink: #f472b6;
+      --accent-blue: #60a5fa;
+      --accent-green: #34d399;
+      --accent-red: #f87171;
+      --text-main: #ededef;
+      --text-sub: #9999a0;
+      --border-subtle: rgba(255,255,255,0.08);
+    }
+    [data-theme="light"] {
+      --bg-dark: #f6f5f4;
+      --panel-bg: rgba(255,255,255,0.94);
+      --accent: #1a56db;
+      --accent-strong: #2563eb;
+      --text-main: #1a1a1a;
+      --text-sub: #555;
+      --border-subtle: rgba(0,0,0,0.08);
     }
 
     * {
@@ -42,7 +47,7 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    /* 背景粒子画布 */
+    /* Solid dark background */
     #bg-canvas {
       position: fixed;
       inset: 0;
@@ -50,10 +55,7 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      background:
-        radial-gradient(circle at 10% 0, #1b2340 0, transparent 55%),
-        radial-gradient(circle at 90% 100%, #211a38 0, transparent 60%),
-        #02030a;
+      background: var(--bg-dark);
     }
 
     /* 主容器：四周留白 */
@@ -66,15 +68,15 @@
       margin: 44px 80px;
       padding: 10px 12px;
       gap: 10px;
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.06), transparent 60%),
-                  radial-gradient(circle at 100% 100%, rgba(136,196,255,0.10), transparent 60%),
-                  rgba(0,0,0,0.45);
-      backdrop-filter: blur(14px);
-      box-shadow:
-        0 0 40px rgba(0,0,0,0.9),
-        0 0 120px rgba(136,196,255,0.35);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-dark);
+      box-shadow: 0 0 40px rgba(0,0,0,0.3);
+    }
+    [data-theme="light"] .app {
+      background: var(--bg-dark);
+      border-color: var(--border-subtle);
+      box-shadow: 0 0 30px rgba(0,0,0,0.08);
     }
     @media (max-width: 1280px) {
       .app { margin: 32px 40px; height: calc(100vh - 70px); }
@@ -178,7 +180,7 @@
     }
     .lang-btn.active {
       background: radial-gradient(circle at 30% 0, rgba(255,255,255,0.28), var(--accent));
-      color: #231b08;
+      color: #fff;
       font-weight: 600;
       box-shadow: 0 0 8px rgba(245,200,76,0.8);
     }
@@ -198,7 +200,7 @@
       background: rgba(0,0,0,0.4);
       color: var(--text-sub);
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(0,0,0,0.9);
+      box-shadow: var(--shadow-card);
       font-size: 15px;
     }
 
@@ -232,21 +234,10 @@
       flex-direction: column;
       min-height: 0;
       padding: 10px;
-      border-radius: 18px;
-      background: var(--panel-glass-soft);
+      border-radius: var(--radius-md);
+      background: var(--panel-bg);
       border: 1px solid var(--border-subtle);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.85);
       z-index: 0;
-    }
-    .panel::before {
-      content: "";
-      position: absolute;
-      inset: -25%;
-      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.08), transparent 60%);
-      opacity: .5;
-      pointer-events: none;
-      z-index: -1;
     }
 
     .panel-header {
@@ -279,18 +270,18 @@
       border: none;
       border-radius: 999px;
       padding: 6px 13px;
-      background: radial-gradient(circle at 30% 0, rgba(255,255,255,0.2), var(--accent));
-      color: #231b08;
+      background: var(--accent);
+      color: #fff;
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
-      box-shadow: 0 7px 16px rgba(245,200,76,0.75);
+      box-shadow: var(--shadow-card);
       transition: transform .12s ease, box-shadow .12s ease;
     }
     .btn-secondary {
-      background: radial-gradient(circle at 30% 0, rgba(255,255,255,0.05), rgba(80,100,180,0.95));
+      background: rgba(80,100,180,0.85);
       color: var(--text-main);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.8);
+      box-shadow: var(--shadow-card);
     }
     .btn-ghost {
       background: transparent;
@@ -318,7 +309,7 @@
       padding: 7px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(5,7,20,0.8);
+      background: rgba(0,0,0,0.15);
       color: var(--text-main);
       font-size: 13px;
       outline: none;
@@ -349,7 +340,7 @@
         radial-gradient(circle at 100% 100%, rgba(104,174,255,0.25), transparent 60%),
         rgba(4,6,20,0.98);
       border: 1px solid rgba(255,255,255,0.25);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.9);
+      box-shadow: var(--shadow-card);
     }
     .search-prefix {
       font-size: 14px;
@@ -380,7 +371,7 @@
       gap: 4px;
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(4,6,20,0.82);
+      background: rgba(0,0,0,0.12);
       border: 1px solid rgba(255,255,255,0.16);
       cursor: pointer;
       user-select: none;
@@ -413,7 +404,7 @@
       color: var(--text-sub);
     }
     .limit-row select {
-      background: rgba(5,7,24,0.8);
+      background: rgba(0,0,0,0.12);
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.18);
       color: var(--text-main);
@@ -444,14 +435,14 @@
       padding: 6px 8px;
       margin-bottom: 4px;
       border-radius: 10px;
-      background: rgba(8,10,32,0.78);
+      background: var(--panel-bg);
       border: 1px solid rgba(255,255,255,0.05);
       font-size: 11px;
       cursor: pointer;
       transition: background .15s, transform .1s, box-shadow .1s;
     }
     .search-mini-item:hover {
-      background: rgba(26,32,80,0.9);
+      background: var(--panel-bg);
       box-shadow: 0 8px 18px rgba(0,0,0,0.85);
       transform: translateY(-1px);
     }
@@ -513,7 +504,7 @@
       height: 130px;
       border-radius: 18px;
       overflow: hidden;
-      background: radial-gradient(circle at 30% 0, #34344b,#151628);
+      background: rgba(0,0,0,0.2);
       box-shadow:
         0 14px 30px rgba(0,0,0,0.9),
         0 0 18px rgba(245,200,76,0.75);
@@ -707,66 +698,36 @@
       min-height: 0;
       margin-top: 6px;
       padding: 10px 18px 8px;
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 50% 0, rgba(255,220,150,0.26), transparent 60%),
-        radial-gradient(circle at 10% 100%, rgba(107,150,255,0.26), transparent 60%),
-        rgba(4,6,20,0.72);
-      border:1px solid rgba(255,255,255,0.16);
-      overflow-y:auto;
-      overflow-x:hidden;
-      position:relative;
-      box-shadow:0 12px 32px rgba(0,0,0,0.9);
+      border-radius: 4px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--border-subtle);
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
     }
-    .lyrics-container::before,
-    .lyrics-container::after {
-      content:"";
-      position:absolute;
-      pointer-events:none;
-      mix-blend-mode:screen;
-    }
-    .lyrics-container::before {
-      inset:-25%;
-      background:conic-gradient(
-        from 0deg,
-        rgba(255,214,102,0.08),
-        rgba(255,214,102,0.38),
-        rgba(104,184,255,0.38),
-        rgba(186,132,255,0.40),
-        rgba(255,214,102,0.08)
-      );
-      opacity:0.46;
-      filter:blur(14px);
-      animation: lyricsGlow 16s linear infinite;
-    }
-    @keyframes lyricsGlow { to { transform:rotate(360deg);} }
-    .lyrics-container::after {
-      top:-40%;
-      left:-20%;
-      width:70%;
-      height:150%;
-      background:linear-gradient(
-        120deg,
-        rgba(255,248,170,0.0),
-        rgba(255,248,170,0.36),
-        rgba(161,233,255,0.0)
-      );
-      transform:translateX(-130%);
-      animation: lyricsSweep 7s linear infinite;
-      opacity:0.95;
-    }
-    @keyframes lyricsSweep {
-      0% { transform:translateX(-130%); }
-      50%{ transform:translateX(40%); }
-      100%{ transform:translateX(130%); }
-    }
-    .lyrics-container.alt-style::before {
-      background:conic-gradient(
-        from 0deg,
-        rgba(104,184,255,0.14),
-        rgba(186,132,255,0.40),
-        rgba(255,214,102,0.32),
-        rgba(104,184,255,0.46),
+    [data-theme="light"] .lyrics-container { background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .input { color: var(--text-main); background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .panel { background: rgba(255,255,255,0.94); }
+    [data-theme="light"] header { background: rgba(255,255,255,0.94); }
+    [data-theme="light"] .app { background: var(--bg-dark); }
+    [data-theme="light"] .modal { background: rgba(255,255,255,0.97); color: var(--text-main); }
+    [data-theme="light"] .search-row { background: rgba(255,255,255,0.9); }
+    [data-theme="light"] .search-row .input { background: transparent; }
+    [data-theme="light"] .source-chip { background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .search-mini-item { color: var(--text-main); }
+    [data-theme="light"] .track-item { color: var(--text-main); }
+    [data-theme="light"] .playlist-bar { background: rgba(255,255,255,0.9); }
+    [data-theme="light"] #roomInput { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); color: var(--text-main); }
+    [data-theme="light"] .track-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .search-mini-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .playlist-bar { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] #roomInput { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); color: var(--text-main); }
+    [data-theme="light"] .cover-placeholder { color: var(--text-sub); }
+    [data-theme="light"] .mini-artist { color: var(--text-sub); }
+    [data-theme="light"] .shortcut-hint { color: var(--text-sub); }
+    [data-theme="light"] .btn { color: #fff; }
+    [data-theme="light"] .btn-secondary { color: #fff; }
+    [data-theme="light"] .playmode-btn.active { color: #fff; }
         rgba(186,132,255,0.40)
       );
     }
@@ -842,7 +803,7 @@
     }
     .playlist-tab.active {
       background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.15), rgba(104,174,255,0.9));
-      color:#02040a;
+      color:var(--text-main);
       font-weight:600;
       box-shadow:0 0 8px rgba(104,174,255,0.7);
     }
@@ -923,7 +884,7 @@
     }
     .playmode-btn.active {
       background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.18), rgba(110,190,255,0.95));
-      color:#02030a;
+      color:var(--text-main);
       box-shadow:0 0 10px rgba(110,190,255,0.95);
     }
 
@@ -941,7 +902,7 @@
       padding:6px 8px;
       margin-bottom:4px;
       border-radius:10px;
-      background:rgba(7,11,34,0.86);
+      background:var(--panel-bg);
       border:1px solid rgba(255,255,255,0.06);
       font-size:11px;
       cursor:pointer;
@@ -986,7 +947,7 @@
       font-size:12px;
     }
     .btn-fav-active {
-      background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.2), var(--accent-red));
+      background:var(--accent-red);
       color:#fff5f7;
       box-shadow:0 0 12px rgba(255,92,122,0.95);
     }
@@ -1104,7 +1065,7 @@
       box-shadow:0 20px 40px rgba(0,0,0,0.9);
       max-width:380px;
       width:92%;
-      color:#f5f6ff;
+      color:var(--text-main);
       position:relative;
       border:1px solid rgba(255,255,255,0.18);
     }
@@ -1223,17 +1184,19 @@
   <canvas id="bg-canvas"></canvas>
 
   <div class="app">
-    <header class="ripple-target" style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-radius:18px;background:linear-gradient(120deg,rgba(255,255,255,.06),rgba(7,10,30,.9));border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 26px rgba(0,0,0,.8);min-height:56px;flex-shrink:0;">
+    <header class="ripple-target" style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-radius:18px;background:rgba(0,0,0,0.06);border:1px solid var(--border-subtle);min-height:56px;flex-shrink:0;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:18px;font-weight:600;color:#f5f6ff;letter-spacing:1px;">🎵 双人听歌</span>
-        <input id="roomInput" type="text" placeholder="输入房间名…" value="" style="width:100px;padding:3px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.5);color:#f5f6ff;font-size:11px;outline:none;">
-        <button id="joinRoomBtn" class="btn" style="padding:3px 10px;font-size:10px;margin-left:-4px;">加入</button>
-        <span style="font-size:11px;color:#a1a6d0;" id="roomLbl"></span>
+        <span style="font-size:18px;font-weight:600;color:var(--text-main);letter-spacing:1px;">🎵 一起听歌</span>
+        <span style="font-size:11px;color:var(--text-sub);">房间号</span>
+        <input id="roomInput" type="text" placeholder="输入房间名…" value="" style="width:140px;padding:6px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.5);color:var(--text-main);font-size:13px;outline:none;">
+        <button id="joinRoomBtn" class="btn" style="padding:6px 14px;font-size:12px;margin-left:0;">加入</button>
+        <span style="font-size:11px;color:var(--text-sub);" id="roomLbl"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:#a1a6d0;">
-        <a href="index.html" style="color:#a1a6d0;text-decoration:none;font-size:11px;">← 返回主页</a>
-        <span>快捷键：Space 播放 · ←/→ 跳转 · N/P 切歌 · ↑/↓ 音量 · F 收藏 · L 歌词</span>
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-sub);">
+        <button id="shareBtn" class="btn btn-ghost" style="padding:5px 12px;font-size:11px;">📋 分享链接</button>
+        <span>快捷键：Space 播放/暂停 · ←/→ 跳转 · N/P 切歌 · ↑/↓ 音量 · F 收藏 · L 歌词效果</span>
         <button id="shortcut-toggle-btn" class="shortcut-toggle-btn ripple-target" title="快捷键">⌨️</button>
+        <button id="themeToggle" class="shortcut-toggle-btn ripple-target" title="切换明暗">🌓</button>
       </div>
     </header>
 
@@ -1452,51 +1415,48 @@
     <div class="modal ripple-target">
       <div class="modal-header">
         <div class="modal-title-wrap">
-          <div class="modal-title-icon">⌨️</div>
-          <span data-i18n="shortcutPanelTitle">快捷键说明</span>
+          <div class="modal-title-icon">💡</div>
+          <span>使用说明</span>
         </div>
         <button id="shortcut-close" class="modal-close-btn">×</button>
       </div>
-      <p class="modal-desc" data-i18n="shortcutPanelDesc">
-        使用键盘可以更加方便地控制皮卡丘的音乐站：
+      <p class="modal-desc" style="font-size:12px;line-height:1.9;">
+        <strong>🔍 搜歌：</strong>在左边搜索栏输入歌名或歌手，咪咕 / 网易云 / QQ / 酷我四源聚合，回车搜索。<br><br>
+        <strong>🎧 播放：</strong>点击搜索结果或播放列表中的歌曲即可播放，右侧显示歌词、封面和进度条。<br><br>
+        <strong>📜 歌单：</strong>在播放列表区域可切换「搜索结果」「收藏」「自建歌单」，支持列表循环 / 单曲循环 / 随机。<br><br>
+        <strong>💬 聊天：</strong>底部的聊天窗可以边听歌边聊天，消息实时同步。<br><br>
+        <strong>👥 一起听：</strong>在顶部输入<strong>同一个房间号</strong>，点击「加入」，同一房间的好友共享歌单和聊天！<br><br>
+        <strong>📋 分享：</strong>点右上角「分享链接」，复制房间链接发给好友即可。<br><br>
+        <strong>⌨️ 快捷键：</strong><br>
+        Space 播放/暂停 · ←→ 快进退 5s · ↑↓ 音量 · N/P 切歌 · F 收藏 · L 歌词效果 · / 聚焦搜索
       </p>
-      <div class="shortcut-grid">
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutPlayPause">播放 / 暂停</div>
-          <div class="shortcut-key"><kbd>Space</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutSeek">快退 / 快进 5 秒</div>
-          <div class="shortcut-key"><kbd>←</kbd><kbd>→</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutVolume">音量加 / 减</div>
-          <div class="shortcut-key"><kbd>↑</kbd><kbd>↓</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutPrevNext">上一首 / 下一首</div>
-          <div class="shortcut-key"><kbd>P</kbd><kbd>N</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutFav">收藏 / 取消收藏</div>
-          <div class="shortcut-key"><kbd>F</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutLyricsFX">切换歌词炫酷效果</div>
-          <div class="shortcut-key"><kbd>L</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutMute">静音 / 取消静音</div>
-          <div class="shortcut-key"><kbd>M</kbd></div>
-        </div>
-        <div class="shortcut-card">
-          <div class="shortcut-label" data-i18n="shortcutFocusSearch">聚焦搜索框</div>
-          <div class="shortcut-key"><kbd>/</kbd></div>
-        </div>
+      <div class="modal-actions">
+        <button id="shortcut-close-btn2" class="btn" style="padding:6px 16px;font-size:12px;">知道了</button>
       </div>
-      <p class="modal-desc" style="margin-top:10px;" data-i18n="shortcutCloseModal">
-        提示：按 Esc 可以关闭弹窗。
+    </div>
+  </div>
+
+  <!-- Welcome modal -->
+  <div id="welcome-modal" class="modal-backdrop show">
+    <div class="modal ripple-target">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">🎵</span>
+          <span>欢迎来到一起听歌</span>
+        </div>
+        <button id="welcome-close" class="modal-close-btn">×</button>
+      </div>
+      <p class="modal-desc" style="font-size:12px;line-height:1.8;">
+        🔍 <strong>搜索区</strong>（左上）— 搜歌曲，咪咕/网易云/QQ/酷我四源聚合<br>
+        🎧 <strong>播放器</strong>（中上）— 播放、歌词、进度<br>
+        📜 <strong>播放列表</strong>（右上）— 收藏和歌单管理<br>
+        💬 <strong>聊天窗</strong>（下方）— 边听边聊<br><br>
+        <strong>和好友一起听：</strong>在顶部输入同一个房间号，点「加入」，就能共享歌单和聊天啦！<br>
+        <span style="color:var(--accent-strong);">分享链接：</span><code id="shareUrl" style="word-break:break-all;font-size:11px;"></code>
       </p>
+      <div class="modal-actions">
+        <button id="welcome-ok" class="btn" style="padding:6px 14px;font-size:12px;">知道了 ✨</button>
+      </div>
     </div>
   </div>
 
@@ -1506,11 +1466,11 @@
   (function(){
     const translations = {
       zh: {
-        appTitle:"皮卡丘的音乐站",
-        authorLabel:"作者：Zhenchao Jin + GPT 5.1",
-        shortcutHint:"快捷键：Space 播放/暂停 · ←/→ 跳转 · ↑/↓ 音量 · N/P 切歌 · F 收藏 · L 切换歌词效果",
-        shortcutPanelTitle:"快捷键说明",
-        shortcutPanelDesc:"使用键盘可以更加方便地控制皮卡丘的音乐站：",
+        appTitle:"一起听歌",
+        authorLabel:"一起听歌 · 四源聚合音乐播放器",
+        shortcutHint:"Space 播放/暂停 · ←/→ 跳转 · ↑/↓ 音量 · N/P 切歌 · F 收藏 · L 歌词效果",
+        shortcutPanelTitle:"快捷键与说明",
+        shortcutPanelDesc:"键盘快捷键可以更快地控制音乐播放：",
         shortcutPlayPause:"播放 / 暂停",
         shortcutSeek:"快退 / 快进 5 秒",
         shortcutVolume:"音量加 / 减",
@@ -1574,11 +1534,11 @@
         modalCancel:"取消"
       },
       en: {
-        appTitle:"Pikachu Music Station",
-        authorLabel:"Author: Zhenchao Jin + GPT 5.1",
-        shortcutHint:"Shortcuts: Space Play/Pause · ←/→ Seek · ↑/↓ Volume · N/P Track · F Fav · L Lyrics FX",
-        shortcutPanelTitle:"Keyboard Shortcuts",
-        shortcutPanelDesc:"Control Pikachu Music Station more easily with your keyboard:",
+        appTitle:"Listen Together",
+        authorLabel:"4-Source Music Player",
+        shortcutHint:"Space Play/Pause · ←/→ Seek · ↑/↓ Vol · N/P Track · F Fav · L Lyrics",
+        shortcutPanelTitle:"Shortcuts",
+        shortcutPanelDesc:"Keyboard shortcuts for music playback:",
         shortcutPlayPause:"Play / Pause",
         shortcutSeek:"Seek backward / forward 5s",
         shortcutVolume:"Volume up / down",
@@ -2925,6 +2885,7 @@
 
       dom.shortcutToggleBtn.addEventListener('click',()=>{dom.shortcutModal.classList.add('show');});
       dom.shortcutCloseBtn.addEventListener('click',()=>{dom.shortcutModal.classList.remove('show');});
+      document.getElementById('shortcut-close-btn2').addEventListener('click',()=>{dom.shortcutModal.classList.remove('show');});
       dom.shortcutModal.addEventListener('click',e=>{if(e.target===dom.shortcutModal)dom.shortcutModal.classList.remove('show');});
 
       document.querySelectorAll('.playmode-btn').forEach(btn=>{
@@ -2979,13 +2940,32 @@
     function init(){
       setupDOM();
       try{const lg=localStorage.getItem('pikachu-music-lang'); if(lg)state.language=lg;}catch(e){}
-      setupParticles();
-      setupRipple();
       setupEvents();
       setLanguage(state.language);
       setPlaymodeUI();
       dom.audio.volume=parseFloat(dom.volumeSlider.value);
     }
+
+    // Theme toggle
+    (function(){var h=document.documentElement;
+    function gt(){return localStorage.getItem("mu_theme")||(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");}
+    function ap(t){if(t==="light")h.setAttribute("data-theme","light");else h.removeAttribute("data-theme");}
+    ap(gt());
+    var tb=document.getElementById("themeToggle");if(tb)tb.addEventListener("click",function(){var n=h.getAttribute("data-theme")==="light"?"dark":"light";ap(n);localStorage.setItem("mu_theme",n);});
+    matchMedia("(prefers-color-scheme:light)").addEventListener("change",function(e){if(!localStorage.getItem("mu_theme"))ap(e.matches?"light":"dark");});
+    })();
+    // Welcome modal
+    var welcomeShown=localStorage.getItem('mu_welcome');
+    if(!welcomeShown){
+      var wRoom=(new URLSearchParams(location.search)).get('room')||'lobby';
+      setTimeout(function(){document.getElementById('welcome-modal').classList.add('show');},600);
+      var shareLink=location.origin+location.pathname+'?room='+wRoom;
+      document.getElementById('shareUrl').textContent=shareLink;
+    }
+    function closeWelcome(){document.getElementById('welcome-modal').classList.remove('show');localStorage.setItem('mu_welcome','1');}
+    document.getElementById('welcome-ok').addEventListener('click',closeWelcome);
+    document.getElementById('welcome-close').addEventListener('click',closeWelcome);
+    document.getElementById('welcome-modal').addEventListener('click',function(e){if(e.target===this)closeWelcome();});
 
     document.addEventListener('DOMContentLoaded',init);
 
@@ -3024,18 +3004,32 @@
     });
     if(document.getElementById('chatRoomName'))document.getElementById('chatRoomName').textContent='#'+room;
 
+    // Share button
+    var shareBtn=document.getElementById('shareBtn');
+    if(shareBtn)shareBtn.addEventListener('click',function(){
+      var link=location.origin+location.pathname+'?room='+encodeURIComponent(room);
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(link).then(function(){
+          shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享链接';},2000);
+        }).catch(function(){prompt('复制链接：',link);});
+      }else{
+        var inp=document.createElement('textarea');inp.value=link;document.body.appendChild(inp);inp.select();document.execCommand('copy');document.body.removeChild(inp);
+        shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享链接';},2000);
+      }
+    });
+
     // Chat
     var chatMsgs=document.getElementById('chat-msgs'),msgCount=0,chatInit=false;
     function addChatMsg(who,txt,tm,isMe){
       if(!chatInit){chatMsgs.innerHTML='';chatInit=true;}
       var last=chatMsgs.querySelectorAll('.mu-msg');if(last.length&&last[last.length-1].textContent===txt&&msgCount>0)return;msgCount++;
       var d=document.createElement('div');d.style.cssText='max-width:88%;'+(isMe?'align-self:flex-end;':'align-self:flex-start;');
-      d.innerHTML='<div style="font-size:10px;color:#a1a6d0;">'+who+'</div><div style="padding:5px 10px;border-radius:10px;font-size:12px;line-height:1.4;word-break:break-word;'+(isMe?'background:#f5c84c;color:#231b08;':'background:rgba(255,255,255,.08);color:#f5f6ff;')+'">'+txt+'</div>';
+      d.innerHTML='<div style="font-size:10px;color:var(--text-sub);">'+who+'</div><div style="padding:5px 10px;border-radius:10px;font-size:12px;line-height:1.4;word-break:break-word;'+(isMe?'background:var(--accent);color:#fff;':'background:rgba(255,255,255,.08);color:var(--text-main);')+'">'+txt+'</div>';
       chatMsgs.appendChild(d);chatMsgs.scrollTop=chatMsgs.scrollHeight;
     }
     var chatCh=sb.channel('room-'+room+'-msgs');
     chatCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'room_id=eq.'+room},function(p){var m=p.new;addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);}).subscribe();
-    sb.from('messages').select('*').eq('room_id',room).order('created_at',{ascending:true}).limit(50).then(function(r){if(r.data)r.data.forEach(function(m){addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);});if(!r.data||!r.data.length)chatMsgs.innerHTML='<div style="text-align:center;color:#a1a6d0;padding:12px;">暂无消息，来聊聊天吧 🎵</div>';});
+    sb.from('messages').select('*').eq('room_id',room).order('created_at',{ascending:true}).limit(50).then(function(r){if(r.data)r.data.forEach(function(m){addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);});if(!r.data||!r.data.length)chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">暂无消息，来聊聊天吧 🎵</div>';});
 
     document.getElementById('btnSend').addEventListener('click',function(){var v=document.getElementById('chatInput').value.trim();if(!v)return;document.getElementById('chatInput').value='';sb.from('messages').insert({room_id:room,sender:sender,content:v}).then();});
     document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnSend').click();});

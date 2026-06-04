@@ -48,7 +48,31 @@
       "Bash(sed -i 's/overflow: auto;/overflow: hidden;/' music.html)",
       "Bash(sed -n '40,42p' music.html)",
       "Bash(sed -i 's/overflow-y: auto;/overflow-y: hidden;/' music.html)",
-      "Bash(sed -n '210,214p' music.html)"
+      "Bash(sed -n '210,214p' music.html)",
+      "Bash(sed -i 's/background: radial-gradient\\(circle at 30% 0, rgba\\(255,255,255,0.2\\), var\\(--accent\\)\\);/background: var\\(--accent\\);/' music.html)",
+      "Bash(sed -i 's/background: radial-gradient\\(circle at 30% 0, rgba\\(255,255,255,0.05\\), rgba\\(80,100,180,0.95\\)\\);/background: rgba\\(80,100,180,0.85\\);/' music.html)",
+      "Bash(sed -i 's/box-shadow: 0 7px 16px rgba\\(245,200,76,0.75\\);/box-shadow: var\\(--shadow-card\\);/' music.html)",
+      "Bash(sed -i 's/box-shadow: 0 6px 14px rgba\\(0,0,0,0.8\\);/box-shadow: var\\(--shadow-card\\);/' music.html)",
+      "Bash(sed -i 's/color: #231b08;/color: #fff;/' music.html)",
+      "Bash(sed -i 's/background: radial-gradient\\(circle at 30% 0, rgba\\(255,255,255,0.18\\), rgba\\(110,190,255,0.95\\)\\);/background: var\\(--accent\\);/' music.html)",
+      "Bash(sed -i 's/color: #02030a;/color: #fff;/' music.html)",
+      "Bash(sed -i 's/box-shadow: 0 0 10px rgba\\(110,190,255,0.95\\);/box-shadow: var\\(--shadow-card\\);/' music.html)",
+      "Bash(sed -i 's/background:radial-gradient\\(circle at 30% 0, rgba\\(255,255,255,0.2\\), var\\(--accent-red\\)\\);/background:var\\(--accent-red\\);/' music.html)",
+      "Bash(sed -i 's/background: radial-gradient\\(circle at 0 0, rgba\\(255,255,255,0.18\\), transparent 60%\\), radial-gradient\\(circle at 100% 100%, rgba\\(104,174,255,0.25\\), transparent 60%\\), rgba\\(4,6,20,0.98\\);/background: var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background: rgba\\(7,11,34,0.86\\);/background: var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background: rgba\\(26,32,80,0.95\\);/background: var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background: rgba\\(8,10,32,0.78\\);/background: var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background: rgba\\(26,32,80,0.9\\);/background: var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background: radial-gradient\\(circle at 30% 0, #34344b,#151628\\);/background: rgba\\(0,0,0,0.2\\);/' music.html)",
+      "Bash(sed -i 's/color:#f5f6ff;/color:var\\(--text-main\\);/' music.html)",
+      "Bash(sed -i 's/color:#a1a6d0/color:var\\(--text-sub\\)/g' music.html)",
+      "Bash(sed -i 's/color: var\\(--text-sub\\);/color: var\\(--text-sub\\);/g' music.html)",
+      "Bash(sed -i 's/box-shadow: 0 0 10px rgba\\(0,0,0,0.9\\);/box-shadow: var\\(--shadow-card\\);/' music.html)",
+      "Bash(sed -i \"s/background:#f5c84c;color:#231b08;/background:var\\(--accent\\);color:#fff;/\" music.html)",
+      "Bash(sed -i 's/color:#02040a;/color:var\\(--text-main\\);/' music.html)",
+      "Bash(sed -i 's/color:#02030a;/color:var\\(--text-main\\);/' music.html)",
+      "Bash(sed -i 's/background:rgba\\(7,11,34,0.86\\);/background:var\\(--panel-bg\\);/' music.html)",
+      "Bash(sed -i 's/background:rgba\\(4,6,20,0.82\\)/background:var\\(--panel-bg\\)/' music.html)"
     ]
   }
 }
