@@ -483,22 +483,21 @@ function doSearch(keyword) {
     var container = document.getElementById('searchResults');
     container.innerHTML = '<div class="search-loading">搜索中...</div>';
 
-    fetch(EDGE_FN + '?path=/search/get&params=type%3D1%26s%3D' + encodeURIComponent(keyword))
+    fetch(EDGE_FN + '?action=search&keyword=' + encodeURIComponent(keyword))
         .then(function(r) { return r.json(); })
         .then(function(data) {
-            var songs = (data.result && data.result.songs) ? data.result.songs : [];
+            var songs = data.songs || [];
             if (!songs.length) {
                 container.innerHTML = '<div class="search-empty">没有找到匹配歌曲</div>';
                 return;
             }
             container.innerHTML = '';
-            songs.slice(0, 10).forEach(function(s) {
-                var artists = (s.artists || []).map(function(a) { return a.name; }).join(' / ');
+            songs.slice(0, 12).forEach(function(s) {
                 var div = document.createElement('div');
                 div.className = 'search-item';
-                div.innerHTML = '<div class="info"><div class="name">' + s.name + '</div><div class="artist">' + artists + '</div></div><button class="add-btn">+ 添加</button>';
+                div.innerHTML = '<div class="info"><div class="name">' + s.name + '</div><div class="artist">' + s.artist + '</div></div><button class="add-btn">+ 添加</button>';
                 div.querySelector('.add-btn').addEventListener('click', function() {
-                    addToPlaylist(s.id, s.name, artists, this);
+                    addToPlaylist(s, this);
                 });
                 container.appendChild(div);
             });
@@ -509,27 +508,31 @@ function doSearch(keyword) {
         });
 }
 
-function addToPlaylist(songId, songName, artist, btn) {
+function addToPlaylist(song, btn) {
     if (btn) { btn.textContent = '...'; btn.disabled = true; }
-    var url = 'https://music.163.com/song/media/outer/url?id=' + songId + '.mp3';
-    sb.from('playlist').insert({
-        room_id: room,
-        song_id: String(songId),
-        song_name: songName,
-        artist: artist,
-        song_url: url
-    }).then(function(res) {
-        if (btn) { btn.textContent = '✓'; btn.style.background = '#22c55e'; btn.style.color = '#fff'; btn.style.borderColor = '#22c55e'; }
-        if (res.error) {
-            console.error('Insert error:', res.error);
+
+    // Get real playable URL from Migu
+    fetch(EDGE_FN + '?action=play&copyrightId=' + song.copyrightId + '&contentId=' + song.id + '&albumId=' + (song.albumId || '0'))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var realUrl = data.url || '';
+            return sb.from('playlist').insert({
+                room_id: room,
+                song_id: String(song.id),
+                song_name: song.name,
+                artist: song.artist,
+                song_url: realUrl,
+                copyright_id: String(song.copyrightId || ''),
+                album_id: String(song.albumId || '0')
+            }).then(function(res) {
+                if (res.error) throw res.error;
+                if (btn) { btn.textContent = '✓'; btn.style.background = '#22c55e'; btn.style.color = '#fff'; btn.style.borderColor = '#22c55e'; }
+            });
+        })
+        .catch(function(err) {
+            console.error(err);
             if (btn) { btn.textContent = '失败'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
-            alert('添加失败：' + res.error.message + '\n\n请在 Supabase SQL Editor 里运行：\ncreate policy "allow_all_playlist" on playlist for all using (true) with check (true);');
-        }
-    }).catch(function(err) {
-        console.error(err);
-        if (btn) { btn.textContent = '失败'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
-        alert('添加失败，请检查 Supabase RLS 策略是否已开启。');
-    });
+        });
 }
 
 // ---- Playlist ----
@@ -567,12 +570,40 @@ function playIndex(i) {
     var s = playlist[i];
     document.getElementById('playerTitle').textContent = s.song_name;
     document.getElementById('playerArtist').textContent = s.artist;
-    audio.src = s.song_url;
-    audio.play().catch(function() {
-        document.getElementById('playerTitle').textContent = '（加载失败）' + s.song_name;
-    });
     document.getElementById('btnPlay').textContent = '⏸';
     renderPlaylist();
+
+    var tryPlay = function(url) {
+        if (!url) {
+            document.getElementById('playerTitle').textContent = '（无版权）' + s.song_name;
+            return;
+        }
+        audio.src = url;
+        audio.play().catch(function() {
+            document.getElementById('playerTitle').textContent = '（播放失败）' + s.song_name;
+        });
+    };
+
+    // Already has a real URL (http/https, not empty)
+    if (s.song_url && (s.song_url.indexOf('http') === 0)) {
+        tryPlay(s.song_url);
+        return;
+    }
+
+    // Fetch real URL on demand
+    var cid = s.copyright_id || s.song_id;
+    var aid = s.album_id || '0';
+    fetch(EDGE_FN + '?action=play&copyrightId=' + cid + '&contentId=' + s.song_id + '&albumId=' + aid)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.url) {
+                s.song_url = data.url; // cache
+                tryPlay(data.url);
+            } else {
+                tryPlay(s.song_url);
+            }
+        })
+        .catch(function() { tryPlay(s.song_url); });
 }
 
 // ---- Player Controls ----
