@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>双人听歌 · 音乐站</title>
+<link rel="icon" type="image/x-icon" href="static/assets/favicon.ico">
+<link type="text/css" href="static/css/main.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+.mu-page{min-height:100vh;padding:calc(var(--nav-height) + 16px) 20px 40px;}
+.mu-layout{display:flex;gap:16px;max-width:1200px;margin:0 auto;height:calc(100vh - var(--nav-height) - 80px);min-height:600px;}
+.mu-chat{width:260px;flex-shrink:0;background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);display:flex;flex-direction:column;overflow:hidden;}
+.mu-main{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;overflow-y:auto;padding-right:4px;}
+.mu-chat-hdr{padding:12px 16px;font-size:13px;font-weight:600;color:var(--text-primary);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px;}
+.mu-chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;}
+.mu-chat-input{padding:10px 12px;border-top:1px solid var(--border-light);display:flex;gap:6px;}
+.mu-chat-input input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:20px;font-size:13px;font-family:var(--font-system);background:var(--bg-primary);color:var(--text-primary);outline:none;}
+.mu-chat-input input:focus{border-color:var(--accent);}
+.mu-chat-send{padding:8px 16px;border-radius:20px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.mu-chat-send:hover{background:var(--accent-hover);}
+
+.msg{display:flex;flex-direction:column;max-width:90%;}
+.msg.me{align-self:flex-end;}
+.msg .sender{font-size:10px;color:var(--text-tertiary);}
+.msg .bub{padding:7px 12px;border-radius:14px;font-size:13px;line-height:1.45;word-break:break-word;}
+.msg.me .bub{background:var(--accent);color:#fff;border-bottom-right-radius:4px;}
+.msg.you .bub{background:var(--bg-secondary);color:var(--text-primary);border-bottom-left-radius:4px;align-self:flex-start;}
+
+.mu-src-row{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;align-items:center;}
+.mu-src-chip{padding:4px 10px;border-radius:14px;border:1px solid var(--border);cursor:pointer;user-select:none;display:flex;align-items:center;gap:4px;font-size:11px;}
+.mu-src-chip input{accent-color:var(--accent);cursor:pointer;}
+.mu-dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+.mu-dot.migu{background:#ff9800}.mu-dot.ne{background:#e53935}.mu-dot.qq{background:#26c6da}.mu-dot.kw{background:#ab47bc}
+
+.mu-sbox{display:flex;gap:8px;align-items:center;}
+.mu-sbox input{flex:1;padding:9px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-system);background:var(--bg-primary);color:var(--text-primary);outline:none;}
+.mu-sbox input:focus{border-color:var(--accent);}
+.mu-sbox button{padding:9px 18px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.mu-sbox button:hover{background:var(--accent-hover);}
+.mu-limit{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-tertiary);}
+.mu-limit select{border-radius:14px;border:1px solid var(--border);padding:3px 8px;font-size:11px;background:var(--bg-primary);color:var(--text-primary);}
+
+.mu-results{flex:1;min-height:0;overflow-y:auto;}
+.mu-res-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light);cursor:pointer;}
+.mu-res-item:hover{opacity:.8;}
+.mu-res-item .ti{font-size:14px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mu-res-item .ar{font-size:12px;color:var(--text-tertiary);}
+.mu-res-item .src{font-size:10px;padding:1px 6px;border-radius:10px;border:1px solid var(--border-light);margin-left:8px;}
+
+.mu-player{border-top:1px solid var(--border-light);padding:12px 0;flex-shrink:0;}
+.mu-pl-info{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.mu-pl-info .ti{font-size:15px;font-weight:600;color:var(--text-primary);}
+.mu-pl-info .ar{font-size:12px;color:var(--text-tertiary);}
+.mu-pl-info .tag{font-size:10px;padding:2px 6px;border-radius:10px;border:1px solid var(--border-light);}
+.mu-pl-ctrl{display:flex;align-items:center;gap:10px;}
+.mu-pl-ctrl button{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-primary);padding:2px 6px;}
+.mu-pl-ctrl button:hover{color:var(--accent);}
+
+.mu-lyr{max-height:160px;overflow-y:auto;text-align:center;font-size:13px;color:var(--text-tertiary);line-height:2;padding:8px 0;margin-top:6px;border-top:1px solid var(--border-light);}
+.mu-lyr .ln{opacity:.45;transition:.2s;}
+.mu-lyr .ln.act{opacity:1;color:var(--accent);font-weight:600;font-size:14px;}
+
+.mu-tabs{display:flex;gap:0;border-radius:14px;border:1px solid var(--border);overflow:hidden;font-size:11px;}
+.mu-tab{padding:5px 14px;cursor:pointer;color:var(--text-tertiary);border-right:1px solid var(--border);}
+.mu-tab:last-child{border-right:none;}
+.mu-tab.act{background:var(--accent);color:#fff;}
+
+.mu-back{display:inline-block;margin-top:16px;color:var(--text-tertiary);font-size:14px;text-decoration:none;}
+.mu-back:hover{color:var(--accent);}
+
+@media(max-width:860px){
+  .mu-layout{flex-direction:column;height:auto;}
+  .mu-chat{width:100%;max-height:35vh;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">Li Zhijiang</a>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:12px;color:var(--text-tertiary);" id="roomLbl"></span>
+      <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 主页</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="切换明暗">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main class="mu-page">
+  <div class="mu-layout">
+    <!-- Chat -->
+    <div class="mu-chat">
+      <div class="mu-chat-hdr"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;"></span> 房间聊天</div>
+      <div class="mu-chat-msgs" id="chatMsgs"><div style="text-align:center;color:var(--text-tertiary);font-size:12px;padding:16px;">欢迎 🎵</div></div>
+      <div class="mu-chat-input"><input id="chatInput" placeholder="说点什么..." maxlength="200"><button class="mu-chat-send" id="btnSend">发送</button></div>
+    </div>
+    <!-- Main -->
+    <div class="mu-main">
+      <div class="mu-src-row">
+        <label class="mu-src-chip"><span class="mu-dot migu"></span><input type="checkbox" data-src="migu" checked>咪咕</label>
+        <label class="mu-src-chip"><span class="mu-dot ne"></span><input type="checkbox" data-src="netease" checked>网易云</label>
+        <label class="mu-src-chip"><span class="mu-dot qq"></span><input type="checkbox" data-src="qq" checked>QQ</label>
+        <label class="mu-src-chip"><span class="mu-dot kw"></span><input type="checkbox" data-src="kuwo" checked>酷我</label>
+      </div>
+      <div class="mu-sbox">
+        <input id="sInp" placeholder="搜歌名/歌手，回车搜索…">
+        <button id="sBtn">搜索</button>
+      </div>
+      <div class="mu-limit">
+        <span>每源</span><select id="limitSel"><option>5</option><option selected>10</option><option>20</option></select><span>首</span>
+        <button id="loadMore" style="margin-left:8px;padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:var(--bg-primary);color:var(--text-secondary);font-size:11px;cursor:pointer;">加载更多</button>
+        <span style="flex:1;"></span><span id="sStat">尚未搜索</span>
+      </div>
+      <div class="mu-results" id="resList"></div>
+      <div class="mu-tabs">
+        <div class="mu-tab act" data-tab="results">搜索结果</div>
+        <div class="mu-tab" data-tab="favorites">收藏</div>
+        <div class="mu-tab" data-tab="playlists">歌单</div>
+      </div>
+      <div class="mu-player">
+        <div class="mu-pl-info">
+          <span class="ti" id="plTitle">选择一首歌曲</span>
+          <span class="tag" id="plTag" style="display:none;"></span>
+          <span class="ar" id="plArtist"></span>
+        </div>
+        <div class="mu-pl-ctrl">
+          <button id="btnPrev">⏮</button><button id="btnPlay">▶</button><button id="btnNext">⏭</button>
+          <button id="btnFav" style="font-size:14px;">❤</button>
+          <span style="flex:1;"></span>
+          <span id="timeDisp" style="font-size:11px;color:var(--text-tertiary);">--:-- / --:--</span>
+          <span>🔊</span><input type="range" id="volSld" min="0" max="1" step="0.01" value="0.8" style="width:70px;accent-color:var(--accent);">
+        </div>
+        <div class="mu-lyr" id="lyrBox"><div style="color:var(--text-tertiary);">暂无歌词</div></div>
+      </div>
+    </div>
+  </div>
+  <audio id="audio" preload="metadata"></audio>
+</main>
+
+<script>
+(function(){
+// ===== Config =====
+var SUPABASE_URL='https://qudyifwqcdququqndomb.supabase.co';
+var SUPABASE_KEY='sb_publishable_vn5kUwJrK0rMLqkUtjAmHA_YPOWlHm-';
+var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// ===== Room =====
+var params=new URLSearchParams(location.search);
+var room=params.get('room')||'default';
+var sender=localStorage.getItem('mu_nick')||('听友'+Math.floor(Math.random()*900+100));
+if(!localStorage.getItem('mu_nick'))localStorage.setItem('mu_nick',sender);
+document.getElementById('roomLbl').textContent=sender+' @ '+room;
+
+// ===== State =====
+var st={
+  kw:'',results:[],tMap:new Map(),favs:[],playlists:[],
+  cur:null,ctx:{type:'results',index:-1,plId:null},
+  mode:'list',lyr:[],lyrIdx:-1,searching:false,noMore:false,
+  limit:10,curLimit:{migu:10,netease:10,qq:10,kuwo:10},
+  page:{migu:1,netease:1,qq:1,kuwo:1},
+  srcs:{migu:true,netease:true,qq:true,kuwo:true}
+};
+var audio=document.getElementById('audio'),audioLvl=0;
+
+function q(id){return document.getElementById(id);}
+function toast(m){var t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:20px;background:rgba(0,0,0,.85);color:#fff;font-size:12px;z-index:9999;';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2000);}
+function fmt(sec){if(!isFinite(sec)||sec<0)sec=0;var m=Math.floor(sec/60),s=Math.floor(sec%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function qTag(url){if(!url)return null;var e=url.split('?')[0].toLowerCase().match(/\.([a-z0-9]+)$/);return e&&['flac','wav','ape','alac'].includes(e[1])?'LOSSLESS':'320K';}
+
+function interleave(){
+  var g={migu:[],netease:[],qq:[],kuwo:[]};
+  st.results.forEach(function(t){if(g[t.source])g[t.source].push(t);});
+  ['migu','netease','qq','kuwo'].forEach(function(k){g[k].sort(function(a,b){return(a.di||0)-(b.di||0);});});
+  var o=[],idx={migu:0,netease:0,qq:0,kuwo:0},ad=true;
+  while(ad){ad=false;['migu','netease','qq','kuwo'].forEach(function(s){var a=g[s],i=idx[s];if(a&&i<a.length){o.push(a[i]);idx[s]++;ad=true;}});}
+  return o;
+}
+
+// ===== Search APIs =====
+async function sMigu(kw,lim){
+  var u='https://api.xcvts.cn/api/music/migu?gm='+encodeURIComponent(kw)+'&n=&num='+lim+'&type=json',ad=0;
+  try{var r=await fetch(u),j=await r.json();if(j.code!==200||!Array.isArray(j.data))return 0;
+  j.data.forEach(function(it){var uid='migu-'+kw+'-'+it.n+'-'+it.title+'-'+it.singer;if(st.tMap.has(uid))return;
+    var t={uid:uid,source:'migu',di:it.n||0,kw:kw,title:it.title||'',artist:it.singer||'',cover:null,audioUrl:null,lrc:null,loaded:false,ql:null};
+    st.tMap.set(uid,t);st.results.push(t);ad++;});}catch(e){console.error('migu',e);}
+  return ad;
+}
+async function sNetease(kw,page,num){
+  var u='https://api.vkeys.cn/v2/music/netease?word='+encodeURIComponent(kw)+'&page='+page+'&num='+num,ad=0;
+  try{var r=await fetch(u),j=await r.json();if(j.code!==200||!Array.isArray(j.data))return 0;
+  j.data.forEach(function(it,idx){var sid=it.id,uid='ne-'+sid;if(st.tMap.has(uid))return;
+    var t={uid:uid,source:'netease',di:(page-1)*num+idx+1,songid:sid,title:it.song||'',artist:it.singer||'',cover:it.cover||null,audioUrl:null,lrc:null,loaded:false,ql:null};
+    st.tMap.set(uid,t);st.results.push(t);ad++;});}catch(e){console.error('ne',e);}
+  return ad;
+}
+async function sQQ(kw,lim){
+  var u='https://tang.api.s01s.cn/music_open_api.php?msg='+encodeURIComponent(kw)+'&type=json',ad=0;
+  try{var r=await fetch(u),j=await r.json(),d=Array.isArray(j)?j:(Array.isArray(j&&j.data)?j.data:[]);if(!d.length)return 0;
+  d.slice(0,lim).forEach(function(it,idx){var mid=it.song_mid;if(!mid)return;var uid='qq-'+mid;if(st.tMap.has(uid))return;
+    var t={uid:uid,source:'qq',di:idx+1,msid:mid,songid:mid,title:it.song_title||'',artist:it.singer_name||'',cover:null,audioUrl:null,lrc:null,loaded:false,ql:null};
+    st.tMap.set(uid,t);st.results.push(t);ad++;});}catch(e){console.error('qq',e);}
+  return ad;
+}
+async function sKuwo(kw,lim){
+  var u='https://kw-api.cenguigui.cn/?name='+encodeURIComponent(kw)+'&page=1&limit='+lim,ad=0;
+  try{var r=await fetch(u),j=await r.json();if(j.code!==200||!Array.isArray(j.data))return 0;
+  j.data.forEach(function(it,idx){var uid='kw-'+it.rid;if(st.tMap.has(uid))return;
+    var t={uid:uid,source:'kuwo',di:idx+1,songid:it.rid,title:it.name||'',artist:it.artist||'',cover:it.pic||null,audioUrl:null,lrc:null,loaded:false,ql:null};
+    st.tMap.set(uid,t);st.results.push(t);ad++;});}catch(e){console.error('kw',e);}
+  return ad;
+}
+
+// ===== Aggregate =====
+async function searchAll(reset){
+  if(!st.kw){toast('请输入搜索关键词');return;}
+  var en=Object.keys(st.srcs).filter(function(k){return st.srcs[k];});if(!en.length)return;
+  st.searching=true;q('sStat').textContent='搜索中…';
+  if(reset){['migu','netease','qq','kuwo'].forEach(function(k){st.curLimit[k]=st.limit;st.page[k]=1;});st.results=[];st.tMap.clear();st.noMore=false;}
+  var kw=st.kw,tasks=[];
+  if(st.srcs.migu)tasks.push(sMigu(kw,st.curLimit.migu));
+  if(st.srcs.netease)tasks.push(sNetease(kw,st.page.netease,st.limit));
+  if(st.srcs.qq)tasks.push(sQQ(kw,st.curLimit.qq));
+  if(st.srcs.kuwo)tasks.push(sKuwo(kw,st.curLimit.kuwo));
+  try{var rr=await Promise.all(tasks);var ad=rr.reduce(function(a,b){return a+(b||0);},0);}catch(e){console.error(e);}
+  st.searching=false;q('sStat').textContent='共 '+st.results.length+' 首';renderList();renderPL();
+  if(!st.cur&&st.results.length)playFrom('results',0);
+  if(!reset&&ad===0){st.noMore=true;toast('没有更多了');}
+}
+
+// ===== Detail APIs =====
+async function detMigu(t){
+  var u='https://api.xcvts.cn/api/music/migu?gm='+encodeURIComponent(t.kw)+'&n='+(t.di||1)+'&num='+(st.curLimit.migu||20)+'&type=json';
+  var r=await fetch(u),j=await r.json();if(j.code!==200)throw Error('migu');
+  t.title=j.title||t.title;t.artist=j.singer||t.artist;t.cover=j.cover||t.cover;t.audioUrl=j.music_url||t.audioUrl;t.lrcUrl=j.lrc_url||null;t.loaded=true;
+  if(t.audioUrl)t.ql=qTag(t.audioUrl);
+  if(t.lrcUrl&&!t.lrc)try{var lr=await fetch(t.lrcUrl);t.lrc=await lr.text();}catch(e){}
+}
+async function detNetease(t){
+  var mu='https://api.qijieya.cn/meting/?type=song&id='+t.songid,r=await fetch(mu),j=await r.json();
+  if(!Array.isArray(j)||!j.length)throw Error('ne');
+  var d=j[0];t.title=d.name||t.title;t.artist=d.artist||t.artist;t.audioUrl=d.url||t.audioUrl;t.cover=d.pic||t.cover;
+  if(t.audioUrl)t.ql=qTag(t.audioUrl);
+  try{var lr=await fetch('https://api.vkeys.cn/v2/music/netease/lyric?id='+t.songid),lj=await lr.json();if(lj&&lj.code===200&&lj.data)t.lrc=lj.data.lrc||t.lrc;}catch(e){}
+  t.loaded=true;
+}
+async function detQQ(t){
+  var msg=t.kw||t.title+' '+t.artist,mid=t.msid||t.songid;if(!mid)return;
+  var u='https://tang.api.s01s.cn/music_open_api.php?msg='+encodeURIComponent(msg)+'&type=json&mid='+mid;
+  var r=await fetch(u),d=await r.json();if(!d||!d.song_mid)return;
+  t.title=d.song_title||t.title;t.artist=d.singer_name||t.artist;t.cover=d.album_pic||t.cover;
+  t.audioUrl=d.song_play_url_sq||d.song_play_url_pq||d.song_play_url_hq||d.song_play_url||t.audioUrl;
+  t.lrc=d.song_lyric||d.lyric||t.lrc;t.ql=qTag(t.audioUrl);t.loaded=true;
+}
+async function detKuwo(t){
+  var u='https://kw-api.cenguigui.cn/?id='+t.songid+'&type=song&level=zp&format=json',r=await fetch(u),j=await r.json();
+  if(!j||j.code!==200||!j.data)throw Error('kw');
+  var d=j.data;t.title=d.name||t.title;t.artist=d.artist||t.artist;t.cover=d.pic||t.cover;t.audioUrl=d.url||t.audioUrl;t.lrc=d.lyric||t.lrc;
+  if(t.audioUrl)t.ql=qTag(t.audioUrl);t.loaded=true;
+}
+async function ensureDetail(t){
+  if(t.loaded&&t.audioUrl)return;
+  try{if(t.source==='migu')await detMigu(t);else if(t.source==='netease')await detNetease(t);else if(t.source==='kuwo')await detKuwo(t);else await detQQ(t);}catch(e){console.error(e);}
+}
+
+// ===== Lyrics =====
+function parseLRC(txt){
+  if(!txt)return[];var lines=txt.split(/\r?\n/),rg=/\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/,out=[];
+  lines.forEach(function(ln){var m=rg.exec(ln);if(!m)return;var t=parseInt(m[1])*60+parseInt(m[2])+(m[3]?parseInt(m[3].padEnd(3,'0'))/1000:0),tx=ln.replace(rg,'').trim();if(tx)out.push({time:t,text:tx});});
+  return out.sort(function(a,b){return a.time-b.time;});
+}
+function renderLyrics(){
+  var b=q('lyrBox');b.innerHTML='';st.lyrIdx=-1;
+  if(!st.lyr.length){b.innerHTML='<div style="color:var(--text-tertiary);">暂无歌词</div>';return;}
+  st.lyr.forEach(function(ln,i){var d=document.createElement('div');d.className='ln';d.dataset.idx=i;d.textContent=ln.text;b.appendChild(d);});
+}
+function updLyr(time){
+  if(!st.lyr.length)return;var idx=st.lyrIdx,lines=st.lyr;
+  if(idx<0||time<lines[idx].time||(idx+1<lines.length&&time>=lines[idx+1].time))idx=lines.findIndex(function(l,i){var n=lines[i+1];return n?time>=l.time-0.05&&time<n.time-0.05:time>=l.time-0.05;});
+  if(idx>=0&&idx!==st.lyrIdx){st.lyrIdx=idx;q('lyrBox').querySelectorAll('.ln.act').forEach(function(el){el.classList.remove('act');});var a=q('lyrBox').querySelector('.ln[data-idx="'+idx+'"]');if(a){a.classList.add('act');a.scrollIntoView({block:'center',behavior:'smooth'});}}
+}
+
+// ===== Play =====
+function isFav(t){return t?st.favs.some(function(x){return x.uid===t.uid;}):false;}
+async function playTrack(t){
+  if(!t)return;st.cur=t;var apply=function(){
+    q('plTitle').textContent=t.title||'';q('plArtist').textContent=t.artist||'';
+    var tg=q('plTag');tg.style.display='inline-block';tg.textContent=(t.ql||'')+' '+(t.source==='migu'?'咪咕':t.source==='netease'?'网易云':t.source==='qq'?'QQ':'酷我');
+  };apply();st.lyr=t.lrc?parseLRC(t.lrc):[];renderLyrics();q('btnFav').style.color=isFav(t)?'#ef4444':'';q('btnPlay').textContent='⏸';
+  try{await ensureDetail(t);apply();st.lyr=t.lrc?parseLRC(t.lrc):[];renderLyrics();if(!t.audioUrl){toast('播放失败');return;}audio.src=t.audioUrl;await audio.play();}catch(e){console.error(e);toast('播放失败');}
+  renderList();renderPL();
+}
+function getList(){
+  if(st.ctx.type==='results'){var l=interleave();return l.length?l:[].concat(st.results);}
+  if(st.ctx.type==='favorites')return st.favs;
+  if(st.ctx.type==='playlist'){var pl=st.playlists.find(function(p){return p.id===st.ctx.plId;});return pl?pl.tracks:[];}
+  return interleave();
+}
+function playFrom(type,idx,plId){
+  var list;if(type==='results')list=getList();else if(type==='favorites')list=st.favs;else{var pl=st.playlists.find(function(p){return p.id===plId;});list=pl?pl.tracks:[];}
+  if(!list.length)return;if(idx<0)idx=list.length-1;if(idx>=list.length)idx=0;
+  st.ctx={type:type,index:idx,plId:plId||null};playTrack(list[idx]);
+}
+function playNext(dir){
+  var list=getList();if(!list.length)return;var idx=st.ctx.index||0;
+  if(st.mode==='single'){audio.currentTime=0;audio.play().catch(function(){});return;}
+  if(st.mode==='shuffle'&&list.length>1){var ni;do{ni=Math.floor(Math.random()*list.length);}while(ni===idx);idx=ni;}
+  else idx=(idx+(dir==='prev'?-1:1)+list.length)%list.length;
+  playFrom(st.ctx.type,idx,st.ctx.plId);
+}
+
+// ===== Render =====
+function renderList(){
+  var w=q('resList'),out=interleave();w.innerHTML='';
+  out.forEach(function(t,i){
+    var d=document.createElement('div');d.className='mu-res-item';
+    d.innerHTML='<div><div class="ti">'+t.title+'</div><div class="ar">'+t.artist+' <span class="src">'+t.source+'</span></div></div>';
+    d.addEventListener('click',function(){var v=interleave(),idx=v.findIndex(function(x){return x.uid===t.uid;});playFrom('results',idx);});
+    w.appendChild(d);
+  });
+}
+function renderPL(){
+  // Simplified: only render result list in its section. Full playlist tabs handled by renderPLFull.
+}
+function renderPLFull(){
+  var tab=document.querySelector('.mu-tab.act');if(!tab)return;
+  var tn=tab.dataset.tab,tgt=q('resList'),list=[];
+  if(tn==='results'){list=interleave();if(!list.length&&st.results.length)list=[].concat(st.results);}
+  else if(tn==='favorites')list=st.favs;
+  tgt.innerHTML='';
+  list.forEach(function(t,i){
+    var d=document.createElement('div');d.className='mu-res-item';
+    if(st.cur&&st.cur.uid===t.uid)d.style.borderLeft='3px solid var(--accent)';
+    d.innerHTML='<div><div class="ti">'+(i+1)+'. '+t.title+'</div><div class="ar">'+t.artist+' <span class="src">'+t.source+'</span></div></div>';
+    d.addEventListener('click',function(){playFrom(tn,i,tn==='playlist'?st.ctx.plId:null);});
+    tgt.appendChild(d);
+  });
+}
+
+// ===== Chat =====
+var cm=document.getElementById('chatMsgs'),mc=0;
+function addMsg(who,txt,tm,isMe){
+  var last=cm.querySelectorAll('.msg');if(last.length){var lb=last[last.length-1].querySelector('.bub');if(lb&&lb.textContent===txt&&mc>0)return;}mc++;
+  var d=document.createElement('div');d.className='msg '+(isMe?'me':'you');
+  var tt=tm?new Date(tm).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):'';
+  d.innerHTML='<div class="sender">'+who+'</div><div class="bub">'+txt+'</div><div style="font-size:9px;color:var(--text-tertiary);">'+tt+'</div>';
+  cm.appendChild(d);cm.scrollTop=cm.scrollHeight;
+}
+document.getElementById('btnSend').addEventListener('click',function(){
+  var v=q('chatInput').value.trim();if(!v)return;q('chatInput').value='';
+  sb.from('messages').insert({room_id:room,sender:sender,content:v}).then();
+});
+q('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnSend').click();});
+// Realtime
+sb.channel('mu-'+room+'-chat').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'room_id=eq.'+room},function(p){var m=p.new;addMsg(m.sender,m.content,m.created_at,m.sender===sender);}).subscribe();
+sb.from('messages').select('*').eq('room_id',room).order('created_at',{ascending:true}).limit(50).then(function(r){if(r.data)r.data.forEach(function(m){addMsg(m.sender,m.content,m.created_at,m.sender===sender);});});
+
+// ===== Events =====
+q('sBtn').addEventListener('click',function(){st.kw=q('sInp').value.trim();searchAll(true);});
+q('sInp').addEventListener('keydown',function(e){if(e.key==='Enter'){st.kw=this.value.trim();searchAll(true);}});
+document.querySelectorAll('.mu-src-chip input').forEach(function(cb){cb.addEventListener('change',function(){st.srcs[cb.dataset.src]=cb.checked;});});
+q('limitSel').addEventListener('change',function(){st.limit=parseInt(this.value)||10;});
+q('loadMore').addEventListener('click',function(){var en=Object.keys(st.srcs).filter(function(k){return st.srcs[k];});en.forEach(function(s){if(s==='netease')st.page.netease++;else st.curLimit[s]+=st.limit;});st.noMore=false;searchAll(false);});
+
+q('btnPlay').addEventListener('click',function(){if(!audio.src)return;if(audio.paused){audio.play();this.textContent='⏸';}else{audio.pause();this.textContent='▶';}});
+q('btnPrev').addEventListener('click',function(){playNext('prev');});
+q('btnNext').addEventListener('click',function(){playNext('next');});
+q('btnFav').addEventListener('click',function(){var t=st.cur;if(!t)return;var i=st.favs.findIndex(function(x){return x.uid===t.uid;});
+  if(i>=0){st.favs.splice(i,1);toast('已取消收藏');q('btnFav').style.color='';}else{st.favs.push(t);toast('已收藏');q('btnFav').style.color='#ef4444';}
+  renderPLFull();});
+
+document.querySelectorAll('.mu-tab').forEach(function(tb){tb.addEventListener('click',function(){
+  document.querySelectorAll('.mu-tab').forEach(function(el){el.classList.toggle('act',el===tb);});renderPLFull();});});
+
+audio.addEventListener('timeupdate',function(){var c=audio.currentTime||0,d=audio.duration||0;q('timeDisp').textContent=fmt(c)+' / '+fmt(d||0);updLyr(c);});
+audio.addEventListener('ended',function(){playNext('next');});
+q('volSld').addEventListener('input',function(){audio.volume=parseFloat(this.value);});
+audio.volume=0.8;
+
+// Keyboard
+document.addEventListener('keydown',function(e){var tg=document.activeElement.tagName.toLowerCase(),ty=tg==='input'||tg==='textarea';if(ty)return;
+  if(e.code==='Space'){e.preventDefault();if(!audio.src)return;audio.paused?audio.play():audio.pause();q('btnPlay').textContent=audio.paused?'▶':'⏸';}
+  if(e.key==='ArrowRight')audio.currentTime=(audio.currentTime||0)+5;
+  if(e.key==='ArrowLeft')audio.currentTime=Math.max(0,(audio.currentTime||0)-5);
+  if(e.key==='ArrowUp'){audio.volume=Math.min(1,(audio.volume||0)+0.05);q('volSld').value=audio.volume;}
+  if(e.key==='ArrowDown'){audio.volume=Math.max(0,(audio.volume||0)-0.05);q('volSld').value=audio.volume;}
+  if(e.key==='n'||e.key==='N')playNext('next');
+  if(e.key==='p'||e.key==='P')playNext('prev');
+  if(e.key==='f'||e.key==='F')q('btnFav').click();
+});
+
+// Theme
+(function(){var h=document.documentElement,tg=document.getElementById('themeToggle');function gt(){var s=localStorage.getItem('theme');return s||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');}function ap(t){if(t==='light')h.setAttribute('data-theme','light');else h.removeAttribute('data-theme');}ap(gt());if(tg)tg.addEventListener('click',function(){var n=h.getAttribute('data-theme')==='light'?'dark':'light';ap(n);localStorage.setItem('theme',n);});var nv=document.getElementById('mainNav');addEventListener('scroll',function(){nv.classList.toggle('scrolled',scrollY>10);},{passive:true});})();
+})();
+</script>
+</body>
+</html>

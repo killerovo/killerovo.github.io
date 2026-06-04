@@ -26,8 +26,21 @@ Deno.serve(async (req: Request) => {
     let result: unknown;
 
     if (action === "search" && keyword) {
-      // Search via Migu Music API
+      // Search via Migu Music API — show ALL songs, filter playable ones later
       const searchUrl = `https://c.musicapp.migu.cn/v1.0/content/search_all.do?text=${encodeURIComponent(keyword)}&pageNo=1&pageSize=20&isCopyright=1&sort=1&searchSwitch=%7B%22song%22%3A1%2C%22album%22%3A0%2C%22singer%22%3A0%2C%22tagSong%22%3A1%2C%22mvSong%22%3A0%2C%22bestShow%22%3A1%7D`;
+      const resp = await fetch(searchUrl, {
+        headers: { "User-Agent": UA, "Referer": "https://m.music.migu.cn/" },
+      });
+      const data = await resp.json();
+      const songs = (data?.songResultData?.result || []).map((s: Record<string, unknown>) => ({
+        id: s.contentId,
+        name: s.name,
+        artist: (s.singers as Array<{name: string}>)?.[0]?.name || "未知歌手",
+        album: (s.albums as Array<{name: string}>)?.[0]?.name || "",
+        copyrightId: s.copyrightId,
+        albumId: (s.albums as Array<{id: string}>)?.[0]?.id || "0",
+      }));
+      result = { songs };
       const resp = await fetch(searchUrl, {
         headers: { "User-Agent": UA, "Referer": "https://m.music.migu.cn/" },
       });
