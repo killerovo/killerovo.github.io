@@ -8,7 +8,7 @@ DFS、Dijkstra、A*、Greedy——四种算法在迷宫中寻找出路。
 
 海量影视免费在线观看，追剧不迷路。
 
-[打开](https://www.4kmovie.top/)
+[打开](https://www.4kmovie.site/)
 
 ## 乐海拾贝
 

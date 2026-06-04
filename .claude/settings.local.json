@@ -72,7 +72,8 @@
       "Bash(sed -i 's/color:#02040a;/color:var\\(--text-main\\);/' music.html)",
       "Bash(sed -i 's/color:#02030a;/color:var\\(--text-main\\);/' music.html)",
       "Bash(sed -i 's/background:rgba\\(7,11,34,0.86\\);/background:var\\(--panel-bg\\);/' music.html)",
-      "Bash(sed -i 's/background:rgba\\(4,6,20,0.82\\)/background:var\\(--panel-bg\\)/' music.html)"
+      "Bash(sed -i 's/background:rgba\\(4,6,20,0.82\\)/background:var\\(--panel-bg\\)/' music.html)",
+      "Bash(findstr /N \"^- \\\\|^+ \")"
     ]
   }
 }

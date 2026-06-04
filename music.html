@@ -208,7 +208,7 @@
     .layout {
       flex: 1;
       display: grid;
-      grid-template-columns: 1fr 1.5fr 1fr;
+      grid-template-columns: 0.85fr 2.3fr 0.85fr;
       grid-template-rows: 1fr auto;
       grid-template-areas: "search player playlist" "chat chat chat";
       gap: 10px;
@@ -425,7 +425,8 @@
     .source-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
       font-size: 11px;
     }
     .source-chip {
@@ -497,7 +498,7 @@
       align-items: center;
       padding: 6px 8px;
       margin-bottom: 4px;
-      border-radius: 10px;
+      border-radius: 14px;
       background: var(--panel-bg);
       border: 1px solid rgba(255,255,255,0.05);
       font-size: 11px;
@@ -505,7 +506,7 @@
       transition: background .15s, transform .1s, box-shadow .1s;
     }
     .search-mini-item:hover {
-      background: var(--panel-bg);
+      background: rgba(255,255,255,0.06);
       box-shadow: 0 8px 18px rgba(0,0,0,0.85);
       transform: translateY(-1px);
     }
@@ -778,33 +779,119 @@
       overflow-x: hidden;
       position: relative;
     }
+    /* ===== 浅色模式全面修正 ===== */
+    /* --- 歌词 --- */
     [data-theme="light"] .lyrics-container { background: rgba(0,0,0,0.04); }
-    [data-theme="light"] .input { color: var(--text-main); background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .lyrics-line { color: rgba(30,30,35,0.82); }
+    [data-theme="light"] .lyrics-line.active {
+      color: transparent;
+      background: linear-gradient(120deg, #c0392b, #8e44ad, #2980b9);
+      -webkit-background-clip: text; background-clip: text;
+      text-shadow: 0 0 8px rgba(180,100,200,0.5), 0 0 16px rgba(100,150,220,0.6);
+    }
+    [data-theme="light"] .lyrics-title-line { color: rgba(30,30,35,0.7); }
+    [data-theme="light"] .lyrics-empty { color: rgba(30,30,35,0.6); }
+
+    /* --- 面板通用 --- */
     [data-theme="light"] .panel { background: rgba(255,255,255,0.94); }
     [data-theme="light"] header { background: rgba(255,255,255,0.94); }
     [data-theme="light"] .app { background: var(--bg-dark); }
     [data-theme="light"] .modal { background: rgba(255,255,255,0.97); color: var(--text-main); }
+    [data-theme="light"] .modal input {
+      background: rgba(0,0,0,0.05);
+      border-color: rgba(0,0,0,0.15);
+      color: #1a1a1a;
+    }
+    [data-theme="light"] .modal-desc { color: #555; }
+    [data-theme="light"] .modal-close-btn { color: #555; }
+    [data-theme="light"] .input { color: var(--text-main); background: rgba(0,0,0,0.04); }
+
+    /* --- 搜索栏 --- */
     [data-theme="light"] .search-row { background: rgba(255,255,255,0.9); }
     [data-theme="light"] .search-row .input { background: transparent; }
     [data-theme="light"] .source-chip { background: rgba(0,0,0,0.04); }
-    [data-theme="light"] .search-mini-item { color: var(--text-main); }
-    [data-theme="light"] .track-item { color: var(--text-main); }
-    [data-theme="light"] .playlist-bar { background: rgba(255,255,255,0.9); }
-    [data-theme="light"] #roomInput { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); color: var(--text-main); }
-    [data-theme="light"] .track-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
-    [data-theme="light"] .search-mini-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
-    [data-theme="light"] .playlist-bar { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); }
-    [data-theme="light"] #roomInput { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); color: var(--text-main); }
-    [data-theme="light"] .cover-placeholder { color: var(--text-sub); }
+    [data-theme="light"] .search-mini-item {
+      color: var(--text-main);
+      background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06);
+    }
     [data-theme="light"] .mini-artist { color: var(--text-sub); }
-    [data-theme="light"] .shortcut-hint { color: var(--text-sub); }
+
+    /* --- 播放列表 --- */
+    [data-theme="light"] .playlist-bar {
+      background: rgba(0,0,0,0.04) !important;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      color: var(--text-main);
+    }
+    [data-theme="light"] .playlist-info { color: var(--text-main); }
+    [data-theme="light"] .track-item {
+      color: var(--text-main);
+      background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.08);
+    }
+    [data-theme="light"] .track-item:hover {
+      background: rgba(0,0,0,0.06);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+    [data-theme="light"] .track-item.playing {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 14px rgba(200,100,160,0.4);
+    }
+    [data-theme="light"] .track-meta-sub { color: var(--text-sub); }
+    [data-theme="light"] .track-index { color: var(--text-secondary); }
+    [data-theme="light"] .playlist-tabs {
+      background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
+    }
+    [data-theme="light"] .playlist-tab { color: var(--text-secondary); }
+    [data-theme="light"] .playlist-tab.active {
+      background: radial-gradient(circle at 30% 0, rgba(255,255,255,0.3), rgba(180,90,150,0.85));
+      color: #fff;
+    }
+    [data-theme="light"] .playmode-btn {
+      background: rgba(0,0,0,0.08);
+      color: var(--text-secondary);
+    }
+    [data-theme="light"] .playmode-btn:hover { background: rgba(0,0,0,0.14); }
+    [data-theme="light"] .playmode-btn.active { color: #fff; }
+    [data-theme="light"] .playlist-select-row select {
+      background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.15);
+      color: var(--text-main);
+    }
+
+    /* --- 播放器 --- */
+    [data-theme="light"] .cover-placeholder { color: var(--text-sub); }
+    [data-theme="light"] .track-artist,
+    [data-theme="light"] .player-status,
+    [data-theme="light"] .progress-time,
+    [data-theme="light"] .control-secondary { color: var(--text-sub); }
+
+    /* --- 聊天 --- */
+    [data-theme="light"] #chat-msgs { color: var(--text-main); }
+    [data-theme="light"] #chatInput {
+      background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
+      color: var(--text-main);
+    }
+    [data-theme="light"] #roomInput {
+      background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
+      color: var(--text-main);
+    }
+
+    /* --- 按钮/通用 --- */
     [data-theme="light"] .btn { color: #fff; }
     [data-theme="light"] .btn-ghost { color: var(--text-main); }
     [data-theme="light"] .btn-secondary { color: #fff; }
-    [data-theme="light"] .playmode-btn.active { color: #fff; }
-        rgba(186,132,255,0.40)
-      );
+    [data-theme="light"] .shortcut-hint { color: var(--text-sub); }
+    [data-theme="light"] .search-stats,
+    [data-theme="light"] .limit-row,
+    [data-theme="light"] .source-row { color: var(--text-sub); }
+
+    /* --- 展开面板浅色微调 --- */
+    [data-theme="light"] .panel.expanded .search-results-mini,
+    [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chat-msgs {
+      background: rgba(0,0,0,0.03);
     }
+    [data-theme="light"] .panel.expanded .playlist-bar {
+      background: rgba(0,0,0,0.04); border-bottom-color: rgba(0,0,0,0.1);
+    }
+
     .lyrics-inner {
       position:relative;
       z-index:1;
@@ -858,6 +945,19 @@
       z-index:1;
     }
 
+    /* Fix 6: center playlist panel header */
+    .playlist-panel .panel-header {
+      justify-content: center !important;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .playlist-panel.expanded .panel-header {
+      justify-content: center !important;
+      align-items: center !important;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
     .playlist-tabs {
       display:inline-flex;
       border-radius:999px;
@@ -873,10 +973,10 @@
       color:var(--text-sub);
     }
     .playlist-tab.active {
-      background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.15), rgba(104,174,255,0.9));
+      background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.15), rgba(200,110,180,0.92));
       color:var(--text-main);
       font-weight:600;
-      box-shadow:0 0 8px rgba(104,174,255,0.7);
+      box-shadow:0 0 8px rgba(200,140,200,0.7);
     }
 
     /* 让 playlist-main 内部滚动，顶部条 sticky 不再消失 */
@@ -942,21 +1042,27 @@
     }
     .playmode-btn {
       border:none;
-      border-radius:999px;
-      width:24px; height:24px;
+      border-radius:50%;
+      width:36px; height:36px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:12px;
-      background:rgba(0,0,0,0.35);
+      font-size:16px;
+      background:rgba(128,128,128,0.3);
       color:var(--text-sub);
       cursor:pointer;
-      box-shadow:0 0 8px rgba(0,0,0,0.8);
+      box-shadow:none;
+      aspect-ratio:1;
+      transition: background .2s, color .2s, box-shadow .2s, transform .15s;
+    }
+    .playmode-btn:hover {
+      background:rgba(128,128,128,0.45);
+      transform:scale(1.08);
     }
     .playmode-btn.active {
-      background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.18), rgba(110,190,255,0.95));
-      color:var(--text-main);
-      box-shadow:0 0 10px rgba(110,190,255,0.95);
+      background:radial-gradient(circle at 35% 30%, rgba(255,220,240,0.35), rgba(180,90,160,0.92));
+      color:#fff;
+      box-shadow:0 0 14px rgba(200,130,180,0.75), 0 0 4px rgba(255,200,230,0.5);
     }
 
     .playlist-list {
@@ -972,7 +1078,7 @@
       align-items:center;
       padding:6px 8px;
       margin-bottom:4px;
-      border-radius:10px;
+      border-radius:14px;
       background:var(--panel-bg);
       border:1px solid rgba(255,255,255,0.06);
       font-size:11px;
@@ -980,13 +1086,13 @@
       transition:background .15s, transform .1s, box-shadow .1s;
     }
     .track-item:hover {
-      background:rgba(26,32,80,0.95);
+      background:rgba(60,24,80,0.82);
       transform:translateY(-1px);
       box-shadow:0 8px 18px rgba(0,0,0,0.9);
     }
     .track-item.playing {
-      border-color:var(--accent);
-      box-shadow:0 0 14px rgba(245,200,76,0.9);
+      border-color:var(--accent-pink);
+      box-shadow:0 0 14px rgba(244,114,182,0.7);
     }
     .track-index {
       width:22px;
@@ -1041,12 +1147,18 @@
       background:rgba(8,10,26,0.96);
       border:1px solid rgba(255,255,255,0.15);
       font-size:11px;
-      color:var(--text-main);
+      color:#ededef;
       box-shadow:0 12px 30px rgba(0,0,0,0.9);
       opacity:0;
       pointer-events:none;
       transition:opacity .2s ease, transform .2s ease;
       z-index:1500;
+    }
+    [data-theme="light"] #toast {
+      background:rgba(255,255,255,0.97);
+      border:1px solid rgba(0,0,0,0.12);
+      color:#1a1a1a;
+      box-shadow:0 8px 24px rgba(0,0,0,0.12);
     }
     #toast.show {
       opacity:1;
@@ -1240,6 +1352,196 @@
     .panel.expanded .p-close{display:flex;}
     @media(max-width:800px){.panel.expanded{top:12px;left:12px;right:12px;bottom:12px;}}
 
+    /* ===== 展开面板 — 统一居中排版 & 字号层级 ===== */
+    /*
+      字号层级规范（展开态）：
+        L1 面板标题  20px
+        L2 内容主要  16px  歌名 / 搜索结果标题 / 聊天消息 / 歌词
+        L3 内容次要  14px  歌手 / 标签 / 辅助文字 / 聊天发送者
+        L4 辅助信息  12px  徽章 / 来源 / 时间
+    */
+
+    /* --- 通用 --- */
+    .panel.expanded {
+      padding: 48px 72px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+    .panel.expanded .panel-header {
+      width: 100%;
+      max-width: 760px;
+      margin-bottom: 24px;
+      justify-content: space-between;
+    }
+    .panel.expanded .panel-title { font-size: 20px; gap: 10px; }              /* L1 */
+    .panel.expanded .panel-title .icon { font-size: 22px; }
+    .panel.expanded .chip { font-size: 12px; padding: 3px 10px; }             /* L4 */
+    .panel.expanded .p-close {
+      width: 44px; height: 44px;
+      font-size: 24px;
+      top: 22px; right: 28px;
+    }
+    @media (max-width: 800px) {
+      .panel.expanded { padding: 24px 16px 16px; }
+      .panel.expanded .p-close { top: 12px; right: 14px; width: 36px; height: 36px; font-size: 20px; }
+    }
+
+    /* --- 搜索面板 --- */
+    .search-panel .panel-header {
+      justify-content: center !important;
+      text-align: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .search-panel.expanded .panel-header {
+      justify-content: center !important;
+      text-align: center;
+      align-items: center !important;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .search-panel.expanded .search-panel-content {
+      width: 100%; max-width: 760px; margin: 0 auto; gap: 18px;
+    }
+    .search-panel.expanded .search-row { padding: 8px 8px 8px 20px; }
+    .search-panel.expanded .search-row .input { font-size: 16px; padding: 11px 14px; }  /* L2 */
+    .search-panel.expanded .search-row .btn { font-size: 14px; padding: 9px 20px; }      /* L3 */
+    .search-panel.expanded .search-prefix { font-size: 18px; }
+    .search-panel.expanded .search-results-mini {
+      max-height: none; flex: 1;
+      border-radius: 16px; background: rgba(0,0,0,0.08); padding: 12px 14px;
+    }
+    .search-panel.expanded .search-mini-item {
+      padding: 16px 20px; margin-bottom: 9px; border-radius: 16px;
+    }
+    .search-panel.expanded .mini-title { font-size: 16px; }                    /* L2 */
+    .search-panel.expanded .mini-artist { font-size: 14px; }                   /* L3 */
+    .search-panel.expanded .mini-badge { font-size: 12px; }                    /* L4 */
+    .search-panel.expanded .mini-source { font-size: 11px; }                   /* L4 */
+    .search-panel.expanded .search-stats { font-size: 13px; padding: 0 6px; }
+    .search-panel.expanded .limit-row { font-size: 13px; gap: 14px; }
+    .search-panel.expanded .limit-row select { font-size: 13px; padding: 5px 12px; }
+    .search-panel.expanded .source-row { gap: 14px; font-size: 13px; }
+    .search-panel.expanded .source-chip { padding: 6px 14px; font-size: 13px; }
+
+    /* --- 播放器面板 --- */
+    .player-panel.expanded .player-top {
+      width: 100%; max-width: 760px; margin: 0 auto;
+      gap: 36px; min-height: 210px; align-items: flex-start;
+    }
+    .player-panel.expanded .cover-wrapper {
+      width: 240px; height: 240px; border-radius: 26px;
+    }
+    .player-panel.expanded .player-main { gap: 14px; flex: 1; }
+    .player-panel.expanded .track-title { font-size: 28px; max-height: 78px; } /* 歌名特大 */
+    .player-panel.expanded .track-artist { font-size: 16px; }                  /* L2 */
+    .player-panel.expanded .track-tags { font-size: 12px; gap: 6px; }          /* L4 */
+    .player-panel.expanded .source-pill,
+    .player-panel.expanded .lossless-pill { font-size: 12px; padding: 4px 10px; }
+    .player-panel.expanded .status-pill { font-size: 14px; padding: 4px 14px; }/* L3 */
+    .player-panel.expanded .control-row { margin-top: 10px; font-size: 14px; }
+    .player-panel.expanded .control-main { gap: 12px; }
+    .player-panel.expanded .control-main .play-btn { width: 56px; height: 56px; }
+    .player-panel.expanded .control-main .btn-icon { width: 38px; height: 38px; font-size: 16px; }
+    .player-panel.expanded .progress-row { font-size: 14px; gap: 10px; }       /* L3 */
+    .player-panel.expanded .progress-time { width: 54px; font-size: 14px; }    /* L3 */
+    .player-panel.expanded .progress-bar-wrapper { height: 8px; }
+    .player-panel.expanded .volume-slider { width: 130px; }
+    .player-panel.expanded .control-secondary { font-size: 14px; gap: 8px; }
+    .player-panel.expanded .player-btn-row { gap: 10px; }
+    .player-panel.expanded .player-actions { gap: 10px; font-size: 14px; }
+    .player-panel.expanded .player-btn-row .btn-icon { width: 34px; height: 34px; font-size: 15px; }
+    .player-panel.expanded .lyrics-container {
+      width: 100%; max-width: 680px; margin: 32px auto 0;
+      border-radius: 18px; padding: 26px 36px 22px; flex: 1; min-height: 150px;
+    }
+    .player-panel.expanded .lyrics-line { font-size: 24px; margin: 9px 0; }    /* 歌词更大 */
+    .player-panel.expanded .lyrics-title-line { font-size: 16px; margin-bottom: 14px; }  /* L2 */
+    .player-panel.expanded .lyrics-empty { font-size: 16px; }                  /* L2 */
+
+    /* --- 播放列表面板 --- */
+    .playlist-panel.expanded .playlist-main {
+      width: 100%; max-width: 760px; margin: 0 auto;
+    }
+    .playlist-panel.expanded .playlist-tab { padding: 6px 16px; font-size: 14px; }       /* L3 */
+    .playlist-panel.expanded .track-item {
+      padding: 16px 20px; margin-bottom: 9px; border-radius: 16px; gap: 16px;
+    }
+    .playlist-panel.expanded .track-meta-title { font-size: 16px; }             /* L2 */
+    .playlist-panel.expanded .track-meta-sub { font-size: 14px; }               /* L3 */
+    .playlist-panel.expanded .track-index { width: 34px; font-size: 16px; }     /* L2 */
+    .playlist-panel.expanded .track-actions .btn-icon { width: 34px; height: 34px; font-size: 16px; }
+    .playlist-panel.expanded .playlist-bar { padding: 10px 6px; margin-bottom: 12px; font-size: 14px; }
+    .playlist-panel.expanded .playlist-info { font-size: 14px; }                /* L3 */
+    .playlist-panel.expanded .playmode-btn { width: 36px; height: 36px; font-size: 17px; }
+    .playlist-panel.expanded .playlist-select-row select { font-size: 14px; padding: 5px 12px; }
+
+    /* --- 房间聊天面板 --- */
+    section.panel:nth-last-of-type(1).expanded .panel-header {
+      width: 100%; max-width: 680px; margin-bottom: 20px;
+    }
+    section.panel:nth-last-of-type(1).expanded #chat-msgs {
+      width: 100%; max-width: 680px; margin: 0 auto;
+      border-radius: 18px; background: rgba(0,0,0,0.08);
+      padding: 24px 28px; gap: 12px;
+      font-size: 16px;                                                          /* L2 */
+    }
+    /* 聊天消息气泡覆盖：JS 内联样式会被 !important 覆盖 */
+    section.panel:nth-last-of-type(1).expanded #chat-msgs .mu-msg,
+    section.panel:nth-last-of-type(1).expanded #chat-msgs > div > div:first-child {
+      font-size: 14px !important;                                               /* L3 发送者 */
+    }
+    section.panel:nth-last-of-type(1).expanded #chat-msgs > div > div:last-child {
+      font-size: 16px !important;                                               /* L2 消息正文 */
+      padding: 8px 14px !important;
+      border-radius: 12px !important;
+    }
+    section.panel:nth-last-of-type(1).expanded > div:last-child {
+      width: 100%; max-width: 680px; margin: 0 auto;
+    }
+    section.panel:nth-last-of-type(1).expanded #chatInput {
+      font-size: 16px; padding: 12px 18px;                                      /* L2 */
+    }
+    section.panel:nth-last-of-type(1).expanded #btnSend {
+      font-size: 16px; padding: 10px 22px;                                      /* L2 */
+    }
+
+    /* --- 头部 "一起听歌" 展开 --- */
+    header.expanded {
+      padding: 56px 48px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px;
+    }
+    header.expanded .room-full {
+      display: flex !important; flex-direction: column;
+      align-items: center; text-align: center;
+      max-width: 560px; width: 100%; margin: 0 auto;
+      gap: 6px;
+    }
+    header.expanded .room-full p:first-of-type {
+      font-size: 36px; margin-bottom: 0 !important;            /* 大标题 */
+    }
+    header.expanded .room-full p:nth-of-type(2) {
+      font-size: 16px; line-height: 1.7; margin-bottom: 0 !important;  /* 描述 */
+    }
+    header.expanded .room-full > div {
+      margin-top: 2px;
+    }
+    header.expanded .room-full input {
+      font-size: 16px; padding: 10px 14px;                     /* L2 */
+    }
+    header.expanded .room-full .btn {
+      font-size: 16px; padding: 8px 22px;                      /* L2 */
+    }
+    @media (max-width: 800px) {
+      header.expanded { padding: 32px 20px; gap: 6px; }
+      header.expanded .room-full p:first-of-type { font-size: 28px; }
+      header.expanded .room-full p:nth-of-type(2) { font-size: 14px; }
+    }
+
     @media (max-width:860px){
       header{
         flex-direction:column;
@@ -1267,7 +1569,7 @@
     <header class="ripple-target" style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-radius:18px;background:var(--panel-bg);border:1px solid var(--border-subtle);min-height:52px;flex-shrink:0;gap:10px;flex-wrap:wrap;">
       <button class="h-close" onclick="document.querySelector('header').classList.remove('expanded');document.querySelector('.app').classList.remove('dim');">×</button>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:16px;font-weight:600;color:var(--text-main);">一起听歌</span>
+        <span style="font-size:16px;font-weight:600;color:var(--text-main);"><span style="margin-right:6px;">👥</span>一起听歌</span>
         <span id="roomTag" style="font-size:12px;color:var(--text-sub);cursor:pointer;padding:5px 12px;border-radius:14px;border:1px solid var(--border);" onclick="var e=document.getElementById('roomBox');e.style.display=e.style.display==='flex'?'none':'flex';if(e.style.display==='flex')document.getElementById('roomInput').focus();">#room</span>
         <span id="roomBox" style="display:none;align-items:center;gap:6px;">
           <input id="roomInput" type="text" placeholder="输入房间名…" style="width:130px;padding:5px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg-primary, rgba(0,0,0,.5));color:var(--text-main);font-size:12px;outline:none;">
@@ -1275,6 +1577,7 @@
         </span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-sub);flex-wrap:wrap;">
+        <a href="index.html" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;text-decoration:none;color:var(--text-sub);">🏠 返回主页</a>
         <button id="shareBtn" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">📋 分享</button>
         <button id="shortcut-toggle-btn" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">💡 使用说明</button>
         <button id="themeToggle" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">🌓</button>
@@ -1478,9 +1781,11 @@
         <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:4px;font-size:12px;min-height:0;">
           <div style="text-align:center;color:var(--text-sub);padding:12px;">连接中…</div>
         </div>
-        <div style="display:flex;gap:4px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;">
-          <input id="chatInput" type="text" placeholder="说点什么…" maxlength="200" class="input" style="flex:1;font-size:12px;">
-          <button id="btnSend" class="btn" style="padding:5px 12px;font-size:11px;">发送</button>
+        <div style="padding:8px 10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;">
+          <div style="display:flex;gap:6px;max-width:560px;margin:0 auto;">
+            <input id="chatInput" type="text" placeholder="说点什么…" maxlength="200" class="input" style="flex:1;font-size:12px;">
+            <button id="btnSend" class="btn" style="padding:5px 12px;font-size:11px;">发送</button>
+          </div>
         </div>
       </section>
     </main>
@@ -2396,7 +2701,28 @@
         applyUI();
         state.lyricLines = track.lrc ? parseLRC(track.lrc) : [];
         renderLyrics();
-        if(!track.audioUrl){showToast(t('toastPlayError'));dom.playerStatus.textContent=t('playerStatusIdle');return;}
+        if(!track.audioUrl){
+          // 该曲目无法获取播放链接，从搜索结果中移除，尝试下一首
+          const idx = state.searchResults.findIndex(x=>x.uid===track.uid);
+          if (idx >= 0) state.searchResults.splice(idx, 1);
+          state.trackMap.delete(track.uid);
+          if (state.currentTrack && state.currentTrack.uid === track.uid) {
+            state.currentTrack = null;
+          }
+          renderMiniSearchList();
+          renderPlaylistList();
+          // 尝试播放列表中的下一首
+          const list = getActiveList();
+          const curIdx = state.playContext.index;
+          if (list.length > 0) {
+            const nextIdx = Math.min(curIdx, list.length - 1);
+            playFromList(state.playContext.type, nextIdx, state.playContext.playlistId);
+          } else {
+            showToast(t('toastPlayError'));
+            dom.playerStatus.textContent=t('playerStatusIdle');
+          }
+          return;
+        }
         dom.audio.src=track.audioUrl;
         await dom.audio.play();
         state.isPlaying=true;
@@ -2404,8 +2730,32 @@
         dom.playerStatus.textContent=t('playerStatusPlaying');
       }catch(e){
         console.error(e);
-        showToast(t('toastPlayError'));
-        dom.playerStatus.textContent=t('playerStatusIdle');
+        // 区分：真正加载失败 vs 浏览器自动播放策略拦截
+        const isAutoplayBlocked = (e instanceof DOMException) &&
+          (e.name === 'NotAllowedError' || e.name === 'AbortError');
+        if (!isAutoplayBlocked) {
+          // 加载失败，移除该曲目并尝试下一首
+          const idx = state.searchResults.findIndex(x=>x.uid===track.uid);
+          if (idx >= 0) state.searchResults.splice(idx, 1);
+          state.trackMap.delete(track.uid);
+          if (state.currentTrack && state.currentTrack.uid === track.uid) {
+            state.currentTrack = null;
+          }
+          renderMiniSearchList();
+          renderPlaylistList();
+          const list = getActiveList();
+          const curIdx = state.playContext.index;
+          if (list.length > 0) {
+            const nextIdx = Math.min(curIdx, list.length - 1);
+            playFromList(state.playContext.type, nextIdx, state.playContext.playlistId);
+          } else {
+            showToast(t('toastPlayError'));
+          }
+        }
+        // 自动播放被拦截时不弹 toast，用户点播放按钮即可正常播放
+        dom.playerStatus.textContent=t('playerStatusPaused');
+        state.isPlaying=false;
+        document.getElementById('playIcon').style.display='block';document.getElementById('pauseIcon').style.display='none';
       }
 
       renderMiniSearchList();
@@ -3140,7 +3490,7 @@
       if(!chatInit){chatMsgs.innerHTML='';chatInit=true;}
       var last=chatMsgs.querySelectorAll('.mu-msg');if(last.length&&last[last.length-1].textContent===txt&&msgCount>0)return;msgCount++;
       var d=document.createElement('div');d.style.cssText='max-width:88%;'+(isMe?'align-self:flex-end;':'align-self:flex-start;');
-      d.innerHTML='<div style="font-size:10px;color:var(--text-sub);">'+who+'</div><div style="padding:5px 10px;border-radius:10px;font-size:12px;line-height:1.4;word-break:break-word;'+(isMe?'background:var(--accent);color:#fff;':'background:rgba(255,255,255,.08);color:var(--text-main);')+'">'+txt+'</div>';
+      d.innerHTML='<div style="font-size:12px;color:var(--text-sub);">'+who+'</div><div style="padding:7px 12px;border-radius:12px;font-size:14px;line-height:1.5;word-break:break-word;'+(isMe?'background:var(--accent);color:#fff;':'background:rgba(255,255,255,.08);color:var(--text-main);')+'">'+txt+'</div>';
       chatMsgs.appendChild(d);chatMsgs.scrollTop=chatMsgs.scrollHeight;
     }
     var chatCh=sb.channel('room-'+room+'-msgs');
