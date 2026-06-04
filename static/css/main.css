@@ -1434,3 +1434,17 @@ a:hover { color: var(--accent-hover); }
 [data-theme="light"] .di-line2 {
   color: rgba(29, 29, 31, 0.55);
 }
+
+/* ===== 全局背景图层 ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('../assets/sakura-bg.png') center/cover no-repeat;
+  opacity: 0.28;
+  z-index: -1;
+  pointer-events: none;
+}
+[data-theme="light"] body::before {
+  opacity: 0.55;
+}
