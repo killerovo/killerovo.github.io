@@ -498,7 +498,7 @@ function doSearch(keyword) {
                 div.className = 'search-item';
                 div.innerHTML = '<div class="info"><div class="name">' + s.name + '</div><div class="artist">' + artists + '</div></div><button class="add-btn">+ 添加</button>';
                 div.querySelector('.add-btn').addEventListener('click', function() {
-                    addToPlaylist(s.id, s.name, artists);
+                    addToPlaylist(s.id, s.name, artists, this);
                 });
                 container.appendChild(div);
             });
@@ -509,7 +509,8 @@ function doSearch(keyword) {
         });
 }
 
-function addToPlaylist(songId, songName, artist) {
+function addToPlaylist(songId, songName, artist, btn) {
+    if (btn) { btn.textContent = '...'; btn.disabled = true; }
     var url = 'https://music.163.com/song/media/outer/url?id=' + songId + '.mp3';
     sb.from('playlist').insert({
         room_id: room,
@@ -517,7 +518,18 @@ function addToPlaylist(songId, songName, artist) {
         song_name: songName,
         artist: artist,
         song_url: url
-    }).then();
+    }).then(function(res) {
+        if (btn) { btn.textContent = '✓'; btn.style.background = '#22c55e'; btn.style.color = '#fff'; btn.style.borderColor = '#22c55e'; }
+        if (res.error) {
+            console.error('Insert error:', res.error);
+            if (btn) { btn.textContent = '失败'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
+            alert('添加失败：' + res.error.message + '\n\n请在 Supabase SQL Editor 里运行：\ncreate policy "allow_all_playlist" on playlist for all using (true) with check (true);');
+        }
+    }).catch(function(err) {
+        console.error(err);
+        if (btn) { btn.textContent = '失败'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
+        alert('添加失败，请检查 Supabase RLS 策略是否已开启。');
+    });
 }
 
 // ---- Playlist ----
