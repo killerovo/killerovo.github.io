@@ -51,11 +51,19 @@
     }
     /* 覆盖全局背景 — ui.html 用茉莉花 */
     body::before {
-      background: url('static/assets/jasmine-bg.png') center/cover no-repeat;
-      opacity: 0.28;
+      background: url('static/assets/jasmine-bg.webp') center/cover no-repeat;
+      opacity: 0;
+      animation: uiBgFadeIn 0.6s ease 0.1s forwards;
     }
     [data-theme="light"] body::before {
-      opacity: 0.55;
+      opacity: 0;
+      animation: uiBgFadeIn 0.6s ease 0.1s forwards;
+    }
+    @keyframes uiBgFadeIn {
+      to { opacity: 0.28; }
+    }
+    [data-theme="light"] @keyframes uiBgFadeIn {
+      to { opacity: 0.55; }
     }
 
     /* 主页按钮 */

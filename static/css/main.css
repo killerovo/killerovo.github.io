@@ -1440,11 +1440,15 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: url('../assets/sakura-bg.png') center/cover no-repeat;
-  opacity: 0.28;
+  background: url('../assets/sakura-bg.webp') center/cover no-repeat;
+  opacity: 0;
   z-index: -1;
   pointer-events: none;
+  animation: bgFadeIn 0.6s ease 0.05s forwards;
 }
 [data-theme="light"] body::before {
-  opacity: 0.55;
+  opacity: 0;
+  animation: bgFadeInLight 0.6s ease 0.05s forwards;
 }
+@keyframes bgFadeIn  { to { opacity: 0.28; } }
+@keyframes bgFadeInLight { to { opacity: 0.55; } }
