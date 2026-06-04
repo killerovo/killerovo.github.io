@@ -29,7 +29,8 @@
       "WebFetch(domain:www.apple.com.cn)",
       "WebFetch(domain:www.xihuannio.cn)",
       "PowerShell(Move-Item *)",
-      "Bash(powershell -Command \"Start-Process 'http://localhost:8080' -ErrorAction SilentlyContinue; python -m http.server 8080\")"
+      "Bash(powershell -Command \"Start-Process 'http://localhost:8080' -ErrorAction SilentlyContinue; python -m http.server 8080\")",
+      "Bash(xxd)"
     ]
   }
 }

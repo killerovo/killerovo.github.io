@@ -729,6 +729,52 @@ a:hover { color: var(--accent-hover); }
   margin-bottom: 10px;
 }
 
+/* Two-column grid for Tools */
+#tools-md {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 36px;
+}
+
+.tool-item {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-light);
+  padding: 22px 0;
+}
+
+.tool-item:last-child,
+.tool-item:nth-last-child(2) {
+  border-bottom: none;
+}
+
+.tool-item h2 {
+  margin: 0 0 6px 0;
+  padding: 0;
+  border: none;
+}
+
+.tool-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tool-item a {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  #tools-md {
+    grid-template-columns: 1fr;
+  }
+  .tool-item:nth-last-child(2) {
+    border-bottom: 1px solid var(--border-light);
+  }
+}
+
 .main-body strong {
   color: var(--text-primary);
   font-weight: 600;

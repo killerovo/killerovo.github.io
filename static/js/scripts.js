@@ -140,8 +140,26 @@ window.addEventListener('DOMContentLoaded', function() {
                     link.setAttribute('target', '_blank');
                     link.setAttribute('rel', 'noopener noreferrer');
                 });
+                // Wrap tools items for two-column grid
+                if (name === 'tools') { wrapToolsGrid(el); }
             })
             .catch(function(error) { console.log(error); });
     });
+
+    // ---- Wrap tools items into grid cards ----
+    function wrapToolsGrid(el) {
+        var current = null;
+        var children = Array.prototype.slice.call(el.children);
+        children.forEach(function(child) {
+            if (child.tagName === 'H2') {
+                current = document.createElement('div');
+                current.className = 'tool-item';
+                current.appendChild(child);
+                el.appendChild(current);
+            } else if (current) {
+                current.appendChild(child);
+            }
+        });
+    }
 
 });
