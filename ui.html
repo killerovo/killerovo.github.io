@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>予君茉莉，愿君莫离</title>
+
+  <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+  <link type="text/css" href="static/css/main.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-primary: #0d0d12;
+      --bg-secondary: #14141a;
+      --text-primary: #ededef;
+      --text-secondary: #9999a0;
+      --text-tertiary: #666670;
+      --accent: #f472b6;
+      --accent-alt: #60a5fa;
+      --border-light: #1e1e28;
+      --card-bg: rgba(28, 28, 38, 0.65);
+    }
+    [data-theme="light"] {
+      --bg-primary: #f6f5f4;
+      --bg-secondary: #efeeec;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-tertiary: #999;
+      --accent: #db2777;
+      --accent-alt: #2563eb;
+      --border-light: #e2e1de;
+      --card-bg: rgba(255,255,255,0.94);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+      position: relative;
+      z-index: 0;
+    }
+    /* 背景茉莉花图 — 低透明度不遮挡内容 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('static/assets/jasmine-bg.png') center/cover no-repeat;
+      opacity: 0.12;
+      z-index: -1;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    [data-theme="light"] body::before {
+      opacity: 0.07;
+    }
+
+    /* 主页按钮 */
+    .home-link {
+      position: fixed; top: 20px; left: 24px;
+      font-size: 13px; color: var(--text-tertiary);
+      text-decoration: none; padding: 6px 14px;
+      border-radius: 6px; border: 1px solid var(--border-light);
+      transition: color 0.2s, border-color 0.2s;
+      z-index: 100;
+    }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* 主题切换 */
+    .theme-btn {
+      position: fixed; top: 20px; right: 24px;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border-light);
+      background: transparent; color: var(--text-secondary);
+      font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+      z-index: 100;
+    }
+    .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* 入口页 */
+    .intro {
+      text-align: center; padding: 60px 20px; cursor: pointer;
+      user-select: none;
+    }
+    .intro h1 {
+      font-size: clamp(36px, 7vw, 64px);
+      letter-spacing: 0.12em; margin-bottom: 12px;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+    .intro p {
+      font-size: 16px; color: var(--text-secondary);
+    }
+    .intro .hint {
+      margin-top: 32px; font-size: 14px; color: var(--text-tertiary);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 0.45; transform: scale(1); }
+      50%     { opacity: 1;    transform: scale(1.07); }
+    }
+
+    /* 内容区 */
+    .content { display: none; text-align: center; padding: 20px 16px 60px; width: 100%; max-width: 1000px; }
+
+    /* 双卡片计时器 */
+    .clocks {
+      display: flex; justify-content: center; gap: 36px;
+      flex-wrap: wrap; margin-bottom: 42px;
+    }
+    .clock-card {
+      padding: 28px 36px; border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      min-width: 320px; flex: 1; max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .clock-card .label { font-size: 15px; color: var(--text-tertiary); margin-bottom: 4px; font-weight: 600; }
+    .clock-card .date  { font-size: 13px; color: var(--text-tertiary); margin-bottom: 12px; }
+    .clock-card .timer {
+      font-size: 22px; font-weight: 600; color: var(--text-primary); line-height: 1.7;
+      white-space: nowrap;
+    }
+    .digit {
+      display: inline-block; font-size: 38px; font-weight: 700;
+      font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+      font-family: "SF Mono","Fira Code","Consolas","Courier New",monospace;
+      color: var(--accent); min-width: 1.1em; text-align: center;
+    }
+    [data-theme="light"] .digit { color: #db2777; }
+
+    /* 打字机 */
+    .typewriter-box {
+      max-width: 920px; margin: 0 auto;
+      padding: 28px 40px;
+      min-height: 80px; display: flex; align-items: center;
+      justify-content: center;
+    }
+    .typewriter {
+      font-size: 18px; line-height: 2; color: var(--text-primary);
+      text-align: center; white-space: pre-wrap; word-break: break-word;
+    }
+    .cursor {
+      font-size: 22px; color: var(--accent);
+      animation: blink 0.7s step-end infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @media (max-width: 768px) {
+      .clocks { gap: 16px; }
+      .clock-card { min-width: auto; flex: 1 1 160px; padding: 16px 14px; }
+      .clock-card .timer { font-size: 17px; }
+      .digit { font-size: 28px; }
+      .typewriter { font-size: 15px; }
+      .typewriter-box { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="home-link" href="index.html">← 返回主页</a>
+  <button class="theme-btn" id="themeToggle" title="切换主题">🌓</button>
+
+  <!-- 入口 -->
+  <div class="intro" id="intro">
+    <h1>予君茉莉，愿君莫离</h1>
+    <p>Every story begins with a single moment.</p>
+    <div class="hint" id="hint">✨ 点击这里，开始我们的故事</div>
+  </div>
+
+  <!-- 内容 -->
+  <div class="content" id="content">
+    <!-- 双计时器 -->
+    <div class="clocks" id="clocks">
+      <div class="clock-card">
+        <div class="label">💫 认识你</div>
+        <div class="date">2026年3月4日</div>
+        <div class="timer" id="timerMeet">
+          <span class="digit">0</span> 天 <span class="digit">00</span> 时 <span class="digit">00</span> 分 <span class="digit">00</span> 秒
+        </div>
+      </div>
+      <div class="clock-card">
+        <div class="label">💕 我们在一起</div>
+        <div class="date">2026年6月6日</div>
+        <div class="timer" id="timerTogether">
+          <span class="digit">0</span> 天 <span class="digit">00</span> 时 <span class="digit">00</span> 分 <span class="digit">00</span> 秒
+        </div>
+      </div>
+    </div>
+
+    <!-- 打字机 -->
+    <div class="typewriter-box">
+      <span class="typewriter" id="typewriter"></span>
+      <span class="cursor" id="cursor">|</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var intro = document.getElementById('intro');
+    var content = document.getElementById('content');
+    var hint = document.getElementById('hint');
+    var twEl = document.getElementById('typewriter');
+    var cursorEl = document.getElementById('cursor');
+    var timerMeet = document.getElementById('timerMeet');
+    var timerTogether = document.getElementById('timerTogether');
+
+    if (!intro || !content) return;
+
+    var revealed = false;
+    var clockInterval = null;
+    var twTimer = null;
+
+    // ---- 主题 ----
+    (function() {
+      var html = document.documentElement;
+      var btn = document.getElementById('themeToggle');
+      function get() { return localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark'); }
+      function apply(t) { if (t === 'light') html.setAttribute('data-theme', 'light'); else html.removeAttribute('data-theme'); }
+      apply(get());
+      btn.addEventListener('click', function() {
+        var n = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        apply(n); localStorage.setItem('theme', n);
+      });
+    })();
+
+    // ---- 点击入口 ----
+    intro.addEventListener('click', function() {
+      if (revealed) return;
+      revealed = true;
+      hint.style.display = 'none';
+      content.style.display = 'block';
+      startClocks();
+      startTypewriter();
+    });
+
+    // ===== 双计时器 =====
+    function startClocks() {
+      var meetDate = new Date(2026, 2, 4, 0, 0, 0, 0);     // 2026-03-04
+      var togetherDate = new Date(2026, 5, 6, 0, 0, 0, 0);   // 2026-06-06
+
+      function fmt(n, p) { return String(n).padStart(p || 2, '0'); }
+
+      function update(el, base) {
+        var total = Math.floor((Date.now() - base.getTime()) / 1000);
+        if (total < 0) total = 0;
+        var d = Math.floor(total / 86400);
+        var r = total % 86400;
+        var h = Math.floor(r / 3600);
+        r = r % 3600;
+        var m = Math.floor(r / 60);
+        var s = r % 60;
+        var digits = el.querySelectorAll('.digit');
+        if (digits.length >= 4) {
+          digits[0].textContent = d;
+          digits[1].textContent = fmt(h);
+          digits[2].textContent = fmt(m);
+          digits[3].textContent = fmt(s);
+        }
+      }
+
+      update(timerMeet, meetDate);
+      update(timerTogether, togetherDate);
+      clockInterval = setInterval(function() {
+        update(timerMeet, meetDate);
+        update(timerTogether, togetherDate);
+      }, 1000);
+    }
+
+    // ===== 打字机：先打中文 → 删 → 打英文 → 删 → 下一对 =====
+    var loveLines = [
+      "从遇见你的那天起，我的世界就有了颜色。","Since the day I met you, my world found its colors.",
+      "你是我这一生，等了半世未拆的礼物。","You are the gift I've waited half a lifetime to unwrap.",
+      "我本是一颗暗淡的星，直到看见你的光芒。","I was a dim star until I saw your light.",
+      "遇见你，是所有故事的开始。","Meeting you is where every story begins.",
+      "山野万里，你是我藏在微风里的欢喜。","Mountains and valleys — you are the joy I hide in the breeze.",
+      "人世间有百媚千红，唯独你是我情之所钟。","Of all the beauty in the world, you alone have my heart.",
+      "你是无意穿堂风，偏偏孤倨引山洪。","You were an accidental breeze, yet you stirred a mountain storm in me.",
+      "夜晚潮湿，空气寂静，树林沉默。今夜我爱你。","The night is damp, the air is silent, the woods are hushed. Tonight I love you.",
+      "你一笑，我觉得整个世界都亮了。","When you smile, the whole world lights up.",
+      "我想和你一起，看遍世间所有的日落。","I want to watch every sunset in the world with you.",
+      "你是我日复一日的梦想。","You are my day-after-day dream.",
+      "深海不会因一杯沸水而加温，我却因你一个眼神而沸腾。","The deep sea won't warm from a cup of boiling water, yet I boil from one glance of yours.",
+      "春风十里，不如你。","Spring breezes for miles cannot compare to you.",
+      "世界很大，我的眼里只有你。","The world is vast, but my eyes hold only you.",
+      "想变成你窗外的月亮，每晚都能看着你入睡。","I wish I were the moon outside your window, watching you fall asleep every night.",
+      "你是我的半截诗，不许别人更改一个字。","You are my half-written poem — no one else may change a single word.",
+      "山河远阔，人间烟火，无一是你，无一不是你。","Vast mountains, worldly bustle — nothing is you, and everything is you.",
+      "你的眼睛里有星辰大海，是我见过最美的风景。","Your eyes hold galaxies and oceans — the most beautiful sight I have ever seen.",
+      "去见你的路上，风都是甜的。","Even the wind tastes sweet on the way to see you.",
+      "你是近处的灯火，也是遥远的星河。","You are the lamp nearby, and the galaxy far away.",
+      "没见到你的时候有很多话想跟你说；见到你的时候就觉得什么都不用说了。","When I don't see you, I have so much to say; when I do, nothing needs to be said.",
+      "我看到的每一件美好事物，第一个念头都是想和你分享。","Every beautiful thing I see, my first thought is to share it with you.",
+      "你是我疲惫生活中唯一的英雄梦想。","You are the only heroic dream in my weary life.",
+      "我想把世界上最好的都给你，却发现世界上最好的就是你。","I wanted to give you the best in the world — then I realized the best in the world is you.",
+      "我对你的喜欢，像风走了八千里，不问归期。","My love for you is like a wind that travels eight thousand miles without asking when to return.",
+      "这个世界乱七八糟，而你干干净净，悬在我的心上，做我的月亮。","The world is a mess, but you are pure — hanging in my heart, being my moon.",
+      "你是声色张扬的春日限定，也是我心尖上不肯凋谢的花。","You are spring's limited edition, a flower on my heart that refuses to wither.",
+      "喜欢你，是平淡生活里一不小心的波澜壮阔。","Loving you is an accidental magnificence in an ordinary life.",
+      "爱不是相互凝望，而是一起望向同一个方向。","Love is not gazing at each other, but looking outward together in the same direction.",
+      "我喜欢你，在所有时候。也喜欢有些人，在他们偶尔像你的时候。","I like you at all times. And I like some people when they occasionally resemble you.",
+      "你是我温暖的手套，冰冷的啤酒，带着阳光味道的衬衫，日复一日的梦想。","You are my warm gloves, my cold beer, my sun-scented shirt, my daily dream.",
+      "如果真的有平行宇宙，我希望每个宇宙里我都能遇见你。","If parallel universes truly exist, I hope in every one of them I get to meet you.",
+      "所谓世间，不就是你吗？","Isn't the whole world just you?",
+      "我这一生都是坚定不移的唯物主义者，唯有你，我希望有来生。","All my life I've been a steadfast materialist — only for you do I wish there were a next life.",
+      "答案很长，我准备用一生来回答，你准备好要听了吗？","The answer is long. I plan to spend a lifetime answering it. Are you ready to listen?",
+      "月色与雪色之间，你是第三种绝色。","Between moonlight and snow, you are the third kind of beauty.",
+      "愿你被这个世界温柔以待，即使生命总以刻薄荒芜相欺。","May the world treat you gently, even when life is harsh and barren.",
+      "你看着我，我就觉得这个世界还没有那么糟糕。","When you look at me, I feel the world isn't so terrible after all.",
+      "如果可以，我想把你藏进口袋里，走到哪儿带到哪儿。","If I could, I would tuck you in my pocket and carry you everywhere.",
+      "第一次见你的时候，我的心里已经炸成了烟花，需要用一生来打扫灰烬。","The first time I saw you, fireworks exploded in my heart — it will take a lifetime to clean the ashes.",
+      "白茶清欢无别事，我在等风也等你。","Plain tea and quiet leisure — I wait for the wind, and for you.",
+      "你呀，是西子湖上的潋滟光，万重山外的舟一方。","You are the shimmering light on West Lake, a boat beyond ten thousand mountains.",
+      "我听过最动听的情话，是你趴在我耳边说的那句：想和你有个很长很长的未来。","The sweetest words I've ever heard were you leaning close to whisper: I want a long, long future with you.",
+      "你问我有多爱你，大概就是再遇见你一百次，也会沦陷一百次。","You ask how much I love you — roughly this much: if I met you a hundred times, I'd fall for you a hundred times.",
+      "想和你一起生活，养只猫，抱着你醒来，看你埋在胸口熟睡的脸。","I want to live with you, raise a cat, wake up holding you, watching your face sleeping against my chest.",
+      "你的名字，是我见过最短的情诗。","Your name is the shortest love poem I have ever read.",
+      "我见众生皆草木，唯你是青山。","All others are grass and trees; only you are the mountain.",
+      "我野蛮生长，没能成为自己的月亮。遇见你，是银河赠予我的糖。","I grew wild, never becoming my own moon. Meeting you was candy gifted by the Milky Way.",
+      "我喜欢你，喜欢到森林里的老虎都化成了黄油。","I like you so much that tigers in the forest have melted into butter.",
+      "你是我在人间发现的宝藏，是我想要昭告天下的私心。","You are the treasure I discovered on earth, the selfishness I want to announce to the whole world.",
+      "世界需要讲讲道理，但我最偏心你。","The world needs reasoning, but I'm most partial to you.",
+      "如果生活很苦的话，你要不要搬进我甜甜的梦里？","If life is bitter, would you like to move into my sweet dreams?",
+      "从遇见你开始，凛冬散尽，星河长明。","Since meeting you, winter has dissolved, and the galaxy shines eternal.",
+      "你是落日弥漫的橘，天边透亮的星。","You are the orange glow of sunset, the bright star on the horizon.",
+      "我贪恋的人间烟火，不偏不倚，全都是你。","The worldly pleasures I crave — every single one, without exception, is you.",
+      "我在贩卖日落，你像神明一样慷慨地将光洒向我。从此人间被点亮。","I was selling sunsets, and you poured light on me like a god. Since then, the world has been lit up.",
+      "这世间最烈的酒，是你低头噙笑的温柔。","The strongest wine in the world is the tenderness in your smile when you lower your head.",
+      "你的出现，让我原本平静的生活泛起了涟漪，不是惊涛骇浪，却是恰好心动。","Your arrival rippled my calm life — not a stormy wave, but the perfect heartbeat.",
+      "我最喜欢你认真的样子，喜欢你笑起来的弧度，喜欢你的所有所有。","I love how focused you look, the curve of your smile, and absolutely everything about you.",
+      "你是八千里云和月，是我穷极一生想要追寻的光。","You are eight thousand miles of clouds and moon — the light I will chase all my life.",
+      "下辈子你住我家隔壁吧，与我青梅竹马，两小无猜。","In our next life, be my next-door neighbor — grow up with me, innocent and inseparable.",
+      "我携满天星辰以赠你，仍觉满天星辰不及你。","I brought you all the stars in the sky, and still felt they paled beside you.",
+      "你是藏在云层里的月亮，也是我穷极一生寻找的宝藏。","You are the moon hidden behind clouds, and the treasure I've spent a lifetime seeking.",
+      "想和你一起去看春夏秋冬，看尽了世间有无。","I want to see spring, summer, autumn, and winter with you — to see all there is and isn't in this world.",
+      "你是我凌晨两点半的太阳，也是我午夜梦回的月光。","You are my 2:30 AM sun, and the moonlight in my midnight dreams.",
+      "下次见面，我会用积攒了一整个冬天的温暖拥抱你。","Next time we meet, I'll embrace you with all the warmth I've saved up through the entire winter.",
+      "你是我所有温柔的来源和归属。","You are the source and destination of all my tenderness.",
+      "我想和你在一起，从晨光熹微到暮色四合。","I want to be with you from the first light of dawn until dusk folds the world.",
+      "和你在一起的每一刻，都像是从上天那里偷来的好时光。","Every moment with you feels like stolen time from heaven.",
+      "你是我绕过山河错落，才找到的人间烟火。","You are the worldly warmth I found after traversing mountains and rivers.",
+      "海底月是天上月，眼前人是心上人。","The moon in the sea is the moon in the sky. The person before me is the one in my heart.",
+      "我想和你虚度时光，比如低头看鱼，比如把茶杯留在桌子上离开。","I want to idle away time with you — watching fish, leaving teacups on the table.",
+      "你是非常可爱的人，真应该遇到最好的人，我也真希望我就是。","You are a truly lovely person, and you deserve the best. I truly hope that I am.",
+      "我这个人哦，满身阴暗，还要你给我一点阳光才能灿烂。","I am full of shadows — I need just a little of your sunshine to shine.",
+      "你是我历经千山万水也要相见的人。","You are the person I would cross a thousand mountains and rivers to see.",
+      "我想把对你的喜欢写进风里，这样就能吹遍整个世界的角落。","I want to write my love for you into the wind, so it blows to every corner of the world.",
+      "世界上美好的东西不太多，立秋傍晚从河对岸吹来的风，和二十来岁笑起来要命的你。","There aren't many beautiful things in the world — the autumn breeze across the river, and you in your twenties with a killer smile.",
+      "你就像是我年少时偷吻到的露珠，此后山长水远，仆仆来赴。","You're like a dewdrop I secretly kissed in my youth — through long journeys since, you've been both my tears and my lake.",
+      "你是夏日繁盛的香樟，扎根在我温暖的心房。","You are a lush summer camphor tree, rooted in the warm chambers of my heart.",
+      "我走过的路有泥泞有平坦有快乐有悲伤，我看过的风景有高山大海有废墟丛林，但唯独最钟意你。","The roads I've walked, the views I've seen — but I fancy only you.",
+      "喜欢你这件事，我从来都没有想过要停下来，就像地球自转，是本能。","Loving you is something I've never thought of stopping — like Earth's rotation, it's instinct.",
+      "你要是愿意，我就永远爱你。你要是不愿意，我就永远相思。","If you're willing, I'll love you forever. If you're not, I'll miss you forever.",
+      "我一生中最幸运的两件事：一件是时间终于将我对你的爱消耗殆尽；一件是很久很久以前有一天，我遇见你。","The two luckiest things in my life: time consuming my love for you; and that day long ago when I met you.",
+      "如果你要问我为什么喜欢你，因为你是我第一个也是唯一一个想要用尽全力去拥抱的人。","If you ask why I love you — because you are the first and only person I want to embrace with everything I have.",
+      "我想写一本很长很长的书，主角是你，主题是爱。","I want to write a very long book — the protagonist is you, and the theme is love.",
+      "我对你并无所企图，如果非要说我对你有企图，今生无非是图你幸福。","If I must name an ulterior motive, it is simply wishing for your happiness in this life.",
+      "你在我旁边，只打了个照面，五月的晴天闪了电。","You were beside me, just a passing glance — and lightning struck on a clear May day.",
+      "我能想到最浪漫的事，就是和你一起慢慢变老。","The most romantic thing I can imagine is growing old together with you.",
+      "你是年少的欢喜，喜欢的少年是你。","You are the crush of my youth, and the youth I have a crush on.",
+      "我想要的很简单：时光还在，你还在。","What I want is simple: time is still here, and so are you.",
+      "你是我这一生等了半世未拆的礼物。","You are the gift I have waited half a lifetime to open.",
+      "有人问我春天是什么，我想起我们第一次见面时你嘴角的弧度。","Someone asked me what spring is — I remembered the curve of your lips when you first spoke to me.",
+      "爱你是plan A，也是plan B，更是我唯一的人生计划。","Loving you is Plan A, and Plan B — the only life plan I have.",
+      "和你在一起的每一分每一秒，都是我最珍贵的回忆。","Every minute and second with you is my most treasured memory.",
+      "不是我爱上了你，是你终结了我的理智。","It's not that I fell in love with you — you ended my rationality.",
+      "我喜欢你，不是情话，是心里话。","I like you. Not sweet nothings — heart truths.",
+      "在所有物是人非的景色里，我最喜欢你。","Among all the changed landscapes, I like you the most.",
+      "你是我温暖的手套，冰冷的啤酒，带着阳光味道的衬衫。","You are my warm gloves, cold beer, and sun-scented shirt.",
+      "我可以陪你三冬暖，也可以陪你春不寒。","I can walk you through three winters' warmth, and springs without chill.",
+      "想把世界上所有的美好都给你，后来想了想，把我也给你吧，反正你也是我的。","I wanted to give you all the beauty in the world — then I thought, let me give you myself too. After all, you're already mine.",
+      "今天的风很温柔，像你说话的声音。","The wind is gentle today, like the sound of your voice.",
+      "我喜欢看日落，不是喜欢日落本身，是因为日落的时候，你会出现在我脑海里。","I love watching sunsets — not for the sunset itself, but because that's when you appear in my thoughts.",
+      "你是我喝过最烈的酒，也是我戒不掉的瘾。","You are the strongest wine I've ever tasted, and the addiction I can never quit.",
+      "这世界很吵，但你在的时候，我只能听见自己的心跳。","The world is noisy, but when you're here, I can only hear my own heartbeat.",
+      "我去过很多地方，看过很多风景，但都不及你眼睛里的万分之一。","I've traveled many places, seen many views — none compare to a single glance of your eyes.",
+      "今天也想你，明天也想你，后天也想你，每天都想你。","Thinking of you today, tomorrow, the day after — every single day.",
+      "你是人间四月天，笑响点亮了四面风。","You are April on earth — your laughter lights up the winds from all directions.",
+      "每当你看向我，我就觉得全世界都在对我笑。","Every time you look at me, I feel the whole world is smiling at me.",
+      "我想用一辈子的时间，给你写一封最长的情书。","I want to spend a lifetime writing you the longest love letter.",
+      "如果快乐可以贩卖，我愿意买下全世界的快乐，然后全部送给你。","If happiness were for sale, I'd buy all of it in the world and give it all to you.",
+      "你是我贫瘠土地上的最后一朵玫瑰。","You are the last rose on my barren land.",
+      "天上的星星很多，但你是最亮的那一颗。","There are many stars in the sky, but you are the brightest one.",
+      "我本来要行走江湖的，但遇见你以后，我觉得可以停一停了。","I was meant to wander the world — but after meeting you, I think I can stop now.",
+      "你是我的软肋，也是我的铠甲。","You are my weakness, and also my armor.",
+      "生活原本沉闷，但跑起来就有风，跑向你的时候更有。","Life was dull, but running creates wind — especially when I'm running toward you.",
+      "我不喜欢这个世界，我只喜欢你。","I don't like this world. I only like you.",
+      "你像彩虹，出现在我人生每一场雨之后。","You are like a rainbow, appearing after every rain in my life.",
+      "每天早上醒来的第一件事，是想起你的样子。","The first thing I do every morning is remember your face.",
+      "我花了很多时间在找你，剩下的时间用来爱你。","I spent a long time searching for you. The rest of my time is for loving you.",
+      "有你的地方就是家，没有你的地方只是房子。","Wherever you are is home. Without you, it's just a house.",
+      "人生很长，还好有你在身边。人生很短，所以每一秒都想和你在一起。","Life is long — thankfully you're by my side. Life is short — so I want every second with you.",
+      "你是我的例外，也是我的偏爱。","You are my exception, and my favoritism.",
+      "我翻山越岭，摔过很多跤，最后才发现，终点是你。","I crossed mountains, fell many times, only to discover the destination was you all along.",
+      "你是夏日冰镇西瓜中间最甜的那一口。","You are the sweetest bite in the middle of a chilled summer watermelon.",
+      "我不是碰不到更好的人，只是有了你，我就不想再碰到任何人。","It's not that I can't meet better people — it's that having you, I don't want to meet anyone else.",
+      "我想在你心里租一间房，期限是一辈子。","I want to rent a room in your heart, with a lifelong lease.",
+      "喜欢你大概就是，心里装满了你，再也装不下别人了。","Loving you means my heart is so full of you there's no room for anyone else.",
+      "如果可以的话，我希望自己从来没有遇见过你。因为遇见你以后，我就再也无法忍受没有你的日子了。","If I could, I wish I'd never met you. Because after meeting you, I can no longer endure days without you.",
+      "你是我的安眠药，也是我的兴奋剂。","You are my sleeping pill, and also my adrenaline.",
+      "众生皆苦，只有你是草莓味的。","All of life is bitter — only you taste like strawberries.",
+      "我想做一个很长的梦，梦里有你，然后永远不要醒来。","I want to have a very long dream with you in it, and never wake up.",
+      "你是我漫漫余生里，斩钉截铁的梦想。","You are the unwavering dream in my long remaining life.",
+      "我不相信一见钟情，直到我遇见了你。","I didn't believe in love at first sight — until I met you.",
+      "你是藏在冰淇淋里的夏天，也是裹在围巾里的冬天。","You are summer hidden in ice cream, and winter wrapped in a scarf.",
+      "我想在你耳边说上一世情话，从天光乍破到暮雪白头。","I want to whisper love words in your ear for a lifetime, from first light to snow-white hair.",
+      "喜欢一个人是藏不住的，就像日出一样，捂住嘴巴也会从眼睛里跑出来。","Loving someone can't be hidden — it seeps out of your eyes even if you cover your mouth.",
+      "有了你以后，我的人生从黑白电影变成了彩色电视。","With you, my life went from black-and-white film to color television.",
+      "你是我平淡岁月里的星辰。","You are the star in my ordinary days.",
+      "我想牵你的手，走过这座城市的每一个街角。","I want to hold your hand and walk through every corner of this city.",
+      "你的声音是我听过最美的旋律。","Your voice is the most beautiful melody I have ever heard.",
+      "每一次呼吸，都觉得空气里有你。","With every breath, I feel you in the air.",
+      "我希望八十岁的时候，醒来发现你还在我身边。","I hope at eighty years old, I'll wake up and find you still beside me.",
+      "别人都说我有眼光，其实我只是在人群中多看了你一眼。","Everyone says I have good taste — really, I just looked at you one extra time in the crowd.",
+      "你是所有情话的起源，也是所有温柔的解药。","You are the origin of every love word, and the antidote to every gentleness.",
+      "今夜我不关心人类，只关心你。","Tonight I don't care about humanity. I only care about you.",
+      "你问我为什么爱你，我想了好久，大概因为你是你，所以我才爱。","You ask why I love you. I thought for a long time — because you are you, that's why I love you.",
+      "你知道我最喜欢什么吗？就是你的名字。","Do you know what I like the most? Your name.",
+      "我不太会说情话，但我愿意学着说，因为对象是你。","I'm not good at sweet talk, but I'm willing to learn — because the subject is you.",
+      "你是这世间最美好的意外，也是我意料之中的欢喜。","You are the world's most beautiful accident, and the joy I fully expected.",
+      "世间的温柔，是晚来的善意和干净的你。","The world's tenderness is belated kindness and pure you.",
+      "我在人间贩卖黄昏，只为收集世间温柔去见你。","I sell dusk on earth, just to collect enough tenderness to come see you.",
+      "星星掉进海里，糖果掉进梦里，而你掉进我心里。","Stars fall into the sea, candy falls into dreams, and you fell into my heart.",
+      "你是鬼斧神工，也是巧夺天工。","You are divine craftsmanship, and also art that surpasses nature.",
+      "一屋两人，三餐四季，如此便是一生。","One house, two people, three meals, four seasons — that's a whole lifetime.",
+      "我要你知道，在这个世界上，总有一个人，在任何时候都在等你。","I want you to know that in this world, there is always one person waiting for you at all times.",
+      "你是我心头的白月光，也是我胸口的朱砂痣。","You are the white moonlight in my heart, and the crimson mole on my chest.",
+      "我写了三行字，爱要放在哪里才合适，你又能否一眼便知。","I wrote three lines — where should love be placed most fittingly, and will you know at a single glance?",
+      "你是我这一生只会遇见一次的惊喜。","You are the surprise I'll only encounter once in this lifetime.",
+      "有时词不达意，但还是很高兴遇见你。","Sometimes words fail, but I'm still so glad I met you.",
+      "生活虽然很苦，但你是那一点点甜。","Life is bitter, but you are that little bit of sweetness.",
+      "没有什么特别的事，只是想你了。","Nothing special — just missing you.",
+      "你是我年少时的欢喜，也是我老去后的回忆。","You are the joy of my youth, and the memory of my old age.",
+      "你知道吗，所有的温柔眷恋，都是对你。","You know, all my tenderness and attachment are for you.",
+      "我想做一朵安静的流云，在你也想我的时候，飘进你的眼里。","I want to be a quiet drifting cloud, and float into your eyes when you miss me too.",
+      "喜欢你这件事，瞒得住所有人，唯独瞒不住我自己。","Loving you — I can keep it from everyone else, but never from myself.",
+      "我喜欢你，是那种只要一想起你，就会弯起嘴角的笑。","I like you — the kind that makes the corners of my mouth curl up the moment I think of you.",
+      "世界很大，但我的心很小，小到只装得下你一个。","The world is big, but my heart is small — so small it can only hold you.",
+      "你是灵感，也是救赎。","You are inspiration, and also redemption.",
+      "你是我漫长岁月里，最美的章节。","You are the most beautiful chapter in my long years.",
+      "即使有一天我的眼睛看不见了，我还是会认出你的声音。","Even if one day I go blind, I will still recognize your voice.",
+      "我要把所有的浪漫，都给你一个人。","I want to give all the romance to you alone.",
+      "你是软风，是细雨，是夕阳，是所有温柔的总和。","You are the soft breeze, the gentle rain, the sunset — the sum of all tenderness.",
+      "我喜欢你，胜过削好的水果，周末的赖床，和空调房里盖被子。","I like you more than sliced fruit, weekend lie-ins, and covering up with a blanket in an air-conditioned room.",
+      "遇见你之前，我没有想过结婚；遇见你之后，我没有想过和别人结婚。","Before meeting you, I never thought of marriage. After meeting you, I never thought of marrying anyone else.",
+      "我不需要你做什么惊天动地的大事，只需要你在我身边就好。","I don't need you to do anything earth-shattering. I just need you by my side.",
+      "你是我最想留住的幸运。","You are the luck I most want to hold on to.",
+      "你笑起来真好看，像春天的花一样。","Your smile is so beautiful, like spring flowers in bloom.",
+      "我想要的爱情很简单：我说话时你会听，我任性时你会爱，我需要时你会在。","The love I want is simple: you listen when I speak, you love me when I'm stubborn, you're there when I need you.",
+      "如果有一天你走累了，就回头看看，我一直在你身后。","If one day you get tired of walking, turn around — I've always been behind you.",
+      "你是那颗让我乱了四季的星。","You are the star that confused my four seasons.",
+      "如果有人问我为什么爱你，我觉得我只能如此回答：因为是你，因为是我。","If someone asks why I love you, I can only answer: because it's you, because it's me.",
+      "第一次看到你的时候上帝在我耳边悄悄说了四个字：在劫难逃。","The first time I saw you, God whispered four words in my ear: there's no escape.",
+      "我喜欢的样子，你都有。","Every look I like — you have them all.",
+      "你就是我生命里的那束光，照亮了所有黑暗。","You are the beam of light in my life, illuminating all darkness.",
+      "你问我多喜欢你？我说不出来，但我心里明白，我宁愿和你吵架，也不愿意去爱别人。","How much do I like you? I can't put it into words, but I know in my heart — I'd rather argue with you than love someone else.",
+      "银河便利店在贩卖星球，我用身上所有的浪漫买下你。","The Milky Way convenience store sells planets — I spent all my romance to buy you.",
+      "你是黄昏后的暮光，是夜晚降临时我永远追随的星辰。","You are the twilight after dusk, the star I will always follow when night falls.",
+      "以前我想仗剑走天涯，现在我只想给你做饭。","I used to want to travel the world with a sword — now I just want to cook for you.",
+      "喜欢你是一件上瘾却无法治疗的事。","Loving you is an addiction with no cure.",
+      "我本来不信命，但遇到你以后，我相信了缘分。","I didn't believe in destiny — but after meeting you, I believe in fate.",
+      "如果可以，我想把地球的自转速度调慢一点，这样就能多爱你好几个小时。","If I could, I'd slow down Earth's rotation just to love you a few more hours each day.",
+      "你的朋友圈我只看了两遍，时间不长，也就从凌晨三点到早上六点。","I only looked through your moments twice — not that long, just from 3 AM to 6 AM.",
+      "你像一首写在星星上的诗，我要花一生去读懂。","You are like a poem written on the stars — it will take me a lifetime to read.",
+      "我已经闭好一只眼睛了，等你说晚安我再闭上另一只。","I've already closed one eye. I'll close the other when you say goodnight.",
+      "你是造物者的光荣，是四季不变的郁郁葱葱。","You are the glory of creation, the eternal green across all seasons.",
+      "不偏不倚，正好是你。","Neither too early nor too late — it was exactly you.",
+      "想和你在一起，哪怕一日三餐，哪怕粗茶淡饭。","I want to be with you — even just three meals a day, even just humble food.",
+      "你是朝露，是晚星，是我一切欢喜的开端。","You are morning dew and evening stars — the beginning of all my joy.",
+      "世间万物，你最珍贵。","Of all things in the world, you are the most precious.",
+      "我记得你笑起来的下垂眼，为数不多几句话的温柔嗓音。","I remember your downturned eyes when you smile, and the tenderness in your rare few words.",
+      "我想把自己变小，这样就能在你口袋里待一整天。","I want to shrink myself so I can stay in your pocket all day long.",
+      "你就是我不分昼夜的想念，是我没有尽头的欢喜。","You are my longing day and night, my joy without end.",
+      "我喜欢你，像云漂泊九万里，不曾歇息。","I love you like clouds drifting ninety thousand miles without rest.",
+      "我本来不想谈恋爱的，可是你太可爱了，我忍不了了。","I didn't plan to fall in love — but you're too adorable, I couldn't hold back.",
+      "如果思念有声音，恐怕你早已震耳欲聋。","If missing you made a sound, you'd be deafened by now.",
+      "你是我遇到过的最美风景，以至于往后的路我都不想一个人走了。","You are the most beautiful scenery I've ever encountered — I don't want to walk the rest of the road alone.",
+      "每天睁眼的第一件事，就是看你有没有发消息给我。","The first thing I do every day when I open my eyes is check if you sent me a message.",
+      "我想把我的全世界都给你，包括那个不太完美的我。","I want to give you my whole world, including the not-so-perfect me.",
+      "你是那种我会毫不犹豫说出'我愿意'的存在。","You are the kind of existence where I'd say 'I do' without hesitation.",
+      "如果这辈子没有遇见你，我会觉得人生少了点什么。","If I had never met you in this life, I would feel something was missing from it.",
+      "你是我吃过最甜的糖，喝过最暖的茶。","You are the sweetest candy I've ever tasted, the warmest tea I've ever drunk.",
+      "想和你一起在冬日的阳光下晒得懒洋洋的。","I want to laze around with you under the winter sun.",
+      "别人问我最想去哪里，我说：去你心里。","When people ask where I most want to go, I say: into your heart.",
+      "你是我手机里偷拍的几百张照片。","You are the hundreds of candid photos in my phone.",
+      "我喜欢看你认真的样子，也喜欢看你发呆的样子。","I love watching you being focused, and also watching you zone out.",
+      "你是我所有灵感的来源，也是我所有温柔的去处。","You are the source of all my inspiration, and the destination of all my tenderness.",
+      "我笨手笨脚的，但我愿意为了你学会所有不会的事。","I'm clumsy, but I'm willing to learn everything I can't do — for you.",
+      "如果有一天我们老了，走不动了，我就每天推着你去看夕阳。","If one day we're old and can't walk, I'll wheel you out to watch the sunset every day.",
+      "你像一只小猫，闯进了我的生活，然后赖着不走了。","You're like a little cat who barged into my life and refused to leave.",
+      "你是春天的雨，夏天的风，秋天的落叶，冬天的暖阳。","You are spring rain, summer breeze, autumn leaves, and winter sunshine.",
+      "你一笑，我就觉得今天是美好的一天。","The moment you smile, I know today is a beautiful day.",
+      "我喜欢你，像鲸鱼缺氧于六千四百米的深海，乐此不疲。","I love you like a whale thriving in oxygen-poor waters six thousand meters deep.",
+      "世人皆唱桃之夭夭，而我独爱你眼角的笑纹。","The world sings of peach blossoms — I alone love the laugh lines at the corners of your eyes.",
+      "你是雾中灯塔，是海上明月，是我的灵魂所系。","You are the lighthouse in fog, the moon over the sea, the anchor of my soul.",
+      "我在日记里写满了关于你的天气。","My diary is filled with weather reports about you.",
+      "你是我世界里的太阳，没有你，我寸步难行。","You are the sun of my world — without you, I can't move an inch.",
+      "想把你的声音录下来，设置成我的起床闹钟。","I want to record your voice and set it as my morning alarm.",
+      "你是人间四月天，也是我的岁岁年年。","You are April on earth, and also my every passing year.",
+      "我什么情话都不会说，但我会做很多很多好吃的给你。","I can't say sweet things, but I can cook lots and lots of good food for you.",
+      "你是我心里最柔软的地方，轻轻一碰就觉得甜。","You are the softest place in my heart — the slightest touch makes it sweet.",
+      "遇见你是故事的开始，走到最后是余生的欢喜。","Meeting you is the beginning of the story; walking to the end is the joy of my remaining life.",
+      "你一回眸，我便沦陷了半生。","One glance back from you, and I fell for half a lifetime.",
+      "你是我的，谁都抢不走，就算你也不行。","You are mine — no one can take you away, not even you.",
+      "我有一颗流浪的心，遇到你以后，它找到了归属。","I had a wandering heart — after meeting you, it found its home.",
+      "你的眼睛里，藏着我见过的所有美好。","Your eyes hold all the beauty I have ever seen.",
+      "你是我永远写不完的故事，永远画不完的画。","You are a story I can never finish writing, a painting I can never finish drawing.",
+      "我想和你浪费余生，一分一秒都不落下。","I want to waste the rest of my life with you, not missing a single second.",
+      "你是清晨第一缕阳光，也是夜晚最后一颗星星。","You are the first ray of morning sunlight and the last star of the night.",
+      "喜欢你这件事，我打算坚持一辈子。","Loving you — I plan to keep doing it for a lifetime.",
+      "要是有人欺负你，我第一个站出来保护你。因为我舍不得你受一丁点委屈。","If anyone bullies you, I'll be the first to stand up for you. Because I can't bear to see you suffer the slightest grievance.",
+      "我觉得这个世界上，没有什么比你更美好了。","I think there is nothing in this world more beautiful than you.",
+      "你是我唱到沙哑都不愿停的歌。","You are the song I'd sing until my voice goes hoarse and still refuse to stop.",
+      "别人说我眼光高，其实我只是看到了你。","People say I have high standards — really, I just saw you.",
+      "如果爱是写诗，那你就是最好的韵脚。","If love is poetry, you are the perfect rhyme.",
+      "我喜欢的每个样子你都有，你没有的样子我也喜欢。","Every look I love, you have. The looks you don't have, I love too.",
+      "遇见你以后，我的择偶标准就变成了你。","After meeting you, my type became: you.",
+      "我想和你一起养一只猫一只狗，然后我们就是一家四口。","I want to raise a cat and a dog with you — then we'll be a family of four.",
+      "你是心尖上的朱砂，是眉目里的星辰。","You are the cinnabar on my heart, the stars in my eyes.",
+      "你不知道，每次你回我消息，我都能开心一整天。","You don't know — every time you reply to my messages, I'm happy for the whole day.",
+      "你的睫毛弯弯的，像是可以承载我所有的心事。","Your curved eyelashes look like they could carry all my secret thoughts.",
+      "你是我日复一日枯燥生活里的那一点点甜。","You are the little bit of sweetness in my monotonous daily life.",
+      "我不敢说永远，但我想说，只要我还活着，我就会一直爱你。","I dare not say forever, but I want to say: as long as I'm alive, I'll keep loving you.",
+      "你是鬼迷心窍，也是情非得已。","You are my bewitched obsession, and my helpless love.",
+      "你是我的光，也是我的方向。","You are my light, and also my direction.",
+      "山野万里，你是我藏在心底的欢喜。","Endless mountains — you are the joy hidden deep in my heart.",
+      "你一笑，春天就来了。你一皱眉，我就想去打人。","When you smile, spring arrives. When you frown, I want to fight someone.",
+      "如果这辈子我只能做一件事，那就是好好爱你。","If I could only do one thing in this life, it would be to love you well.",
+      "我想每天都给你说晚安，一直说到我们老去。","I want to say goodnight to you every day, all the way until we grow old.",
+      "你是所有温柔里的奢侈品，也是所有暗淡里的一束光。","You are the luxury among all tenderness, and a beam of light in all darkness.",
+      "我对你的喜欢，是无法撤回的消息。","My love for you is a message that cannot be recalled.",
+      "你是薄荷味的糖，入口清凉，回味甘甜。","You are a mint candy — cool on the tongue, sweet as it lingers.",
+      "如果有一天我老了，记性不好了，但我一定会记得我爱你。","If one day I grow old and my memory fades, I will still remember that I love you.",
+      "遇见你之前我把温柔藏得很好，遇见你之后全漏了。","Before meeting you I hid my tenderness well — after meeting you, it all leaked out.",
+      "你是我笔尖写不尽的情诗。","You are the love poem my pen can never finish.",
+      "我很懒，但我愿意早起给你买早餐。","I'm very lazy, but I'd wake up early to buy you breakfast.",
+      "你的出现，让我相信了什么是命中注定。","Your appearance made me believe in destiny.",
+      "你是心里的小鹿，是梦里的独角兽。","You are the little deer in my heart, the unicorn in my dreams.",
+      "我想为你做很多很多顿饭，然后看你吃得开心的样子。","I want to cook many, many meals for you, and watch you enjoy them.",
+      "喜欢一个人是什么感觉？大概就是想到你就会忍不住笑。","What's it like to love someone? It's probably when you can't help smiling at the thought of them.",
+      "你是浮世三千里的吾爱有三，日月与卿。日为朝，月为暮，卿为朝朝暮暮。","In this vast world of three thousand things, I love three: the sun, the moon, and you. The sun for day, the moon for night, and you — for every day and every night.",
+      "我在全世界70亿人里找到了你，这就是我最大的幸运。","Out of 7 billion people in the world, I found you — that's my greatest luck.",
+      "你是我翻山越岭也想见的人，是我跋山涉水也要牵的手。","You are the one I'd cross mountains to see, the hand I'd wade through rivers to hold.",
+      "我想把世界上最好的都给你，才发现世界上最好的已经在我身边了。","I wanted to give you the best in the world — then realized the best was already by my side.",
+      "你的名字是我听过最短的诗，你的眼睛是我见过最深的湖。","Your name is the shortest poem I've ever heard; your eyes are the deepest lake I've ever seen.",
+      "如果可以，我想变成你手里的手机，每天被你捧着看。","If I could, I'd turn into your phone — held by you every day.",
+      "生活本来很无趣，但有了你，就有了光。","Life was boring — but with you, there is light.",
+      "你是蜜糖，是我甘愿沉溺的甜。","You are honey — a sweetness I'm willing to drown in.",
+      "被你喜欢是幸运，喜欢你更是我的福气。","Being loved by you is luck; loving you is my blessing.",
+      "你是我的日月星辰，也是我的人间烟火。","You are my sun, moon, and stars — and also my earthly warmth.",
+      "我喜欢你，这句话已经在我心里排练了无数次。","I like you — I've rehearsed this line countless times in my heart.",
+      "你是我这一生，只想紧紧抓住的温柔。","You are the tenderness I want to hold onto tightly in this life.",
+      "我曾以为我不会爱，直到遇见了你。","I thought I was incapable of love — until I met you.",
+      "你是心动的源头，是所有美好的起点。","You are the source of heartbeats, the starting point of all beauty.",
+      "如果有一天我们吵架了，我还是会给你发消息，问你想吃什么。","If we ever fight, I'll still text you to ask what you want to eat.",
+      "你是我穷尽一生也想守护的人。","You are the one I want to protect with all my life.",
+      "我想和你一起走在雨里，撑着同一把伞，靠着彼此的肩膀。","I want to walk in the rain with you, under the same umbrella, leaning on each other's shoulders.",
+      "你是春风化雨，润物无声，却让我心潮澎湃。","You are spring wind turning to rain, nourishing silently — yet making my heart surge.",
+      "你突然出现的那一刻，我的世界按下了慢放键。","The moment you appeared, my world switched to slow motion.",
+      "我有时候会吃醋，但那都是因为我太在乎你。","I get jealous sometimes — but it's only because I care about you so much.",
+      "你是那抹最亮眼的色彩，在我灰白的画布上。","You are the brightest splash of color on my gray canvas.",
+      "我想把情话都说给你听，说到你耳朵起茧。","I want to say all the sweet nothings to you until your ears grow calluses.",
+      "你是我的光明，也是我的救赎。","You are my light, and also my redemption.",
+      "人生若只如初见，我愿每一次初见都是你。","If life were only first encounters, I'd want every first encounter to be you.",
+      "你把我从一个人的孤独里捞了出来，扔进了两个人的幸福里。","You fished me out of solitary loneliness and threw me into the happiness of two.",
+      "你是那颗让我夜不能寐的星星，也是那个让我安然入睡的月亮。","You are the star that keeps me awake at night, and the moon that lets me sleep peacefully.",
+      "我写了很多情书，每一封都是写给不同的你——因为每天的你，我都重新喜欢一遍。","I've written many love letters, each to a different you — because I fall for you anew every day.",
+      "你是我醉酒后唯一想见的人。","You are the only person I want to see when I'm drunk.",
+      "风吹过你的发梢，那一刻我觉得风都变甜了。","When the wind blew through your hair, I felt even the wind turned sweet.",
+      "你是软肋，也是铠甲。你是泪点，也是笑点。","You are my weakness and my armor. You make me cry and you make me laugh.",
+      "我们之间不需要什么轰轰烈烈，只要平平淡淡的相守。","We don't need grand gestures — just quiet, steady togetherness.",
+      "你的每一次笑，都像在我心里放了一场烟花。","Every smile of yours is like fireworks set off in my heart.",
+      "我想对你好，好到让全世界都羡慕你。","I want to treat you so well that the whole world envies you.",
+      "你是这世上最动听的旋律，我愿用一生去聆听。","You are the most beautiful melody in the world — I'd spend a lifetime listening.",
+      "遇见你之前，我不知道什么叫心动；遇见你之后，我每天都在心动。","Before meeting you, I didn't know what heart-fluttering meant. After meeting you, my heart flutters every day.",
+      "如果可以把快乐打包，我会把所有快乐都寄给你。","If happiness could be packaged, I'd mail all of it to you.",
+      "你是那一夜的大雨，淋湿了我全部的心事。","You are that night's heavy rain, drenching all of my secret thoughts.",
+      "你让我从一个不相信爱情的人变成了一个满脑子都是你的人。","You turned me from someone who didn't believe in love into someone whose head is full of you.",
+      "你的眼睛里藏着银河，而我想要乘舟穿行其中。","Your eyes hold the Milky Way, and I want to sail through it.",
+      "我想和你一起看星星，一颗两颗，数到天亮。","I want to watch the stars with you — one, two, counting until dawn.",
+      "你是夏日最冰的那口可乐，是冬天最暖的那杯奶茶。","You are the coldest sip of cola in summer, the warmest cup of milk tea in winter.",
+      "我每天最期待的事，就是收到你的消息。","The thing I look forward to most every day is receiving a message from you.",
+      "你是我唯一想放进未来里的人。","You are the only person I want to put in my future.",
+      "不是每一场相遇都有结局，但我们的相遇，一定是一辈子。","Not every encounter has an ending — but ours will surely last a lifetime.",
+      "你是清晨被窝里的温暖，是我赖床的理由。","You are the warmth under the morning blanket, my reason to stay in bed.",
+      "我的眼里只能装下你，我的心也只能住进你。","My eyes can only hold you; my heart can only house you.",
+      "你是所有温柔的归宿，是我不肯醒来的梦。","You are the destination of all tenderness, the dream I refuse to wake from.",
+      "想跟你说很多很多废话，因为喜欢一个人，就是什么都想跟他分享。","I want to talk endless nonsense with you — because loving someone means wanting to share everything with them.",
+      "你是诗三百，是我终其一生也读不完的篇章。","You are three hundred poems — a volume I'll never finish reading in my lifetime.",
+      "你身上有淡淡的香味，是让我安心的味道。","There's a faint fragrance about you — the scent that puts me at ease.",
+      "我喜欢你不只是因为你的样子，还因为跟你在一起时我的样子。","I like you not just for how you are, but for who I am when I'm with you.",
+      "你是破晓的光，也是黄昏的暖。","You are the light of dawn, and the warmth of dusk.",
+      "时间很快，但我愿意用全部的时间来陪你。","Time flies, but I'll spend all of it with you.",
+      "你是夏天冰箱里最后一根雪糕，是我最想独占的甜蜜。","You are the last popsicle in the summer freezer — the sweetness I most want to keep to myself.",
+      "如果思念会开花，我的心里已经是一座花园。","If missing you could bloom, my heart would already be a garden.",
+      "我在人间捡故事，捡了那么多，最想珍藏的还是你。","I collect stories on earth — out of so many, the one I most want to keep is you.",
+      "你是意外的惊喜，也是意料之中的温暖。","You are an unexpected surprise, and a warmth I fully expected.",
+      "我还是很喜欢你，像风走了八千里，不问归期。","I still love you, like a wind that travels eight thousand miles without asking when to return.",
+      "你是耳机里单曲循环的那首歌，是我永远听不腻的旋律。","You are the song on repeat in my earphones — the melody I'll never get tired of.",
+      "如果可以，我想把时间暂停，就停在你对我笑的那一刻。","If I could, I'd pause time — right at the moment you smiled at me.",
+      "你的出现，是我平淡一生里最华丽的意外。","Your arrival is the most magnificent surprise in my ordinary life.",
+      "我喜欢你，喜欢到把所有的温柔都攒下来给你。","I like you so much that I save up all my tenderness just for you.",
+      "你是我漫长黑夜里，最亮的启明星。","You are the brightest morning star in my long, dark night.",
+      "这辈子很短，短到只够好好爱一个人。那个人就是你。","This life is short — just short enough to love one person well. And that person is you.",
+      "你是我生命里最重要的那个人，没有之一。","You are the most important person in my life — no exceptions.",
+      "月遇从云，花遇和风，而我遇见了你。","The moon meets the clouds, the flowers meet the breeze — and I met you.",
+      "你是茫茫人海中我唯一想要停靠的岸。","You are the only shore I want to dock at in the vast sea of people.",
+      "今天天气很好，好到我想立刻飞奔到你身边。","The weather is so beautiful today that I want to race to your side.",
+      "你是我永远追逐的光，是我此生唯一的向往。","You are the light I'll forever chase, the only longing of this life.",
+      "我喜欢你已经超过两分钟，不能撤回了。","I've liked you for more than two minutes — it can no longer be recalled.",
+      "你是人间理想，也是我此生不换。","You are the ideal of the world, and the one I'll never trade away.",
+      "你是一首我永远唱不完的情歌，我爱你的旋律，永不停歇。","You are a love song I'll never finish singing — the melody of my love for you never stops."
+    ];
+
+    var pairIdx = 0;     // 当前是第几对
+    var charIdx = 0;     // 当前打/删到第几个字符
+    var deleting = false;
+    var engPhase = false; // false=打中文, true=打英文
+    var TYPE = 50;
+    var DEL  = 18;
+    var PAUSE_AFTER_TYPE = 2200;
+    var PAUSE_BETWEEN = 500;
+
+    function startTypewriter() {
+      twEl.textContent = '';
+      cursorEl.style.display = 'inline';
+      pairIdx = 0; charIdx = 0; deleting = false; engPhase = false;
+      schedule(TYPE);
+    }
+
+    function schedule(ms) {
+      if (twTimer) clearTimeout(twTimer);
+      twTimer = setTimeout(tick, ms);
+    }
+
+    function tick() {
+      var phraseIdx = pairIdx * 2 + (engPhase ? 1 : 0);
+      if (phraseIdx >= loveLines.length) {
+        // 打完一轮，从头来
+        pairIdx = 0; charIdx = 0; deleting = false; engPhase = false;
+        phraseIdx = 0;
+      }
+      var cur = loveLines[phraseIdx];
+
+      if (deleting) {
+        charIdx--;
+        if (charIdx < 0) {
+          deleting = false;
+          if (engPhase) {
+            engPhase = false;
+            pairIdx++;
+            schedule(PAUSE_BETWEEN);
+          } else {
+            engPhase = true;
+            schedule(PAUSE_BETWEEN);
+          }
+          return;
+        }
+      } else {
+        charIdx++;
+        if (charIdx > cur.length) {
+          deleting = true;
+          schedule(PAUSE_AFTER_TYPE);
+          return;
+        }
+      }
+
+      twEl.textContent = cur.substring(0, charIdx);
+      var delay = deleting ? DEL : TYPE;
+      // 标点停顿
+      var last = cur.charAt(charIdx - 1);
+      if (!deleting && last && /[，。！？、：；""''（）,…\.!\?\;\:\(\)]/.test(last)) delay *= 2.3;
+      schedule(delay);
+    }
+  })();
+  </script>
+</body>
+</html>
