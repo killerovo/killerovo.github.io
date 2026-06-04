@@ -30,7 +30,25 @@
       "WebFetch(domain:www.xihuannio.cn)",
       "PowerShell(Move-Item *)",
       "Bash(powershell -Command \"Start-Process 'http://localhost:8080' -ErrorAction SilentlyContinue; python -m http.server 8080\")",
-      "Bash(xxd)"
+      "Bash(xxd)",
+      "WebFetch(domain:api.xcvts.cn)",
+      "Bash(sed -i ':a;N;$!ba;s/min-height: 0;\\\\n    }\\\\n\\\\n\\\\n\\\\n\\\\n/min-height: 0;\\\\n    }\\\\n\\\\n    .layout .panel { flex: 0 0 auto; min-height: 240px; max-height: 40vh; }\\\\n/' music.html)",
+      "Bash(sed -n '210,220p' music.html)",
+      "Bash(sed -i 's/min-height: 240px; max-height: 40vh;/min-height: 280px;/' music.html)",
+      "Bash(sed -n '215,218p' music.html)",
+      "Bash(sed -i 's/overflow: hidden; \\\\/\\\\* 页面整体不滚动 \\\\*\\\\//overflow: auto;/' music.html)",
+      "Bash(sed -i 's/overflow: hidden; \\\\/\\\\* 页面整体不滚动\\\\*\\\\//overflow: auto;/' music.html)",
+      "Bash(sed -i 's/height: calc\\(100vh - 104px\\);/min-height: calc\\(100vh - 104px\\);/' music.html)",
+      "Bash(sed -i 's/height: calc\\(100vh - 70px\\);/min-height: calc\\(100vh - 70px\\);/' music.html)",
+      "Bash(sed -i 's/.layout section:last-of-type/.layout > section:last-of-type/' music.html)",
+      "Bash(sed -n '215,217p' music.html)",
+      "Bash(sed -i '1212s/section.panel:last-of-type/.layout > section:last-of-type/' music.html)",
+      "Bash(sed -i '1209s/\"chat\"/\"bottom\"/' music.html)",
+      "Bash(sed -i '1212s/chat/bottom/' music.html)",
+      "Bash(sed -i 's/overflow: auto;/overflow: hidden;/' music.html)",
+      "Bash(sed -n '40,42p' music.html)",
+      "Bash(sed -i 's/overflow-y: auto;/overflow-y: hidden;/' music.html)",
+      "Bash(sed -n '210,214p' music.html)"
     ]
   }
 }
