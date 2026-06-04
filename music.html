@@ -1154,11 +1154,12 @@
 
     /* Panel expand */
     .panel{cursor:pointer;transition:transform .35s ease,opacity .35s ease;overflow:hidden;}
-    .panel.expanded{position:fixed;inset:48px;z-index:100;cursor:default;transform:scale(1);box-shadow:0 0 80px rgba(0,0,0,.95),0 0 200px rgba(100,160,255,.3);overflow-y:auto;}
-    .app.dim .panel:not(.expanded){opacity:.15;pointer-events:none;filter:blur(2px);}
-    .panel .p-close{display:none;position:absolute;top:12px;right:16px;z-index:110;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.7);color:#fff;font-size:20px;cursor:pointer;line-height:1;align-items:center;justify-content:center;}
+    .panel.expanded{position:fixed;top:48px;left:48px;right:48px;bottom:48px;z-index:500;cursor:default;overflow-y:auto;border-radius:var(--radius-md);margin:0;background:var(--bg-dark);padding:16px;border:1px solid var(--border-subtle);}
+    .app.dim .layout>.panel:not(.expanded),.app.dim>header,.app.dim>canvas,.app.dim>footer{visibility:hidden;}
+    [data-theme="light"] .panel.expanded{background:var(--bg-dark);}
+    .panel .p-close{display:none;position:absolute;top:12px;right:16px;z-index:510;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.7);color:#fff;font-size:20px;cursor:pointer;line-height:1;align-items:center;justify-content:center;}
     .panel.expanded .p-close{display:flex;}
-    @media(max-width:800px){.panel.expanded{inset:12px;}}
+    @media(max-width:800px){.panel.expanded{top:12px;left:12px;right:12px;bottom:12px;}}
 
     @media (max-width:860px){
       header{
@@ -1421,9 +1422,12 @@
         <button id="shortcut-close" class="modal-close-btn">×</button>
       </div>
       <p class="modal-desc" style="font-size:12px;line-height:1.9;">
-        <strong>🔍 搜歌：</strong>在左边搜索栏输入歌名或歌手，咪咕 / 网易云 / QQ / 酷我四源聚合，回车搜索。<br><br>
-        <strong>🎧 播放：</strong>点击搜索结果或播放列表中的歌曲即可播放，右侧显示歌词、封面和进度条。<br><br>
-        <strong>📜 歌单：</strong>在播放列表区域可切换「搜索结果」「收藏」「自建歌单」，支持列表循环 / 单曲循环 / 随机。<br><br>
+        <strong>📱 四个板块：</strong>页面分为 <strong>歌曲搜索</strong> / <strong>正在播放</strong> / <strong>播放列表</strong> / <strong>房间聊天</strong> 四个区域。<br>
+        每个区域都可以<strong>点击放大</strong>查看完整内容，尤其手机端显示不完整时需要点开放大。<br>
+        ESC 或点击右上角 × 可以收起。<br><br>
+        <strong>🔍 搜歌：</strong>在搜索栏输入歌名或歌手，咪咕 / 网易云 / QQ / 酷我四源聚合，回车搜索。<br><br>
+        <strong>🎧 播放：</strong>点击搜索结果或播放列表中的歌曲即可播放，歌词和进度条在播放区显示。<br><br>
+        <strong>📜 歌单：</strong>在播放列表区可切换「搜索结果」「收藏」「自建歌单」，支持循环 / 单曲循环 / 随机。<br><br>
         <strong>💬 聊天：</strong>底部的聊天窗可以边听歌边聊天，消息实时同步。<br><br>
         <strong>👥 一起听：</strong>在顶部输入<strong>同一个房间号</strong>，点击「加入」，同一房间的好友共享歌单和聊天！<br><br>
         <strong>📋 分享：</strong>点右上角「分享链接」，复制房间链接发给好友即可。<br><br>
@@ -1447,11 +1451,13 @@
         <button id="welcome-close" class="modal-close-btn">×</button>
       </div>
       <p class="modal-desc" style="font-size:12px;line-height:1.8;">
-        🔍 <strong>搜索区</strong>（左上）— 搜歌曲，咪咕/网易云/QQ/酷我四源聚合<br>
-        🎧 <strong>播放器</strong>（中上）— 播放、歌词、进度<br>
-        📜 <strong>播放列表</strong>（右上）— 收藏和歌单管理<br>
-        💬 <strong>聊天窗</strong>（下方）— 边听边聊<br><br>
-        <strong>和好友一起听：</strong>在顶部输入同一个房间号，点「加入」，就能共享歌单和聊天啦！<br>
+        📱 页面分为 <strong>歌曲搜索 / 正在播放 / 播放列表 / 房间聊天</strong> 四个板块。<br>
+        每个板块都可以<strong>点击放大</strong>查看完整内容，手机端需要点开放大才能看到全部。<br><br>
+        🔍 <strong>搜索区</strong> — 咪咕/网易云/QQ/酷我四源聚合搜歌<br>
+        🎧 <strong>播放器</strong> — 播放、歌词、进度<br>
+        📜 <strong>播放列表</strong> — 收藏和歌单管理<br>
+        💬 <strong>聊天窗</strong> — 边听边聊，和好友一起听！<br><br>
+        <strong>👥 一起听：</strong>在顶部输入同一个房间号，点「加入」，就能共享歌单和聊天！<br>
         <span style="color:var(--accent-strong);">分享链接：</span><code id="shareUrl" style="word-break:break-all;font-size:11px;"></code>
       </p>
       <div class="modal-actions">

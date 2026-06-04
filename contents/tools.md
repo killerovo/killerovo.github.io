@@ -16,7 +16,7 @@ DFS、Dijkstra、A*、Greedy——四种算法在迷宫中寻找出路。
 
 [打开](http://qjjlb.quanjian.com.cn/musicdl/)
 
-## 双人听歌
+## 一起听歌
 
 咪咕/网易云/QQ/酷我四源搜歌，创建房间共享歌单边听边聊。
 
