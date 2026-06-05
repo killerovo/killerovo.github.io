@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="view-transition" content="same-origin" />
   <title>予君茉莉，愿君莫离</title>
 
   <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
@@ -78,7 +79,8 @@
       font-size: 16px; color: var(--text-secondary);
     }
     .intro .hint {
-      margin-top: 32px; font-size: 14px; color: var(--text-tertiary);
+      margin-top: 32px; font-size: 14px;
+      color: rgba(255,255,255,0.7);
       animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -89,24 +91,37 @@
     /* 内容区 */
     .content { display: none; text-align: center; padding: 20px 16px 60px; width: 100%; max-width: 1000px; }
 
-    /* 双卡片计时器 */
+    /* 双卡片计时器 —— 高级感磨砂玻璃 */
     .clocks {
       display: flex; justify-content: center; gap: 36px;
-      flex-wrap: wrap; margin-bottom: 42px;
+      flex-wrap: wrap; margin-bottom: 48px;
     }
     .clock-card {
-      padding: 28px 36px; border-radius: 16px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-light);
+      position: relative;
+      padding: 32px 40px; border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
       min-width: 320px; flex: 1; max-width: 400px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      transition: background 0.3s, border-color 0.3s;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 8px 32px rgba(0,0,0,0.3);
+      overflow: hidden;
     }
-    .clock-card .label { font-size: 15px; color: var(--text-tertiary); margin-bottom: 4px; font-weight: 600; }
-    .clock-card .date  { font-size: 13px; color: var(--text-tertiary); margin-bottom: 12px; }
+    .clock-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 20px; padding: 1px;
+      background: linear-gradient(155deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02) 50%, rgba(244,114,182,0.15));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .clock-card .label { font-size: 15px; color: rgba(220,210,225,0.65); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.06em; position: relative; }
+    .clock-card .date  { font-size: 13px; color: rgba(200,190,210,0.4); margin-bottom: 16px; font-weight: 400; letter-spacing: 0.04em; position: relative; }
     .clock-card .timer {
-      font-size: 22px; font-weight: 600; color: var(--text-primary); line-height: 1.7;
-      white-space: nowrap;
+      font-size: 21px; font-weight: 500; color: rgba(235,230,245,0.9); line-height: 1.7;
+      white-space: nowrap; position: relative; letter-spacing: 0.02em;
     }
     .digit {
       display: inline-block; font-size: 38px; font-weight: 700;
@@ -150,7 +165,7 @@
   <div class="intro" id="intro">
     <h1>予君茉莉，愿君莫离</h1>
     <p>Every story begins with a single moment.</p>
-    <div class="hint" id="hint">✨ 点击这里，开始我们的故事</div>
+    <div class="hint" id="hint">&gt; 点击这里，开始我们的故事 &lt;</div>
   </div>
 
   <!-- 内容 -->
@@ -158,7 +173,7 @@
     <!-- 双计时器 -->
     <div class="clocks" id="clocks">
       <div class="clock-card">
-        <div class="label">💫 认识你</div>
+        <div class="label">💫 我们的故事开始于</div>
         <div class="date">2026年3月4日</div>
         <div class="timer" id="timerMeet">
           <span class="digit">0</span> 天 <span class="digit">00</span> 时 <span class="digit">00</span> 分 <span class="digit">00</span> 秒

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="view-transition" content="same-origin" />
     <meta name="description" content="Li Zhijiang — Academic Homepage" />
     <meta name="author" content="killerovo" />
     <title id="title">Li Zhijiang</title>
@@ -513,20 +514,7 @@
                 'AI 会像 QQ 和微信一样普及。'
             ];
 
-            wrapper.style.cursor = 'pointer';
-            wrapper.addEventListener('click', function(e) {
-                e.stopPropagation();
-                listEl.innerHTML = '';
-                for (var i = 0; i < allPhrases.length; i += 2) {
-                    var en = allPhrases[i] || '';
-                    var zh = allPhrases[i + 1] || '';
-                    var row = document.createElement('div');
-                    row.className = 'quote-pair';
-                    row.innerHTML = '<span class="quote-en">' + en + '</span><span class="quote-zh">' + zh + '</span>';
-                    listEl.appendChild(row);
-                }
-                overlay.classList.add('open');
-            });
+            wrapper.style.cursor = 'default';
 
             closeBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
