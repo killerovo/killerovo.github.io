@@ -58,7 +58,9 @@
                 height: 88vw;
             }
         }
-    </style>
+    [data-theme="light"] .cube-hint,
+[data-theme="light"] .cube-back { color: #1a1a1a; }
+</style>
 </head>
 <body>
 
@@ -67,7 +69,7 @@
         <div class="nav-inner">
             <a class="nav-brand" href="index.html">Li Zhijiang</a>
             <div style="display:flex;align-items:center;gap:12px;">
-                <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+                <a href="index.html" style="font-size:13px;color:var(--text-secondary);">← 返回主页</a>
                 <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"/>
@@ -578,5 +580,7 @@
         })();
     })();
     </script>
+    <footer class="site-footer-unified" style="position:relative;z-index:1;margin-top:60px;"><span id="visitor-count"></span></footer>
+    <script type="text/javascript" src="static/js/shared.js"></script>
 </body>
 </html>

@@ -6,13 +6,13 @@ DFS、Dijkstra、A*、Greedy——四种算法在迷宫中寻找出路。
 
 ## 追光影视
 
-海量影视免费在线观看，追剧不迷路。
+海量影视免费在线观看，追剧不迷路。（外部）
 
 [打开](https://www.4kmovie.site/)
 
 ## 乐海拾贝
 
-免费在线听歌，海量曲库随心播放。
+免费在线听歌，海量曲库随心播放。（外部）
 
 [打开](http://qjjlb.quanjian.com.cn/musicdl/)
 

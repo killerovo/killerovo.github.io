@@ -26,7 +26,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: #0d0d12;
+      background: transparent;
       color: #ededef;
       min-height: 100vh;
       display: flex;
@@ -157,6 +157,7 @@
       .typewriter-box { padding: 20px 18px; }
     }
   </style>
+  <script>document.documentElement.removeAttribute('data-theme');</script>
 </head>
 <body>
   <a class="home-link" href="index.html">← 返回主页</a>
@@ -211,8 +212,7 @@
     var clockInterval = null;
     var twTimer = null;
 
-    // ---- 强制深色模式 ----
-    document.documentElement.removeAttribute('data-theme');
+    // ---- 强制深色模式（已在 <head> 中执行，此处保留作为兜底） ----
 
     // ---- 点击入口 ----
     intro.addEventListener('click', function() {
@@ -664,5 +664,7 @@
     }
   })();
   </script>
+  <footer class="site-footer-unified" style="position:relative;z-index:1;"><span id="visitor-count"></span></footer>
+  <script type="text/javascript" src="static/js/shared.js"></script>
 </body>
 </html>

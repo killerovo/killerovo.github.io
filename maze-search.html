@@ -68,7 +68,7 @@
 
     .maze-btn.btn-start {
         border-color: #86efac;
-        color: #6b7280;
+        color: #4b5563;
         background: transparent;
     }
     .maze-btn.btn-start.active {
@@ -81,7 +81,7 @@
 
     .maze-btn.btn-end {
         border-color: #fca5a5;
-        color: #6b7280;
+        color: #4b5563;
         background: transparent;
     }
     .maze-btn.btn-end.active {
@@ -92,8 +92,8 @@
         transform: scale(1.04);
     }
 
-    [data-theme="dark"] .maze-btn.btn-start { border-color: #166534; color: #6b7280; background: transparent; }
-    [data-theme="dark"] .maze-btn.btn-end   { border-color: #7f1d1d; color: #6b7280; background: transparent; }
+    [data-theme="dark"] .maze-btn.btn-start { border-color: #166534; color: #4b5563; background: transparent; }
+    [data-theme="dark"] .maze-btn.btn-end   { border-color: #7f1d1d; color: #4b5563; background: transparent; }
 
     [data-theme="dark"] .maze-btn.btn-start.active {
         background: #22c55e; color: #fff; border-color: #16a34a;
@@ -159,6 +159,11 @@
         .maze-btn { padding: 6px 12px; font-size: 11px; }
         .maze-legend { gap: 8px; font-size: 10px; }
     }
+[data-theme="light"] .maze-subtitle,
+[data-theme="light"] .maze-legend,
+[data-theme="light"] .maze-back { color: #1a1a1a; }
+[data-theme="light"] .maze-btn.btn-start { color: #1a1a1a; }
+[data-theme="light"] .maze-btn.btn-end { color: #1a1a1a; }
 </style>
 </head>
 <body>
@@ -167,7 +172,7 @@
     <div class="nav-inner">
         <a class="nav-brand" href="index.html">Li Zhijiang</a>
         <div style="display:flex;align-items:center;gap:12px;">
-            <a href="index.html" style="font-size:13px;color:var(--text-tertiary);">← 返回主页</a>
+            <a href="index.html" style="font-size:13px;color:var(--text-secondary);">← 返回主页</a>
             <button class="theme-toggle" id="themeToggle" aria-label="切换明暗主题">
                 <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
@@ -187,14 +192,14 @@
     <div class="maze-toolbar">
         <button class="maze-btn btn-start active" id="btnSetStart">🟢 放置起点</button>
         <button class="maze-btn btn-end" id="btnSetEnd">🔴 放置终点</button>
-        <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
+        <span style="font-size:12px;color:var(--text-secondary);margin:0 4px;">|</span>
         <div class="maze-mode">
             <button class="maze-btn active" id="btnDFS">DFS</button>
             <button class="maze-btn" id="btnBFS">Dijkstra</button>
             <button class="maze-btn" id="btnAStar">A*</button>
             <button class="maze-btn" id="btnGreedy">Greedy</button>
         </div>
-        <span style="font-size:12px;color:var(--text-tertiary);margin:0 4px;">|</span>
+        <span style="font-size:12px;color:var(--text-secondary);margin:0 4px;">|</span>
         <button class="maze-btn primary" id="btnSearch">▶ 开始搜索</button>
         <button class="maze-btn" id="btnReset">↺ 重置</button>
         <button class="maze-btn" id="btnNewMaze">🎲 新迷宫</button>
@@ -917,5 +922,7 @@ updateStats();
 
 })();
 </script>
+    <footer class="site-footer-unified" style="position:relative;z-index:1;margin-top:60px;"><span id="visitor-count"></span></footer>
+    <script type="text/javascript" src="static/js/shared.js"></script>
 </body>
 </html>

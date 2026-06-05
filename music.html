@@ -309,6 +309,9 @@
     .playlist-panel:not(.expanded) .playlist-bar { display:flex !important; }
     .playlist-panel:not(.expanded) .playlist-info { font-size:12px; color:var(--text-sub); }
     .playlist-panel:not(.expanded) .playmode-row { display:flex !important; }
+    /* Fix: compact mode text visibility in light mode */
+    [data-theme="light"] .player-panel:not(.expanded) .track-artist { color: var(--text-sub); }
+    [data-theme="light"] .player-panel:not(.expanded) .progress-time { color: var(--text-sub); }
 
     /* === EXPANDED: restore all content === */
     .panel.expanded { min-height:auto !important; max-height:none !important; align-items:stretch !important; text-align:left !important; }
@@ -689,7 +692,7 @@
       display:inline-flex;
       align-items:center;
       gap:4px;
-      background:rgba(0,0,0,0.35);
+      background:rgba(0,0,0,0.65);
     }
     .source-pill.source-migu   { color:#ffb74d; background:rgba(255,183,77,0.12);}
     .source-pill.source-netease{ color:#ff7b7b; background:rgba(255,107,107,0.12);}
@@ -716,7 +719,7 @@
       padding:2px 8px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.18);
-      background:rgba(0,0,0,0.35);
+      background:rgba(0,0,0,0.65);
       color:var(--text-sub);
       font-size:11px;
     }
@@ -822,7 +825,7 @@
     /* ===== 浅色模式全面修正 ===== */
     /* --- 歌词 --- */
     [data-theme="light"] .lyrics-container { background: rgba(0,0,0,0.04); }
-    [data-theme="light"] .lyrics-line { color: rgba(30,30,35,0.82); }
+    [data-theme="light"] .lyrics-line { color: rgba(30,30,35,0.82); opacity: 0.82; }
     [data-theme="light"] .lyrics-line.active {
       color: transparent;
       background: linear-gradient(120deg, #c0392b, #8e44ad, #2980b9);
@@ -997,7 +1000,7 @@
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.2);
       padding:2px;
-      background:rgba(0,0,0,0.35);
+      background:rgba(0,0,0,0.65);
       font-size:11px;
     }
     .playlist-tab {
@@ -1429,7 +1432,7 @@
       background:linear-gradient(155deg, rgba(0,0,0,0.05), rgba(0,0,0,0.01) 60%, rgba(0,0,0,0.04));
     }
     [data-theme="light"] .modal-desc {
-      color:rgba(40,40,50,0.78);
+      color:rgba(40,40,50,0.9);
     }
     [data-theme="light"] .modal-desc kbd {
       background:rgba(0,0,0,0.05); border-color:rgba(0,0,0,0.12); color:rgba(30,30,40,0.85);
@@ -1455,7 +1458,7 @@
       background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.06);
     }
     [data-theme="light"] .shortcut-card:hover { background:rgba(0,0,0,0.06); }
-    [data-theme="light"] .shortcut-label { color:rgba(40,40,50,0.6); }
+    [data-theme="light"] .shortcut-label { color:rgba(40,40,50,0.85); }
     [data-theme="light"] .shortcut-key kbd {
       background:rgba(0,0,0,0.04); border-color:rgba(0,0,0,0.14); color:rgba(0,0,0,0.75);
     }
@@ -1652,7 +1655,7 @@
       background: rgba(255,255,255,0.04);
       border-color: rgba(255,255,255,0.06);
       transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.65);
     }
     .search-panel.expanded .mini-title {
       font-size: 16px; font-weight: 500;
@@ -1704,12 +1707,12 @@
     [data-theme="light"] .search-panel.expanded .chip {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.5);
+      color: #555;
     }
     [data-theme="light"] .search-panel.expanded .source-chip {
       background: rgba(0,0,0,0.02);
       border-color: rgba(0,0,0,0.06);
-      color: rgba(0,0,0,0.5);
+      color: #555;
     }
     [data-theme="light"] .search-panel.expanded .source-chip:hover {
       background: rgba(0,0,0,0.05);
@@ -1728,7 +1731,7 @@
     [data-theme="light"] .search-panel.expanded .limit-row .btn {
       background: rgba(0,0,0,0.04);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.55);
+      color: #444;
     }
     [data-theme="light"] .search-panel.expanded .limit-row .btn:hover {
       background: rgba(0,0,0,0.1);
@@ -1743,23 +1746,23 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     }
     [data-theme="light"] .search-panel.expanded .mini-artist {
-      color: rgba(0,0,0,0.4);
+      color: #555;
     }
     [data-theme="light"] .search-panel.expanded .mini-badge {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.06);
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .search-panel.expanded .mini-source {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.06);
     }
     [data-theme="light"] .search-panel.expanded .search-prefix {
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .search-panel.expanded .search-stats,
     [data-theme="light"] .search-panel.expanded .limit-row {
-      color: rgba(0,0,0,0.4);
+      color: #555;
     }
 
     /* --- 播放器面板展开 —— 高级感重设计 --- */
@@ -1904,7 +1907,7 @@
 
     /* ===== 浅色模式播放器面板 ===== */
     [data-theme="light"] .player-panel.expanded .track-artist {
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .player-panel.expanded .source-pill,
     [data-theme="light"] .player-panel.expanded .lossless-pill {
@@ -1914,7 +1917,7 @@
     [data-theme="light"] .player-panel.expanded .player-btn-row .btn-icon {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .player-panel.expanded .player-btn-row .btn-icon:hover {
       background: rgba(0,0,0,0.1);
@@ -1923,7 +1926,7 @@
     [data-theme="light"] .player-panel.expanded .status-pill {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .progress-bar-wrapper {
       background: rgba(0,0,0,0.08);
@@ -1952,7 +1955,7 @@
       accent-color: rgba(0,0,0,0.3);
     }
     [data-theme="light"] .player-panel.expanded .progress-time {
-      color: rgba(0,0,0,0.4);
+      color: #555;
     }
     [data-theme="light"] .player-panel.expanded .control-main .play-btn {
       background: #1a1a1a;
@@ -1964,21 +1967,21 @@
     [data-theme="light"] .player-panel.expanded .control-main .btn-icon {
       background: rgba(0,0,0,0.04);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .player-panel.expanded .control-main .btn-icon:hover {
       background: rgba(0,0,0,0.12);
       color: #000;
     }
     [data-theme="light"] .player-panel.expanded .control-secondary {
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .player-panel.expanded .lyrics-container {
       background: rgba(230,222,210,0.5);
       border-color: rgba(0,0,0,0.06);
     }
     [data-theme="light"] .player-panel.expanded .lyrics-title-line {
-      color: rgba(0,0,0,0.35);
+      color: rgba(0,0,0,0.65);
     }
 
     /* --- 播放列表面板展开 —— 高级感重设计 --- */
@@ -2018,7 +2021,7 @@
       background: rgba(255,255,255,0.12);
       color: #fff;
       font-weight: 600;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     /* 内容区 */
@@ -2144,7 +2147,7 @@
       border-color: rgba(0,0,0,0.08);
     }
     [data-theme="light"] .playlist-panel.expanded .playlist-tab {
-      color: rgba(0,0,0,0.5);
+      color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .playlist-tab:hover {
       color: #000;
@@ -2177,15 +2180,15 @@
     }
     [data-theme="light"] .playlist-panel.expanded .track-index {
       background: rgba(0,0,0,0.04);
-      color: rgba(0,0,0,0.5);
+      color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .track-meta-sub {
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .track-actions .btn-icon {
       background: rgba(0,0,0,0.04);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.45);
+      color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .track-actions .btn-icon:hover {
       background: rgba(0,0,0,0.1);
@@ -2194,7 +2197,7 @@
     [data-theme="light"] .playlist-panel.expanded .playmode-btn {
       background: rgba(0,0,0,0.04);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.4);
+      color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .playmode-btn:hover {
       background: rgba(0,0,0,0.1);
@@ -2291,7 +2294,7 @@
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded .chip {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.08);
-      color: rgba(0,0,0,0.5);
+      color: #555;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chat-msgs {
       background: rgba(0,0,0,0.02);
@@ -2299,7 +2302,7 @@
       color: #1a1a1a;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chat-msgs > div > div:first-child {
-      color: rgba(0,0,0,0.35) !important;
+      color: rgba(0,0,0,0.65) !important;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chatInput {
       background: rgba(0,0,0,0.03);
@@ -2605,6 +2608,7 @@
 
     <footer>
       <span>本站仅作为学习演示，音乐版权归各平台与原作者所有。· 分享链接邀请好友一起听歌</span>
+      <span id="visitor-count" style="margin-left:12px;"></span>
     </footer>
   </div>
 
@@ -4228,11 +4232,11 @@
 
     // Theme toggle
     (function(){var h=document.documentElement;
-    function gt(){return localStorage.getItem("mu_theme")||(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");}
+    function gt(){return localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");}
     function ap(t){if(t==="light")h.setAttribute("data-theme","light");else h.removeAttribute("data-theme");}
     ap(gt());
-    var tb=document.getElementById("themeToggle");if(tb)tb.addEventListener("click",function(){var n=h.getAttribute("data-theme")==="light"?"dark":"light";ap(n);localStorage.setItem("mu_theme",n);});
-    matchMedia("(prefers-color-scheme:light)").addEventListener("change",function(e){if(!localStorage.getItem("mu_theme"))ap(e.matches?"light":"dark");});
+    var tb=document.getElementById("themeToggle");if(tb)tb.addEventListener("click",function(){var n=h.getAttribute("data-theme")==="light"?"dark":"light";ap(n);localStorage.setItem("theme",n);});
+    matchMedia("(prefers-color-scheme:light)").addEventListener("change",function(e){if(!localStorage.getItem("theme"))ap(e.matches?"light":"dark");});
     })();
     // Welcome modal
     var welcomeShown=localStorage.getItem('mu_welcome');
@@ -4317,7 +4321,7 @@
       var last=chatMsgs.querySelectorAll('.mu-msg');if(last.length&&last[last.length-1].textContent===txt&&msgCount>0)return;msgCount++;
       var d=document.createElement('div');d.style.cssText='max-width:88%;'+(isMe?'align-self:flex-end;':'align-self:flex-start;');
       d.innerHTML='<div style="font-size:12px;color:var(--text-sub);">'+who+'</div><div style="padding:7px 12px;border-radius:12px;font-size:14px;line-height:1.5;word-break:break-word;'+(isMe?'background:var(--accent);color:#fff;':'background:rgba(255,255,255,.08);color:var(--text-main);')+'">'+txt+'</div>';
-      chatMsgs.appendChild(d);chatMsgs.scrollTop=chatMsgs.scrollHeight;
+      chatMsgs.appendChild(d);chatMsgs.scrollTo({top:chatMsgs.scrollHeight,behavior:'smooth'});
     }
     var chatCh=sb.channel('room-'+room+'-msgs');
     chatCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'room_id=eq.'+room},function(p){var m=p.new;addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);}).subscribe();
@@ -4337,5 +4341,6 @@
 
   })();
   </script>
+  <script type="text/javascript" src="static/js/shared.js"></script>
 </body>
 </html>
