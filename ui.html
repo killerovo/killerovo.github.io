@@ -7,6 +7,7 @@
   <title>予君茉莉，愿君莫离</title>
 
   <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+  <link rel="preload" as="image" href="static/assets/jasmine-bg.webp" />
   <link type="text/css" href="static/css/main.css" rel="stylesheet" />
 
   <style>
@@ -23,6 +24,75 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ---- 验证门控 ---- */
+    #auth-gate {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(8,8,16,0.96);
+      backdrop-filter: blur(18px);
+      flex-direction: column; gap: 24px; padding: 32px;
+    }
+    .auth-card {
+      background: rgba(22,24,42,0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 40px 36px 32px;
+      max-width: 420px; width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .auth-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 1px;
+      background: linear-gradient(155deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.06));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .auth-card p {
+      font-size: 15px; color: rgba(210,210,225,0.65); margin-bottom: 24px;
+      line-height: 1.7; letter-spacing: 0.03em;
+    }
+    .auth-input {
+      width: 100%; padding: 14px 18px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: #ededef; font-size: 16px; text-align: center;
+      outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+      font-family: "SF Mono","Fira Code","Consolas",monospace;
+      letter-spacing: 0.04em;
+    }
+    .auth-input:focus {
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 0 20px rgba(255,255,255,0.05);
+    }
+    .auth-input::placeholder {
+      color: rgba(180,175,200,0.3); font-family: inherit;
+    }
+    .auth-btn {
+      margin-top: 16px; padding: 12px 40px; border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(235,232,245,0.8); font-size: 15px; cursor: pointer;
+      font-weight: 500; letter-spacing: 0.05em;
+      transition: all 0.25s ease;
+    }
+    .auth-btn:hover {
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      border-color: rgba(255,255,255,0.22);
+    }
+    .auth-back {
+      display: block; margin-top: 12px;
+      font-size: 12px; color: rgba(255,255,255,0.3);
+      cursor: pointer; text-decoration: none;
+      transition: color 0.2s;
+    }
+    .auth-back:hover { color: rgba(255,255,255,0.55); }
+    .auth-error {
+      margin-top: 12px; font-size: 13px; color: rgba(255,180,180,0.75);
+      min-height: 20px; letter-spacing: 0.03em;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -45,7 +115,7 @@
       inset: 0;
       background: url('static/assets/jasmine-bg.webp') center/cover no-repeat;
       opacity: 0;
-      animation: uiBgFadeIn 0.6s ease 0.1s forwards;
+      animation: uiBgFadeIn 0.6s ease forwards;
       z-index: -1;
       pointer-events: none;
     }
@@ -160,6 +230,21 @@
   <script>document.documentElement.removeAttribute('data-theme');</script>
 </head>
 <body>
+  <!-- 验证门控 -->
+  <div id="auth-gate">
+    <div class="auth-card">
+      <p>请输入一个特殊日期</p>
+      <input id="auth-input" class="auth-input" type="text"
+             placeholder="例如：2026年06月05日"
+             maxlength="12" autocomplete="off" />
+      <br />
+      <button id="auth-btn" class="auth-btn">确认 ▸</button>
+      <br>
+      <a class="auth-back" href="index.html">← 返回主页</a>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+  </div>
+
   <a class="home-link" href="index.html">← 返回主页</a>
 
   <!-- 入口 -->
@@ -181,7 +266,7 @@
         </div>
       </div>
       <div class="clock-card">
-        <div class="label">💕 我们在一起</div>
+        <div class="label">💕 我们在一起的时间</div>
         <div class="date">2026年6月6日</div>
         <div class="timer" id="timerTogether">
           <span class="digit">0</span> 天 <span class="digit">00</span> 时 <span class="digit">00</span> 分 <span class="digit">00</span> 秒
@@ -195,6 +280,52 @@
       <span class="cursor" id="cursor">|</span>
     </div>
   </div>
+
+  <!-- Auth Gate -->
+  <script>
+  (function() {
+    var gate    = document.getElementById('auth-gate');
+    var input   = document.getElementById('auth-input');
+    var btn     = document.getElementById('auth-btn');
+    var errEl   = document.getElementById('auth-error');
+    if (!gate || !input) return;
+
+    function normalize(str) {
+      var m = str.match(/(\d{4})\D*(\d{1,2})\D*(\d{1,2})/);
+      if (!m) return null;
+      return m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
+    }
+
+    var correct = ['2026-03-04', '2026-06-06'];
+    var attempts = 0;
+
+    function check() {
+      var raw = input.value.trim();
+      var norm = normalize(raw);
+      if (!norm) {
+        errEl.textContent = '格式不对哦，请输入 XXXX年XX月XX日';
+        return;
+      }
+      if (correct.indexOf(norm) !== -1) {
+        gate.style.display = 'none';
+      } else {
+        attempts++;
+        if (attempts >= 3) {
+          window.location.href = 'index.html';
+        } else {
+          errEl.textContent = '不是这个日期哦，再想想～（还剩 ' + (3 - attempts) + ' 次）';
+          input.value = '';
+        }
+      }
+    }
+
+    btn.addEventListener('click', check);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') check();
+    });
+    setTimeout(function() { input.focus(); }, 300);
+  })();
+  </script>
 
   <script>
   (function() {
