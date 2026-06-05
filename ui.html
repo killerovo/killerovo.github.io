@@ -21,15 +21,15 @@
       --card-bg: rgba(28, 28, 38, 0.65);
     }
     [data-theme="light"] {
-      --bg-primary: #f6f5f4;
-      --bg-secondary: #efeeec;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
       --text-primary: #1a1a1a;
       --text-secondary: #555;
-      --text-tertiary: #999;
+      --text-tertiary: #888;
       --accent: #db2777;
       --accent-alt: #2563eb;
-      --border-light: #e2e1de;
-      --card-bg: rgba(255,255,255,0.94);
+      --border-light: #e5e5e5;
+      --card-bg: #ffffff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,15 +55,17 @@
       opacity: 0;
       animation: uiBgFadeIn 0.6s ease 0.1s forwards;
     }
+    /* 浅色模式：纯白，不用背景图 */
     [data-theme="light"] body::before {
-      opacity: 0;
-      animation: uiBgFadeIn 0.6s ease 0.1s forwards;
+      background: none;
+      animation: none;
+      opacity: 1;
+    }
+    [data-theme="light"] body {
+      background: #ffffff;
     }
     @keyframes uiBgFadeIn {
       to { opacity: 0.28; }
-    }
-    [data-theme="light"] @keyframes uiBgFadeIn {
-      to { opacity: 0.55; }
     }
 
     /* 主页按钮 */
