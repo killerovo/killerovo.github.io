@@ -76,7 +76,10 @@
       "Bash(findstr /N \"^- \\\\|^+ \")",
       "Bash(dir /s /b \"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\LoveSourceCode\\\\LoveCode\")",
       "Bash(Set-Location \"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\")",
-      "Bash(Move-Item *)"
+      "Bash(Move-Item *)",
+      "Bash(npx serve *)",
+      "Bash(Start-Process *)",
+      "Bash(cmd.exe *)"
     ]
   }
 }

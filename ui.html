@@ -32,6 +32,10 @@
       background: rgba(8,8,16,0.96);
       backdrop-filter: blur(18px);
       flex-direction: column; gap: 24px; padding: 32px;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #auth-gate.hidden {
+      opacity: 0; visibility: hidden; pointer-events: none;
     }
     .auth-card {
       background: rgba(22,24,42,0.96);
@@ -235,7 +239,7 @@
     <div class="auth-card">
       <p>请输入一个特殊日期</p>
       <input id="auth-input" class="auth-input" type="text"
-             placeholder="例如：2026年06月05日"
+             placeholder="例如：2000年01月01日"
              maxlength="12" autocomplete="off" />
       <br />
       <button id="auth-btn" class="auth-btn">确认 ▸</button>
@@ -307,7 +311,10 @@
         return;
       }
       if (correct.indexOf(norm) !== -1) {
-        gate.style.display = 'none';
+        gate.classList.add('hidden');
+        // 滚动到入口区域
+        var introEl = document.getElementById('intro');
+        if (introEl) { introEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
       } else {
         attempts++;
         if (attempts >= 3) {
@@ -390,6 +397,7 @@
 
     // ===== 打字机：先打中文 → 删 → 打英文 → 删 → 下一对 =====
     var loveLines = [
+      "今天是2026年6月6日 星期六 我们里一个约定 祝我们幸福快乐 没有烦恼 一切顺利","",
       "从遇见你的那天起，我的世界就有了颜色。","Since the day I met you, my world found its colors.",
       "你是我这一生，等了半世未拆的礼物。","You are the gift I've waited half a lifetime to unwrap.",
       "我本是一颗暗淡的星，直到看见你的光芒。","I was a dim star until I saw your light.",
@@ -772,7 +780,14 @@
             pairIdx++;
             schedule(PAUSE_BETWEEN);
           } else {
-            engPhase = true;
+            // 如果英文对应项为空，跳过英文阶段直接进入下一对
+            var engIdx = pairIdx * 2 + 1;
+            if (engIdx < loveLines.length && !loveLines[engIdx]) {
+              engPhase = false;
+              pairIdx++;
+            } else {
+              engPhase = true;
+            }
             schedule(PAUSE_BETWEEN);
           }
           return;
