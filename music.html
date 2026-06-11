@@ -1248,6 +1248,8 @@
       }
     }
 
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
     /* 滚动条 */
     .search-results-mini::-webkit-scrollbar,
     .playlist-main::-webkit-scrollbar,
@@ -2520,6 +2522,7 @@
                   <button id="download-btn" class="btn btn-secondary btn-icon ripple-target" title="下载">⬇</button>
                 </div>
                 <div id="player-status" class="status-pill" data-i18n="playerStatusIdle">空闲</div>
+                <span id="sync-indicator" style="display:none;font-size:11px;color:var(--accent);animation:pulse 1.5s ease-in-out infinite;">🔗 同步中</span>
               </div>
             </div>
 
@@ -2617,6 +2620,13 @@
                     <polyline points="21 16 21 21 16 21"/>
                     <line x1="15" y1="15" x2="21" y2="21"/>
                     <line x1="4" y1="4" x2="9" y2="9"/>
+                  </svg>
+                </button>
+                <button class="playmode-btn ripple-target" data-mode="sync" title="同步播放" style="font-size:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 15 12 5 21"/>
+                    <polygon points="9 3 19 12 9 21" opacity="0.5"/>
+                    <circle cx="12" cy="12" r="9" stroke-dasharray="4 2" opacity="0.6"/>
                   </svg>
                 </button>
               </div>
@@ -3600,6 +3610,8 @@
         state.isPlaying=true;
         document.getElementById('playIcon').style.display='none';document.getElementById('pauseIcon').style.display='block';
         dom.playerStatus.textContent=t('playerStatusPlaying');
+        // Sync mode: broadcast (only if user-initiated, not from receiving sync)
+        if(state.playMode==='sync'&&!syncReceiving){syncUpsert(track,true,0);}
       }catch(e){
         console.error(e);
         // 区分：真正加载失败 vs 浏览器自动播放策略拦截
@@ -3670,7 +3682,16 @@
     }
 
     function playNext(direction){
-      const list=getActiveList(); if(!list.length)return;
+      // Sync mode: always play from room playlist
+      var list, type, plId;
+      if(state.playMode==='sync'){
+        var pl=state.playlists.find(function(p){return p.id===state.playContext.playlistId;});
+        if(!pl||!pl.tracks.length)return;
+        list=pl.tracks; type='playlist'; plId=pl.id;
+      }else{
+        list=getActiveList(); if(!list.length)return;
+        type=state.playContext.type; plId=state.playContext.playlistId;
+      }
       let idx=state.playContext.index ?? -1;
       if(idx<0||idx>=list.length)idx=0;
 
@@ -3690,13 +3711,18 @@
       }else{
         idx = (idx + (direction==='prev'?-1:1) + list.length) % list.length;
       }
-      playFromList(state.playContext.type,idx,state.playContext.playlistId);
+      playFromList(type,idx,plId);
     }
 
     function togglePlayPause(){
       if(!dom.audio.src)return;
+      var willBePlaying=!state.isPlaying;
       if(state.isPlaying)dom.audio.pause();
       else dom.audio.play().catch(e=>console.error(e));
+      // Sync mode: broadcast new play/pause state
+      if(state.playMode==='sync'&&state.currentTrack){
+        syncUpsert(state.currentTrack,willBePlaying,dom.audio.currentTime||0);
+      }
     }
 
     function toggleFavoriteCurrent(){
@@ -4191,6 +4217,10 @@
         const r=(e.clientX-rect.left)/rect.width;
         const dur=dom.audio.duration||0;
         dom.audio.currentTime=Math.max(0,Math.min(dur,dur*r));
+        // Sync mode: broadcast seek
+        if(state.playMode==='sync'&&state.currentTrack){
+          syncUpsert(state.currentTrack,state.isPlaying,dom.audio.currentTime);
+        }
       });
 
       document.querySelectorAll('.playlist-tab').forEach(tab=>{
@@ -4239,11 +4269,16 @@
       dom.shortcutModal.addEventListener('click',e=>{if(e.target===dom.shortcutModal)dom.shortcutModal.classList.remove('show');});
 
       document.querySelectorAll('.playmode-btn').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          state.playMode=btn.dataset.mode;
+        btn.addEventListener('click',function(){
+          var mode=this.dataset.mode;
+          // Leave previous sync mode
+          if(state.playMode==='sync'&&mode!=='sync')leaveSyncMode();
+          state.playMode=mode;
           setPlaymodeUI();
-          if(state.playMode==='list')showToast(t('toastPlaymodeList'));
-          else if(state.playMode==='single')showToast(t('toastPlaymodeSingle'));
+          if(mode==='sync'){
+            enterSyncMode();
+          }else if(mode==='list')showToast(t('toastPlaymodeList'));
+          else if(mode==='single')showToast(t('toastPlaymodeSingle'));
           else showToast(t('toastPlaymodeShuffle'));
         });
       });
@@ -4827,6 +4862,112 @@
         handleSupabaseError(e,'removeTrack');
       });
     };
+
+    // ===== 同步播放 =====
+    var syncCh=null;
+    var syncIgnoreUntil=0;
+    var syncReceiving=false;
+
+    function syncUpsert(track,isPlaying,position){
+      if(!track||!track.uid)return;
+      sb.from('room_sync').upsert({
+        room_id:room,
+        sender:chatName,
+        song_id:track.uid,
+        title:track.title||'',
+        artist:track.artist||'',
+        audio_url:track.audioUrl||'',
+        is_playing:!!isPlaying,
+        position:position||0,
+        updated_at:new Date().toISOString()
+      }).then().catch(function(e){console.error('syncUpsert failed:',e);});
+    }
+
+    function subscribeRoomSync(){
+      if(syncCh)try{syncCh.unsubscribe();}catch(e){}
+      syncCh=sb.channel('room-'+room+'-sync');
+      syncCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'room_sync',filter:'room_id=eq.'+room},function(p){
+        handleSyncEvent(p.new);
+      }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'room_sync',filter:'room_id=eq.'+room},function(p){
+        handleSyncEvent(p.new);
+      }).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Sync channel error:',status);});
+    }
+
+    function handleSyncEvent(s){
+      if(!s)return;
+      // Ignore own events (with 3s grace for initial join)
+      if(s.sender===chatName&&Date.now()>syncIgnoreUntil)return;
+      if(state.playMode!=='sync')return;
+      syncReceiving=true;
+      // Don't sync if we already have this song loaded
+      if(state.currentTrack&&state.currentTrack.uid===s.song_id){
+        if(s.is_playing&&!state.isPlaying){dom.audio.play().catch(function(){});}
+        if(!s.is_playing&&state.isPlaying){dom.audio.pause();}
+        var seekPos=parseFloat(s.position)||0;
+        if(Math.abs(dom.audio.currentTime-seekPos)>2){
+          dom.audio.currentTime=seekPos;
+        }
+        syncReceiving=false;
+        return;
+      }
+      // Load and play a different song
+      var track={
+        uid:s.song_id,title:s.title||'',artist:s.artist||'',
+        audioUrl:s.audio_url,detailsLoaded:true,lrc:null,source:'room'
+      };
+      // Find in room playlists to set correct playContext
+      var found=false;
+      for(var i=0;i<state.playlists.length;i++){
+        var pl=state.playlists[i];
+        var idx=pl.tracks.findIndex(function(x){return x.uid===s.song_id;});
+        if(idx>=0){
+          state.playContext={type:'playlist',index:idx,playlistId:pl.id};
+          found=true;
+          break;
+        }
+      }
+      if(!found){
+        state.playContext={type:'results',index:0,playlistId:null};
+      }
+      playTrack(track,state.playContext).then(function(){
+        var seekPos=parseFloat(s.position)||0;
+        if(seekPos>0)dom.audio.currentTime=seekPos;
+        if(!s.is_playing)dom.audio.pause();
+        syncReceiving=false;
+      }).catch(function(e){console.error('sync play failed:',e);syncReceiving=false;});
+    }
+
+    function enterSyncMode(){
+      // Must have room playlists with songs
+      var plId=document.getElementById('playlist-select').value;
+      var pl=state.playlists.find(function(p){return p.id===plId;});
+      if(!pl||!pl.tracks.length){
+        showToast(state.language==='zh'?'房间歌单为空，无法启动同步播放':'Room playlist empty, cannot start sync');
+        state.playMode='list';setPlaymodeUI();return;
+      }
+      state.playContext={type:'playlist',index:0,playlistId:pl.id};
+      subscribeRoomSync();
+      syncIgnoreUntil=Date.now()+3000;
+      // Fetch existing sync state from room
+      sb.from('room_sync').select('*').eq('room_id',room).maybeSingle().then(function(r){
+        if(r.data&&r.data.song_id){
+          handleSyncEvent(r.data);
+        }else if(state.currentTrack&&state.currentTrack.audioUrl){
+          syncUpsert(state.currentTrack,state.isPlaying,dom.audio.currentTime||0);
+        }else{
+          playFromList('playlist',0,pl.id);
+        }
+      }).catch(function(){});
+      showToast(state.language==='zh'?'已进入同步播放':'Sync play on');
+      var si=document.getElementById('sync-indicator');
+      if(si)si.style.display='';
+    }
+
+    function leaveSyncMode(){
+      if(syncCh)try{syncCh.unsubscribe();syncCh=null;}catch(e){}
+      var si=document.getElementById('sync-indicator');
+      if(si)si.style.display='none';
+    }
 
     // ===== 初始化数据加载 =====
     if(username){
