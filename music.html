@@ -1198,7 +1198,7 @@
       opacity:0;
       pointer-events:none;
       transition:opacity .2s ease, transform .2s ease;
-      z-index:1500;
+      z-index:9999;
     }
     [data-theme="light"] #toast {
       background:rgba(255,255,255,0.97);
@@ -2405,7 +2405,7 @@
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-sub);flex-wrap:wrap;">
         <a href="index.html" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;text-decoration:none;color:var(--text-sub);">🏠 返回主页</a>
-        <button id="shareBtn" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">📋 分享</button>
+        <button id="shareBtn" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">📋 分享房间</button>
         <button id="shortcut-toggle-btn" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">💡 使用说明</button>
         <button id="themeToggle" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;">🌓</button>
       </div>
@@ -2683,7 +2683,7 @@
   </div>
 
   <!-- Welcome modal -->
-  <div id="welcome-modal" class="modal-backdrop show">
+  <div id="welcome-modal" class="modal-backdrop">
     <div class="modal ripple-target">
       <div class="modal-header">
         <div class="modal-title-wrap">
@@ -4334,11 +4334,11 @@
       var link=location.origin+location.pathname+'?room='+encodeURIComponent(room);
       if(navigator.clipboard&&navigator.clipboard.writeText){
         navigator.clipboard.writeText(link).then(function(){
-          shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享';},2000);
+          shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享房间';},2000);
         }).catch(function(){prompt('复制链接：',link);});
       }else{
         var inp=document.createElement('textarea');inp.value=link;document.body.appendChild(inp);inp.select();document.execCommand('copy');document.body.removeChild(inp);
-        shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享链接';},2000);
+        shareBtn.textContent='✓ 已复制';setTimeout(function(){shareBtn.textContent='📋 分享房间';},2000);
       }
     });
 
@@ -4369,25 +4369,91 @@
           '输入同一房间号加入房间，<strong>共享歌单</strong>与<strong>实时聊天</strong><br>'+
           '❤️ 登录后可<strong>收藏歌曲</strong>、<strong>创建房间歌单</strong>、增删歌曲'+
           '</div>'+
-          '<div style="margin:10px 0;">'+
-          '<input id="usernameInput" type="text" placeholder="输入用户名即可登录（无密码）" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;">'+
+          '<div style="margin:8px 0;">'+
+          '<input id="usernameInput" type="text" placeholder="输入用户名" style="width:100%;padding:8px 12px;border-radius:8px 8px 0 0;border:1px solid rgba(255,255,255,0.15);border-bottom:none;background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;">'+
+          '<input id="passwordInput" type="password" placeholder="输入密码" style="width:100%;padding:8px 12px;border-radius:0 0 8px 8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;">'+
           '</div>'+
-          '<span style="font-size:11px;color:var(--text-sub);">📋 分享链接：</span><code id="shareUrl" style="word-break:break-all;font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.05);"></code>';
+          '<div id="formError" style="color:var(--accent-red);font-size:12px;min-height:18px;margin-bottom:4px;display:none;"></div>'+
+          '<span style="font-size:11px;color:var(--text-sub);">📋 分享房间：</span><code id="shareUrl" style="word-break:break-all;font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.05);"></code>';
       }
       var actions=wm.querySelector('.modal-actions');
       if(actions){
-        actions.innerHTML='<button id="welcome-login" class="btn" style="padding:8px 24px;font-size:13px;">登录 ✨</button>'+
-          '<button id="welcome-skip" class="btn btn-ghost" style="padding:8px 24px;font-size:13px;">游客浏览</button>';
+        actions.innerHTML='<button id="welcome-login" class="btn" style="padding:8px 18px;font-size:13px;">登录</button>'+
+          '<button id="welcome-register" class="btn btn-secondary" style="padding:8px 18px;font-size:13px;">注册</button>'+
+          '<button id="welcome-skip" class="btn btn-ghost" style="padding:8px 16px;font-size:13px;">游客浏览</button>';
       }
       var shareUrl=document.getElementById('shareUrl');
       if(shareUrl)shareUrl.textContent=location.origin+location.pathname+'?room='+room;
 
-      // Login
-      document.getElementById('welcome-login').addEventListener('click',function(){
-        var u=document.getElementById('usernameInput').value.trim();
-        if(!u){showToast('请输入用户名');return;}
-        doLogin(u);
-        wm.classList.remove('show');
+      // Login handler
+      var loginBtn=document.getElementById('welcome-login');
+      var regBtn=document.getElementById('welcome-register');
+      var userInp=document.getElementById('usernameInput');
+      var passInp=document.getElementById('passwordInput');
+
+      function setFormBusy(busy){
+        if(loginBtn){loginBtn.disabled=busy;loginBtn.textContent=busy?'登录中…':'登录';}
+        if(regBtn){regBtn.disabled=busy;regBtn.textContent=busy?'注册中…':'注册';}
+        if(userInp)userInp.disabled=busy;
+        if(passInp)passInp.disabled=busy;
+      }
+
+      var formErr=document.getElementById('formError');
+      function showFormError(msg){
+        if(formErr){formErr.textContent=msg;formErr.style.display=msg?'':'none';}
+        if(msg)showToast(msg);
+      }
+
+      loginBtn.addEventListener('click',async function(){
+        var u=userInp.value.trim();
+        var p=passInp.value;
+        if(!u){showFormError('请输入用户名');userInp.focus();return;}
+        if(!p){showFormError('请输入密码');passInp.focus();return;}
+        showFormError('');
+        setFormBusy(true);
+        try{
+          var hash=await hashPassword(p);
+          var r=await sb.from('profiles').select('*').eq('username',u).maybeSingle();
+          if(r.error)throw r.error;
+          var row=r.data;
+          if(!row){showFormError('用户不存在，请先注册');setFormBusy(false);return;}
+          if(!row.password_hash){showFormError('该账号未设密码，请点"注册"设置密码');setFormBusy(false);return;}
+          if(row.password_hash!==hash){showFormError('密码错误');setFormBusy(false);return;}
+          onLoginSuccess(u);
+        }catch(e){console.error(e);showFormError('登录失败，请重试');setFormBusy(false);}
+      });
+
+      regBtn.addEventListener('click',async function(){
+        var u=userInp.value.trim();
+        var p=passInp.value;
+        if(!u){showFormError('请输入用户名');userInp.focus();return;}
+        if(!p){showFormError('请输入密码');passInp.focus();return;}
+        if(p.length<3){showFormError('密码至少 3 位');passInp.focus();return;}
+        if(!/^[a-zA-Z0-9_一-龥]{2,20}$/.test(u)){showFormError('用户名 2-20 位，支持中英文、数字、下划线');userInp.focus();return;}
+        showFormError('');
+        setFormBusy(true);
+        try{
+          var hash=await hashPassword(p);
+          var r=await sb.from('profiles').select('*').eq('username',u).maybeSingle();
+          if(r.error)throw r.error;
+          if(r.data&&r.data.password_hash){showFormError('该用户名已被注册，请换一个');setFormBusy(false);return;}
+          if(r.data&&!r.data.password_hash){
+            var up=await sb.from('profiles').update({password_hash:hash}).eq('username',u);
+            if(up.error)throw up.error;
+          }else{
+            var ins=await sb.from('profiles').insert({username:u,password_hash:hash,room_id:room});
+            if(ins.error){
+              if(ins.error.message&&ins.error.message.indexOf('duplicate')>=0){showFormError('该用户名已被占用，请换一个');setFormBusy(false);return;}
+              throw ins.error;
+            }
+          }
+          onLoginSuccess(u);
+        }catch(e){console.error(e);showFormError('操作失败，请重试');setFormBusy(false);}
+      });
+
+      // Enter in password field triggers login
+      passInp.addEventListener('keydown',function(e){
+        if(e.key==='Enter')loginBtn.click();
       });
       // Skip
       document.getElementById('welcome-skip').addEventListener('click',function(){
@@ -4410,18 +4476,27 @@
       }
     }
 
-    function doLogin(u){
+    async function hashPassword(pw){
+      var enc=new TextEncoder().encode(pw);
+      var buf=await crypto.subtle.digest('SHA-256',enc);
+      return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+    }
+
+    function onLoginSuccess(u){
       username=u;
       localStorage.setItem('mu_username',u);
       chatName=u;
-      // Upsert profile
-      sb.from('profiles').upsert({username:u,room_id:room}).then();
+      // Update room
+      sb.from('profiles').update({room_id:room}).eq('username',u).then();
       // Load user data & subscribe
       loadFavorites();
       subscribeFavorites();
       loadRoomPlaylists();
-      // Update UI
+      // Update UI & close modal
       updateLoginUI();
+      var wm=document.getElementById('welcome-modal');
+      if(wm)wm.classList.remove('show');
+      showToast(state.language==='zh'?'登录成功':'Logged in');
     }
 
     function updateLoginUI(){
