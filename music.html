@@ -879,8 +879,9 @@
     }
     [data-theme="light"] .playlist-tab { color: var(--text-secondary); }
     [data-theme="light"] .playlist-tab.active {
-      background: radial-gradient(circle at 30% 0, rgba(255,255,255,0.3), rgba(180,90,150,0.85));
-      color: #fff;
+      background: rgba(0,0,0,0.08);
+      color: #1a1a1a;
+      font-weight: 600;
     }
     [data-theme="light"] .playmode-btn {
       background: rgba(0,0,0,0.08);
@@ -1012,10 +1013,9 @@
       color:var(--text-sub);
     }
     .playlist-tab.active {
-      background:radial-gradient(circle at 30% 0, rgba(255,255,255,0.15), rgba(200,110,180,0.92));
-      color:var(--text-main);
-      font-weight:600;
-      box-shadow:0 0 8px rgba(200,140,200,0.7);
+      background: rgba(255,255,255,0.12);
+      color: var(--text-main);
+      font-weight: 600;
     }
 
     /* 让 playlist-main 内部滚动，顶部条 sticky 不再消失 */
