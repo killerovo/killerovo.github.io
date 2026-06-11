@@ -23,6 +23,7 @@
       --accent-red: #f87171;
       --text-main: #ededef;
       --text-sub: #9999a0;
+      --text-secondary: #777;
       --border-subtle: rgba(255,255,255,0.08);
     }
     [data-theme="light"] {
@@ -30,7 +31,7 @@
       --panel-bg: rgba(248,242,235,0.96);
       --accent: #1a56db;
       --accent-strong: #2563eb;
-      --text-main: #1a1a1a;
+      --text-main: #333;
       --text-sub: #555;
       --border-subtle: rgba(0,0,0,0.08);
     }
@@ -880,7 +881,7 @@
     [data-theme="light"] .playlist-tab { color: var(--text-secondary); }
     [data-theme="light"] .playlist-tab.active {
       background: rgba(0,0,0,0.08);
-      color: #1a1a1a;
+      color: #333;
       font-weight: 600;
     }
     [data-theme="light"] .playmode-btn {
@@ -906,6 +907,12 @@
     [data-theme="light"] #chatInput {
       background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
       color: var(--text-main);
+    }
+    /* 浅色模式下聊天消息气泡文字改为深色 */
+    [data-theme="light"] #chat-msgs > div > div:first-child { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="light"] #chat-msgs > div > div:last-child {
+      color: #333 !important;
+      background: rgba(0,0,0,0.06) !important;
     }
     [data-theme="light"] #roomInput {
       background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
@@ -1196,7 +1203,7 @@
     [data-theme="light"] #toast {
       background:rgba(255,255,255,0.97);
       border:1px solid rgba(0,0,0,0.12);
-      color:#1a1a1a;
+      color:#333;
       box-shadow:0 8px 24px rgba(0,0,0,0.12);
     }
     #toast.show {
@@ -1428,7 +1435,7 @@
         0 0 0 1px rgba(0,0,0,0.06),
         0 24px 60px rgba(0,0,0,0.12),
         0 0 120px rgba(0,0,0,0.04);
-      color:#1a1a1a;
+      color:#333;
     }
     [data-theme="light"] .modal::before {
       background:linear-gradient(155deg, rgba(0,0,0,0.05), rgba(0,0,0,0.01) 60%, rgba(0,0,0,0.04));
@@ -1442,9 +1449,9 @@
     [data-theme="light"] .modal-close-btn {
       background:rgba(0,0,0,0.04); color:rgba(0,0,0,0.5);
     }
-    [data-theme="light"] .modal-close-btn:hover { background:rgba(0,0,0,0.1); color:#000; }
+    [data-theme="light"] .modal-close-btn:hover { background:rgba(0,0,0,0.1); color:#333; }
     [data-theme="light"] .modal input {
-      background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.1); color:#1a1a1a;
+      background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.1); color:#333;
     }
     [data-theme="light"] .modal-title-icon {
       background:rgba(0,0,0,0.05);
@@ -1696,12 +1703,12 @@
       border-color: rgba(0,0,0,0.18);
     }
     [data-theme="light"] .search-panel.expanded .search-row .input {
-      color: #1a1a1a;
+      color: #333;
     }
     [data-theme="light"] .search-panel.expanded .search-row .btn {
-      background: #1a1a1a;
+      background: #444;
       color: #fff;
-      border-color: #1a1a1a;
+      border-color: #444;
     }
     [data-theme="light"] .search-panel.expanded .search-row .btn:hover {
       background: #333;
@@ -1721,8 +1728,8 @@
       border-color: rgba(0,0,0,0.12);
     }
     [data-theme="light"] .search-panel.expanded .source-chip:has(input:checked) {
-      background: #1a1a1a;
-      border-color: #1a1a1a;
+      background: #444;
+      border-color: #444;
       color: #fff;
     }
     [data-theme="light"] .search-panel.expanded .limit-row select {
@@ -1737,7 +1744,7 @@
     }
     [data-theme="light"] .search-panel.expanded .limit-row .btn:hover {
       background: rgba(0,0,0,0.1);
-      color: #000;
+      color: #333;
     }
     [data-theme="light"] .search-panel.expanded .search-mini-item {
       background: rgba(0,0,0,0.02);
@@ -1923,7 +1930,7 @@
     }
     [data-theme="light"] .player-panel.expanded .player-btn-row .btn-icon:hover {
       background: rgba(0,0,0,0.1);
-      color: #000;
+      color: #333;
     }
     [data-theme="light"] .player-panel.expanded .status-pill {
       background: rgba(0,0,0,0.03);
@@ -1960,8 +1967,8 @@
       color: #555;
     }
     [data-theme="light"] .player-panel.expanded .control-main .play-btn {
-      background: #1a1a1a;
-      border-color: #1a1a1a;
+      background: #444;
+      border-color: #444;
     }
     [data-theme="light"] .player-panel.expanded .control-main .play-btn:hover {
       background: #333;
@@ -1973,7 +1980,7 @@
     }
     [data-theme="light"] .player-panel.expanded .control-main .btn-icon:hover {
       background: rgba(0,0,0,0.12);
-      color: #000;
+      color: #333;
     }
     [data-theme="light"] .player-panel.expanded .control-secondary {
       color: #555;
@@ -2152,11 +2159,11 @@
       color: #555;
     }
     [data-theme="light"] .playlist-panel.expanded .playlist-tab:hover {
-      color: #000;
+      color: #333;
       background: rgba(0,0,0,0.05);
     }
     [data-theme="light"] .playlist-panel.expanded .playlist-tab.active {
-      background: #1a1a1a;
+      background: #444;
       color: #fff;
       box-shadow: 0 4px 16px rgba(0,0,0,0.25);
     }
@@ -2194,7 +2201,7 @@
     }
     [data-theme="light"] .playlist-panel.expanded .track-actions .btn-icon:hover {
       background: rgba(0,0,0,0.1);
-      color: #000;
+      color: #333;
     }
     [data-theme="light"] .playlist-panel.expanded .playmode-btn {
       background: rgba(0,0,0,0.04);
@@ -2203,12 +2210,12 @@
     }
     [data-theme="light"] .playlist-panel.expanded .playmode-btn:hover {
       background: rgba(0,0,0,0.1);
-      color: #000;
+      color: #333;
     }
     [data-theme="light"] .playlist-panel.expanded .playmode-btn.active {
-      background: #1a1a1a;
+      background: #444;
       color: #fff;
-      border-color: #1a1a1a;
+      border-color: #444;
     }
     [data-theme="light"] .playlist-panel.expanded .playlist-select-row select {
       background: rgba(0,0,0,0.04);
@@ -2301,7 +2308,7 @@
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chat-msgs {
       background: rgba(0,0,0,0.02);
       border-color: rgba(0,0,0,0.06);
-      color: #1a1a1a;
+      color: #333;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chat-msgs > div > div:first-child {
       color: rgba(0,0,0,0.65) !important;
@@ -2309,15 +2316,15 @@
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chatInput {
       background: rgba(0,0,0,0.03);
       border-color: rgba(0,0,0,0.1);
-      color: #1a1a1a;
+      color: #333;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #chatInput:focus {
       border-color: rgba(0,0,0,0.18);
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #btnSend {
-      background: #1a1a1a;
+      background: #444;
       color: #fff;
-      border-color: #1a1a1a;
+      border-color: #444;
     }
     [data-theme="light"] section.panel:nth-last-of-type(1).expanded #btnSend:hover {
       background: #333;
@@ -2389,6 +2396,8 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:16px;font-weight:600;color:var(--text-main);"><span style="margin-right:6px;">👥</span>一起听歌</span>
         <span id="roomTag" style="font-size:12px;color:var(--text-sub);cursor:pointer;padding:5px 12px;border-radius:14px;border:1px solid var(--border);" onclick="var e=document.getElementById('roomBox');e.style.display=e.style.display==='flex'?'none':'flex';if(e.style.display==='flex')document.getElementById('roomInput').focus();">#room</span>
+        <span id="userTag" style="font-size:12px;color:var(--accent);padding:5px 12px;border-radius:14px;border:1px solid var(--border);cursor:pointer;display:none;" title="点击退出登录"></span>
+        <span id="guestTag" style="font-size:12px;color:var(--text-sub);cursor:pointer;padding:5px 12px;border-radius:14px;border:1px solid var(--border);" title="点击登录">👤 未登录</span>
         <span id="roomBox" style="display:none;align-items:center;gap:6px;">
           <input id="roomInput" type="text" placeholder="输入房间名…" style="width:130px;padding:5px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg-primary, rgba(0,0,0,.5));color:var(--text-main);font-size:12px;outline:none;">
           <button id="joinRoomBtn" class="btn" style="padding:5px 12px;font-size:11px;">加入</button>
@@ -2566,7 +2575,7 @@
           <div class="playlist-tabs ripple-target">
             <div class="playlist-tab active" data-tab="results" data-i18n="tabResults">搜索结果</div>
             <div class="playlist-tab" data-tab="favorites" data-i18n="tabFavorites">我的收藏</div>
-            <div class="playlist-tab" data-tab="playlists" data-i18n="tabCustomLists">自建歌单</div>
+            <div class="playlist-tab" data-tab="playlists" data-i18n="tabCustomLists">房间歌单</div>
           </div>
         </div>
 
@@ -2578,6 +2587,7 @@
                 <select id="playlist-select"></select>
                 <button id="add-current-btn" class="btn btn-secondary btn-icon ripple-target" title="把当前歌曲加入歌单">＋</button>
                 <button id="new-playlist-btn" class="btn btn-ghost ripple-target" data-i18n="newPlaylist">新建歌单</button>
+                <button id="delete-playlist-btn" class="btn btn-ghost ripple-target" title="删除当前歌单" style="color:var(--accent-red);">🗑</button>
               </div>
               <div class="playmode-row">
                 <button class="playmode-btn active ripple-target" data-mode="list" title="列表循环">🔁</button>
@@ -2595,6 +2605,7 @@
         <div class="panel-header">
           <div class="panel-title"><span class="icon">💬</span> 房间聊天</div>
           <span class="chip" id="chatRoomName"></span>
+          <button id="clearChatBtn" class="btn btn-ghost" style="padding:3px 8px;font-size:10px;display:none;" title="清空聊天">🗑 清空</button>
         </div>
         <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:4px;font-size:12px;min-height:0;">
           <div style="text-align:center;color:var(--text-sub);padding:12px;">连接中…</div>
@@ -2644,12 +2655,15 @@
         <button id="shortcut-close" class="modal-close-btn">×</button>
       </div>
       <div class="modal-desc" style="font-size:13px;line-height:1.8;margin-bottom:12px;">
-        <span style="font-size:15px;font-weight:600;display:block;margin-bottom:8px;color:var(--text-main);">📦 四个板块</span>
-        页面分为 <strong>歌曲搜索</strong> / <strong>正在播放</strong> / <strong>播放列表</strong> / <strong>房间聊天</strong><br>
-        每个区域<strong>点击即可放大</strong>，ESC 或 × 收起
-        <span style="display:block;margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">
-          👥 输入同一房间号 → 点「加入」→ 共享歌单与聊天
-        </span>
+        <span style="font-size:15px;font-weight:600;display:block;margin-bottom:8px;color:var(--text-main);">📦 四大板块</span>
+        页面分为 <strong>歌曲搜索</strong> · <strong>正在播放</strong> · <strong>播放列表</strong> · <strong>房间聊天</strong><br>
+        每个区域<strong>点击即可放大</strong>，按 <kbd>ESC</kbd> 或 ✕ 收起面板
+        <div style="margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);line-height:1.8;">
+          👥 <strong>房间共享</strong>：输入相同房间号 → 加入 → 共享歌单与聊天<br>
+          🔍 <strong>搜索</strong>：支持咪咕 / 网易云 / QQ / 酷我四源聚合<br>
+          ❤️ <strong>登录后</strong>可收藏歌曲、创建房间歌单、增删歌曲<br>
+          👤 <strong>游客</strong>可搜索、切换房间、查看歌单、聊天
+        </div>
       </div>
       <div class="modal-desc" style="font-weight:600;margin-bottom:6px;color:var(--text-main);">⌨️ 快捷键</div>
       <div class="shortcut-grid">
@@ -2735,7 +2749,7 @@
         playlistTitle:"播放列表",
         tabResults:"搜索结果",
         tabFavorites:"我的收藏",
-        tabCustomLists:"自建歌单",
+        tabCustomLists:"房间歌单",
         playlistInfoResults:"搜索结果列表",
         playlistInfoFavorites:"收藏列表",
         playlistInfoPlaylist:"歌单",
@@ -2803,7 +2817,7 @@
         playlistTitle:"Playlists",
         tabResults:"Default",
         tabFavorites:"Favorites",
-        tabCustomLists:"Playlists",
+        tabCustomLists:"Room Lists",
         playlistInfoResults:"Search Result List",
         playlistInfoFavorites:"Favorites List",
         playlistInfoPlaylist:"Playlist",
@@ -3661,9 +3675,10 @@
 
     function toggleFavoriteCurrent(){
       const tr=state.currentTrack; if(!tr)return;
+      if(!window.requireLogin('请先登录后再收藏'))return;
       const i=state.favorites.findIndex(x=>x.uid===tr.uid);
-      if(i>=0){state.favorites.splice(i,1);showToast(t('toastRemovedFavorite'));}
-      else{state.favorites.push(tr);showToast(t('toastAddedFavorite'));}
+      if(i>=0){window.removeFavorite(tr);showToast(t('toastRemovedFavorite'));}
+      else{window.addFavorite(tr);showToast(t('toastAddedFavorite'));}
       updateMainFavButton();
       renderPlaylistList();
     }
@@ -3675,6 +3690,7 @@
     }
 
     function addCurrentToPlaylist(){
+      if(!window.requireLogin('请先登录后再添加歌曲'))return;
       const plId=dom.playlistSelect.value;
       if(!plId){showToast(t('toastNeedPlaylistSelected'));return;}
       const track=state.currentTrack;
@@ -3685,8 +3701,7 @@
         showToast(t('toastAlreadyInList'));
         return;
       }
-      pl.tracks.push(track);
-      renderPlaylistList();
+      window.addTrackToRoomPlaylist(plId,track);
       showToast(t('toastAddedToPlaylist'));
     }
 
@@ -3803,6 +3818,7 @@
         pBtn.className='btn btn-secondary btn-icon ripple-target'; pBtn.textContent='▶';
         const fBtn=document.createElement('button');
         fBtn.className='btn btn-secondary btn-icon ripple-target'; fBtn.textContent='❤';
+        if(!username) fBtn.style.display='none';
         if(isFavorite(track)) fBtn.classList.add('btn-fav-active');
 
         pBtn.addEventListener('click',ev=>{
@@ -3823,14 +3839,28 @@
         });
         fBtn.addEventListener('click',ev=>{
           ev.stopPropagation();
+          if(!window.requireLogin('请先登录后再收藏'))return;
           const i=state.favorites.findIndex(x=>x.uid===track.uid);
-          if(i>=0){state.favorites.splice(i,1);showToast(t('toastRemovedFavorite'));}
-          else{state.favorites.push(track);showToast(t('toastAddedFavorite'));}
+          if(i>=0){window.removeFavorite(track);showToast(t('toastRemovedFavorite'));}
+          else{window.addFavorite(track);showToast(t('toastAddedFavorite'));}
           renderPlaylistList();
           updateMainFavButton();
         });
         act.appendChild(pBtn);
         act.appendChild(fBtn);
+        // Delete track button (room playlists only)
+        if(activeTab==='playlists' && username){
+          const dBtn=document.createElement('button');
+          dBtn.className='btn btn-secondary btn-icon ripple-target'; dBtn.textContent='✕';
+          dBtn.style.color='var(--accent-red)';
+          dBtn.addEventListener('click',ev=>{
+            ev.stopPropagation();
+            const plId=dom.playlistSelect.value;
+            window.removeTrackFromRoomPlaylist(plId,track);
+            showToast(state.language==='zh'?'已从歌单移除':'Removed from playlist');
+          });
+          act.appendChild(dBtn);
+        }
         item.appendChild(index);item.appendChild(meta);item.appendChild(act);
         item.addEventListener('click',()=>pBtn.click());
         wrap.appendChild(item);
@@ -3853,18 +3883,15 @@
       dom.playlistModal.classList.remove('show');
     }
     function createPlaylist(){
+      if(!window.requireLogin('请先登录后再创建歌单'))return;
       let name=dom.playlistNameInput.value.trim();
       if(!name)name=state.language==='zh'?'未命名歌单':'Untitled Playlist';
-      const id='pl-'+Date.now()+'-'+Math.random().toString(16).slice(2);
-      const pl={id,name,tracks:[]};
-      state.playlists.push(pl);
-      const opt=document.createElement('option');
-      opt.value=pl.id; opt.textContent=pl.name;
-      dom.playlistSelect.appendChild(opt);
-      dom.playlistSelect.value=pl.id;
-      closePlaylistModal();
-      renderPlaylistList();
-      showToast(t('toastPlaylistCreated'));
+      window.createRoomPlaylist(name,function(pl){
+        dom.playlistSelect.value=pl.id;
+        closePlaylistModal();
+        renderPlaylistList();
+        showToast(t('toastPlaylistCreated'));
+      });
     }
 
     // ===================== 搜索加载更多 =====================
@@ -4153,8 +4180,6 @@
             if(state.playlists.length&&!state.playContext.playlistId)state.playContext.playlistId=state.playlists[0].id;
           }
           renderPlaylistList();
-          const list=getActiveList();
-          if(!state.currentTrack && list.length) playFromList(state.playContext.type,0,state.playContext.playlistId);
         });
       });
 
@@ -4168,6 +4193,19 @@
         renderPlaylistList();
       });
       dom.addCurrentBtn.addEventListener('click',addCurrentToPlaylist);
+
+      var deletePlaylistBtn=document.getElementById('delete-playlist-btn');
+      if(deletePlaylistBtn)deletePlaylistBtn.addEventListener('click',function(){
+        if(!window.requireLogin('请先登录后再删除歌单'))return;
+        var plId=dom.playlistSelect.value;
+        if(!plId)return;
+        var pl=state.playlists.find(function(p){return p.id===plId;});
+        if(!pl)return;
+        var name=pl.name||'';
+        if(!confirm((state.language==='zh'?'确认删除歌单 "':'Delete playlist "')+name+'" ?'))return;
+        window.deleteRoomPlaylist(plId);
+        showToast(state.language==='zh'?'歌单已删除':'Playlist deleted');
+      });
 
       dom.shortcutToggleBtn.addEventListener('click',()=>{dom.shortcutModal.classList.add('show');});
       dom.shortcutCloseBtn.addEventListener('click',()=>{dom.shortcutModal.classList.remove('show');});
@@ -4240,19 +4278,6 @@
     var tb=document.getElementById("themeToggle");if(tb)tb.addEventListener("click",function(){var n=h.getAttribute("data-theme")==="light"?"dark":"light";ap(n);localStorage.setItem("theme",n);});
     matchMedia("(prefers-color-scheme:light)").addEventListener("change",function(e){if(!localStorage.getItem("theme"))ap(e.matches?"light":"dark");});
     })();
-    // Welcome modal
-    var welcomeShown=localStorage.getItem('mu_welcome');
-    if(!welcomeShown){
-      var wRoom=(new URLSearchParams(location.search)).get('room')||'lobby';
-      setTimeout(function(){document.getElementById('welcome-modal').classList.add('show');},600);
-      var shareLink=location.origin+location.pathname+'?room='+wRoom;
-      document.getElementById('shareUrl').textContent=shareLink;
-    }
-    function closeWelcome(){document.getElementById('welcome-modal').classList.remove('show');localStorage.setItem('mu_welcome','1');}
-    document.getElementById('welcome-ok').addEventListener('click',closeWelcome);
-    document.getElementById('welcome-close').addEventListener('click',closeWelcome);
-    document.getElementById('welcome-modal').addEventListener('click',function(e){if(e.target===this)closeWelcome();});
-
     document.addEventListener('DOMContentLoaded',init);
 
     // ===== Header Expand =====
@@ -4283,13 +4308,14 @@
     });
     document.addEventListener('keydown',function(e){if(e.key==='Escape'){var ex=document.querySelector('.panel.expanded');if(ex)ex.classList.remove('expanded');document.querySelector('.app').classList.remove('dim');}});
 
-    // ===== Supabase 双人听歌 =====
+    // ===== Supabase 房间共享 =====
     var SUPABASE_URL='https://qudyifwqcdququqndomb.supabase.co';
     var SUPABASE_KEY='sb_publishable_vn5kUwJrK0rMLqkUtjAmHA_YPOWlHm-';
     var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     var room=(new URLSearchParams(location.search)).get('room')||'lobby';
-    var sender=localStorage.getItem('mu_nick')||('听友'+Math.floor(Math.random()*900+100));
-    localStorage.setItem('mu_nick',sender);
+    var username=localStorage.getItem('mu_username')||null;
+    var chatName=username||('听友'+Math.floor(Math.random()*900+100));
+
     document.getElementById('roomInput').value=room;
     document.getElementById('roomInput2').value=room;
     document.getElementById('roomTag').textContent='#'+room;
@@ -4316,7 +4342,124 @@
       }
     });
 
-    // Chat
+    // ===== 登录/游客守卫 =====
+    window.isLoggedIn=function(){return !!username;};
+    window.requireLogin=function(action){
+      if(!username){showToast(action||'请先登录后再操作');return false;}
+      return true;
+    };
+
+    function handleSupabaseError(err,action){
+      console.error('Supabase error ('+action+'):',err);
+      showToast((state.language==='zh'?'操作失败，请重试':'Operation failed, retry')+' ('+action+')');
+    }
+
+    // ===== 欢迎弹窗 — 登录 =====
+    function setupWelcomeModal(){
+      var wm=document.getElementById('welcome-modal');
+      if(!wm)return;
+      // Always inject login form (needed for guest → login flow)
+      var desc=wm.querySelector('.modal-desc');
+      if(desc){
+        desc.innerHTML='<span style="font-size:18px;font-weight:600;display:block;margin-bottom:8px;color:var(--text-main);">👋 欢迎来到 Pikachu Music</span>'+
+          '四源聚合搜索：<strong>咪咕 · 网易云 · QQ · 酷我</strong>，支持歌词滚动、收藏、多歌单管理<br>'+
+          '点击任意区域即可<strong>放大</strong>，按 <kbd>ESC</kbd> 或 ✕ 收起面板'+
+          '<div style="margin:10px 0;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);">'+
+          '<div style="font-weight:600;margin-bottom:4px;">👥 房间共享</div>'+
+          '输入同一房间号加入房间，<strong>共享歌单</strong>与<strong>实时聊天</strong><br>'+
+          '❤️ 登录后可<strong>收藏歌曲</strong>、<strong>创建房间歌单</strong>、增删歌曲'+
+          '</div>'+
+          '<div style="margin:10px 0;">'+
+          '<input id="usernameInput" type="text" placeholder="输入用户名即可登录（无密码）" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;">'+
+          '</div>'+
+          '<span style="font-size:11px;color:var(--text-sub);">📋 分享链接：</span><code id="shareUrl" style="word-break:break-all;font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,0.05);"></code>';
+      }
+      var actions=wm.querySelector('.modal-actions');
+      if(actions){
+        actions.innerHTML='<button id="welcome-login" class="btn" style="padding:8px 24px;font-size:13px;">登录 ✨</button>'+
+          '<button id="welcome-skip" class="btn btn-ghost" style="padding:8px 24px;font-size:13px;">游客浏览</button>';
+      }
+      var shareUrl=document.getElementById('shareUrl');
+      if(shareUrl)shareUrl.textContent=location.origin+location.pathname+'?room='+room;
+
+      // Login
+      document.getElementById('welcome-login').addEventListener('click',function(){
+        var u=document.getElementById('usernameInput').value.trim();
+        if(!u){showToast('请输入用户名');return;}
+        doLogin(u);
+        wm.classList.remove('show');
+      });
+      // Skip
+      document.getElementById('welcome-skip').addEventListener('click',function(){
+        wm.classList.remove('show');
+        localStorage.setItem('mu_welcome','1');
+      });
+      // Close button
+      var closeBtn=document.getElementById('welcome-close');
+      if(closeBtn)closeBtn.addEventListener('click',function(){wm.classList.remove('show');localStorage.setItem('mu_welcome','1');});
+      // ESC
+      wm.addEventListener('click',function(e){if(e.target===wm){wm.classList.remove('show');localStorage.setItem('mu_welcome','1');}});
+
+      // Auto-show or hide
+      if(username){
+        wm.classList.remove('show');
+      } else if(!localStorage.getItem('mu_welcome')){
+        setTimeout(function(){wm.classList.add('show');},600);
+      } else {
+        wm.classList.remove('show');
+      }
+    }
+
+    function doLogin(u){
+      username=u;
+      localStorage.setItem('mu_username',u);
+      chatName=u;
+      // Upsert profile
+      sb.from('profiles').upsert({username:u,room_id:room}).then();
+      // Load user data & subscribe
+      loadFavorites();
+      subscribeFavorites();
+      loadRoomPlaylists();
+      // Update UI
+      updateLoginUI();
+    }
+
+    function updateLoginUI(){
+      var tag=document.getElementById('userTag');
+      var gtag=document.getElementById('guestTag');
+      if(tag){
+        if(username){
+          tag.textContent='👤 '+username;tag.style.display='';
+          tag.onclick=function(){
+            if(confirm((state.language==='zh'?'退出登录？':'Logout?')+' ('+username+')')){
+              localStorage.removeItem('mu_username');
+              localStorage.removeItem('mu_welcome');
+              location.reload();
+            }
+          };
+          if(gtag)gtag.style.display='none';
+        }
+        else{
+          tag.style.display='none';
+          if(gtag){gtag.style.display='';gtag.onclick=function(){document.getElementById('welcome-modal').classList.add('show');};}
+        }
+      }
+      // Update fav button visibility
+      var fb=document.getElementById('fav-btn');
+      if(fb)fb.style.display=username?'':'none';
+      // Update playlist action buttons
+      var npb=document.getElementById('new-playlist-btn');
+      if(npb)npb.style.display=username?'':'none';
+      var acb=document.getElementById('add-current-btn');
+      if(acb)acb.style.display=username?'':'none';
+      var dpb=document.getElementById('delete-playlist-btn');
+      if(dpb)dpb.style.display=username?'':'none';
+      // Clear chat button (login only)
+      var ccb=document.getElementById('clearChatBtn');
+      if(ccb)ccb.style.display=username?'':'none';
+    }
+
+    // ===== Chat =====
     var chatMsgs=document.getElementById('chat-msgs'),msgCount=0,chatInit=false;
     function addChatMsg(who,txt,tm,isMe){
       if(!chatInit){chatMsgs.innerHTML='';chatInit=true;}
@@ -4326,20 +4469,276 @@
       chatMsgs.appendChild(d);chatMsgs.scrollTo({top:chatMsgs.scrollHeight,behavior:'smooth'});
     }
     var chatCh=sb.channel('room-'+room+'-msgs');
-    chatCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'room_id=eq.'+room},function(p){var m=p.new;addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);}).subscribe();
-    sb.from('messages').select('*').eq('room_id',room).order('created_at',{ascending:true}).limit(50).then(function(r){if(r.data)r.data.forEach(function(m){addChatMsg(m.sender,m.content,m.created_at,m.sender===sender);});if(!r.data||!r.data.length)chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">暂无消息，来聊聊天吧 🎵</div>';});
+    chatCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'room_id=eq.'+room},function(p){var m=p.new;addChatMsg(m.sender,m.content,m.created_at,m.sender===chatName);}).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Chat channel error:',status);});
+    sb.from('messages').select('*').eq('room_id',room).order('created_at',{ascending:true}).limit(50).then(function(r){if(r.data)r.data.forEach(function(m){addChatMsg(m.sender,m.content,m.created_at,m.sender===chatName);});if(!r.data||!r.data.length)chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">暂无消息，来聊聊天吧 🎵</div>';}).catch(function(e){chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">消息加载失败，请刷新重试</div>';console.error('Chat load failed:',e);});
 
-    document.getElementById('btnSend').addEventListener('click',function(){var v=document.getElementById('chatInput').value.trim();if(!v)return;document.getElementById('chatInput').value='';sb.from('messages').insert({room_id:room,sender:sender,content:v}).then();});
+    document.getElementById('btnSend').addEventListener('click',function(){var v=document.getElementById('chatInput').value.trim();if(!v)return;document.getElementById('chatInput').value='';sb.from('messages').insert({room_id:room,sender:chatName,content:v}).then();});
     document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnSend').click();});
 
-    // Shared playlist via Supabase
-    sb.channel('room-'+room+'-pl').on('postgres_changes',{event:'INSERT',schema:'public',table:'playlist',filter:'room_id=eq.'+room},function(p){var s=p.new;console.log('Playlist INSERT:',s);if(!state.playlists.length)return;state.playlists[0].tracks.push({uid:s.song_id,title:s.song_name,artist:s.artist,source:'shared',audioUrl:s.song_url,loaded:true,lrc:null});renderPlaylistList();}).subscribe();
-    sb.from('playlist').select('*').eq('room_id',room).order('created_at',{ascending:true}).then(function(r){if(r.data)r.data.forEach(function(s){if(!state.playlists.length)return;state.playlists[0].tracks.push({uid:s.song_id,title:s.song_name,artist:s.artist,source:'shared',audioUrl:s.song_url,loaded:true,lrc:null});});renderPlaylistList();});
+    // 清空聊天（删除 Supabase 中本房间所有消息）
+    var clearChatBtn=document.getElementById('clearChatBtn');
+    if(clearChatBtn)clearChatBtn.addEventListener('click',function(){
+      if(!confirm(state.language==='zh'?'确认清空本房间所有聊天记录？（所有人可见的云端数据将被删除）':'Clear ALL chat history in this room? (Cloud data will be deleted for everyone)'))return;
+      chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">'+(state.language==='zh'?'清空中…':'Clearing…')+'</div>';
+      msgCount=0;chatInit=false;
+      sb.from('messages').delete().eq('room_id',room).then(function(){
+        chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">'+(state.language==='zh'?'聊天已清空':'Chat cleared')+'</div>';
+      }).catch(function(e){
+        console.error('Clear chat failed:',e);
+        chatMsgs.innerHTML='<div style="text-align:center;color:var(--text-sub);padding:12px;">'+(state.language==='zh'?'清空失败，请重试':'Clear failed, retry')+'</div>';
+      });
+    });
 
-    // Expose add-to-shared-playlist globally for search clicks
-    window.addToSharedPlaylist=function(track){
-      sb.from('playlist').insert({room_id:room,song_id:track.uid||track.songid,song_name:track.title,artist:track.artist,song_url:track.audioUrl||'',copyright_id:'',album_id:'0'}).then();
+    // ===== 收藏 — Supabase 持久化 =====
+    function loadFavorites(){
+      if(!username)return;
+      sb.from('favorites').select('*').eq('username',username).order('created_at',{ascending:true}).then(function(r){
+        state.favorites=[];
+        if(r.data)r.data.forEach(function(f){
+          state.favorites.push({uid:f.song_id,title:f.title,artist:f.artist,audioUrl:f.audio_url,detailsLoaded:true,lrc:null,source:'fav'});
+        });
+        renderPlaylistList();
+        updateMainFavButton();
+      }).catch(function(e){console.error('Favorites load failed:',e);});
+    }
+
+    var favCh=null;
+    function subscribeFavorites(){
+      if(!username)return;
+      if(favCh)try{favCh.unsubscribe();}catch(e){}
+      favCh=sb.channel('user-'+username+'-favs');
+      favCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'favorites',filter:'username=eq.'+username},function(p){
+        var f=p.new;
+        if(!state.favorites.some(function(x){return x.uid===f.song_id;})){
+          state.favorites.push({uid:f.song_id,title:f.title,artist:f.artist,audioUrl:f.audio_url,detailsLoaded:true,lrc:null,source:'fav'});
+          renderPlaylistList();
+          updateMainFavButton();
+        }
+      }).on('postgres_changes',{event:'DELETE',schema:'public',table:'favorites',filter:'username=eq.'+username},function(p){
+        var old=p.old;
+        var idx=state.favorites.findIndex(function(x){return x.uid===old.song_id;});
+        if(idx>=0){state.favorites.splice(idx,1);renderPlaylistList();updateMainFavButton();}
+      }).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Favs channel error:',status);});
+    }
+
+    window.addFavorite=function(track){
+      if(!window.requireLogin('请先登录后再收藏'))return;
+      var sid=track.uid||track.songid||'';
+      if(!sid)return;
+      // Optimistic local update
+      if(!state.favorites.some(function(x){return x.uid===sid;})){
+        state.favorites.push({uid:sid,title:track.title||'',artist:track.artist||'',audioUrl:track.audioUrl||'',detailsLoaded:true,lrc:null,source:'fav'});
+        renderPlaylistList();
+        updateMainFavButton();
+      }
+      sb.from('favorites').insert({username:username,song_id:sid,title:track.title||'',artist:track.artist||'',audio_url:track.audioUrl||''}).then().catch(function(e){
+        // Rollback on failure
+        var idx=state.favorites.findIndex(function(x){return x.uid===sid;});
+        if(idx>=0){state.favorites.splice(idx,1);renderPlaylistList();updateMainFavButton();}
+        handleSupabaseError(e,'addFavorite');
+      });
     };
+
+    window.removeFavorite=function(track){
+      if(!window.requireLogin('请先登录后再取消收藏'))return;
+      var sid=track.uid||track.songid||'';
+      if(!sid)return;
+      // Optimistic local update
+      var idx=state.favorites.findIndex(function(x){return x.uid===sid;});
+      if(idx>=0){state.favorites.splice(idx,1);renderPlaylistList();updateMainFavButton();}
+      sb.from('favorites').delete().eq('username',username).eq('song_id',sid).then().catch(function(e){
+        // Rollback on failure
+        state.favorites.push({uid:sid,title:track.title||'',artist:track.artist||'',audioUrl:track.audioUrl||'',detailsLoaded:true,lrc:null,source:'fav'});
+        renderPlaylistList();updateMainFavButton();
+        handleSupabaseError(e,'removeFavorite');
+      });
+    };
+
+    // ===== 房间歌单 — Supabase 持久化 =====
+    function trackFromRow(s){
+      return {uid:s.song_id,title:s.title,artist:s.artist,audioUrl:s.audio_url,detailsLoaded:true,lrc:null,source:'room'};
+    }
+
+    function loadRoomPlaylists(){
+      sb.from('room_playlists').select('*').eq('room_id',room).order('created_at',{ascending:true}).then(function(r){
+        state.playlists=[];
+        if(!r.data||!r.data.length){renderPlaylistList();updatePlaylistSelect();return;}
+        var plistIds=r.data.map(function(p){return p.id;});
+        r.data.forEach(function(p){
+          state.playlists.push({id:'rpl-'+p.id,name:p.name,tracks:[],createdBy:p.created_by});
+        });
+        // Load tracks for all playlists
+        sb.from('room_playlist_tracks').select('*').in('playlist_id',plistIds).order('created_at',{ascending:true}).then(function(tr){
+          if(tr.data)tr.data.forEach(function(t){
+            var pl=state.playlists.find(function(x){return x.id==='rpl-'+t.playlist_id;});
+            if(pl)pl.tracks.push(trackFromRow(t));
+          });
+          renderPlaylistList();
+          updatePlaylistSelect();
+        }).catch(function(e){console.error('Room tracks load failed:',e);renderPlaylistList();updatePlaylistSelect();});
+      }).catch(function(e){console.error('Room playlists load failed:',e);});
+    }
+
+    function updatePlaylistSelect(){
+      var sel=document.getElementById('playlist-select');
+      if(!sel)return;
+      sel.innerHTML='';
+      state.playlists.forEach(function(pl){
+        var opt=document.createElement('option');
+        opt.value=pl.id;opt.textContent=pl.name;
+        sel.appendChild(opt);
+      });
+      if(state.playlists.length&&!sel.value)sel.value=state.playlists[0].id;
+    }
+
+    // Realtime subscriptions for room playlists
+    var roomPlCh=null;
+    function subscribeRoomPlaylists(){
+      if(roomPlCh)try{roomPlCh.unsubscribe();}catch(e){}
+      roomPlCh=sb.channel('room-'+room+'-playlists');
+      roomPlCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'room_playlists',filter:'room_id=eq.'+room},function(p){
+        var rp=p.new;
+        if(!state.playlists.some(function(x){return x.id==='rpl-'+rp.id;})){
+          state.playlists.push({id:'rpl-'+rp.id,name:rp.name,tracks:[],createdBy:rp.created_by});
+          updatePlaylistSelect();
+          renderPlaylistList();
+        }
+      }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'room_playlists',filter:'room_id=eq.'+room},function(p){
+        var rp=p.new;
+        var pl=state.playlists.find(function(x){return x.id==='rpl-'+rp.id;});
+        if(pl){pl.name=rp.name;updatePlaylistSelect();renderPlaylistList();}
+      }).on('postgres_changes',{event:'DELETE',schema:'public',table:'room_playlists',filter:'room_id=eq.'+room},function(p){
+        var old=p.old;
+        var idx=state.playlists.findIndex(function(x){return x.id==='rpl-'+old.id;});
+        if(idx>=0){
+          state.playlists.splice(idx,1);
+          if(state.playContext.playlistId==='rpl-'+old.id)state.playContext.playlistId=state.playlists.length?state.playlists[0].id:null;
+          updatePlaylistSelect();
+          renderPlaylistList();
+        }
+      }).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Room playlists channel error:',status);});
+    }
+
+    var roomTrCh=null;
+    function subscribeRoomTracks(){
+      if(roomTrCh)try{roomTrCh.unsubscribe();}catch(e){}
+      roomTrCh=sb.channel('room-'+room+'-tracks');
+      roomTrCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'room_playlist_tracks',filter:'room_id=eq.'+room},function(p){
+        var t=p.new;
+        var pl=state.playlists.find(function(x){return x.id==='rpl-'+t.playlist_id;});
+        if(pl){
+          if(!pl.tracks.some(function(x){return x.uid===t.song_id;})){
+            pl.tracks.push(trackFromRow(t));
+            renderPlaylistList();
+          }
+        }
+      }).on('postgres_changes',{event:'DELETE',schema:'public',table:'room_playlist_tracks',filter:'room_id=eq.'+room},function(p){
+        var old=p.old;
+        var pl=state.playlists.find(function(x){return x.id==='rpl-'+old.playlist_id;});
+        if(pl){
+          var idx=pl.tracks.findIndex(function(x){return x.uid===old.song_id;});
+          if(idx>=0){pl.tracks.splice(idx,1);renderPlaylistList();}
+        }
+      }).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Favs channel error:',status);});
+    }
+
+    // Global CRUD functions for playlist operations
+    window.createRoomPlaylist=function(name,cb){
+      if(!window.requireLogin('请先登录后再创建歌单'))return;
+      sb.from('room_playlists').insert({room_id:room,name:name,created_by:username}).select().then(function(r){
+        if(r.data&&r.data[0]){
+          var pl={id:'rpl-'+r.data[0].id,name:name,tracks:[],createdBy:username};
+          state.playlists.push(pl);
+          updatePlaylistSelect();
+          renderPlaylistList();
+          if(cb)cb(pl);
+        }
+      }).catch(function(e){handleSupabaseError(e,'createPlaylist');});
+    };
+
+    window.deleteRoomPlaylist=function(plId){
+      if(!window.requireLogin('请先登录后再删除歌单'))return;
+      var numId=parseInt(plId.replace('rpl-',''),10);
+      if(!numId)return;
+      // Optimistic local remove first
+      var idx=state.playlists.findIndex(function(x){return x.id===plId;});
+      var removed=null;
+      if(idx>=0){removed=state.playlists.splice(idx,1)[0];}
+      if(state.playContext.playlistId===plId)state.playContext.playlistId=state.playlists.length?state.playlists[0].id:null;
+      updatePlaylistSelect();
+      renderPlaylistList();
+      // Delete from Supabase
+      sb.from('room_playlist_tracks').delete().eq('playlist_id',numId).then(function(){
+        return sb.from('room_playlists').delete().eq('id',numId);
+      }).catch(function(e){
+        // Rollback
+        if(removed){state.playlists.splice(idx,0,removed);}
+        updatePlaylistSelect();
+        renderPlaylistList();
+        handleSupabaseError(e,'deletePlaylist');
+      });
+    };
+
+    window.addTrackToRoomPlaylist=function(plId,track){
+      if(!window.requireLogin('请先登录后再添加歌曲'))return;
+      var numId=parseInt(plId.replace('rpl-',''),10);
+      if(!numId)return;
+      var sid=track.uid||track.songid||'';
+      if(!sid)return;
+      var pl=state.playlists.find(function(x){return x.id===plId;});
+      if(pl&&pl.tracks.some(function(x){return x.uid===sid;})){
+        showToast(t('toastAlreadyInList'));
+        return;
+      }
+      var newTrack={uid:sid,title:track.title||'',artist:track.artist||'',audioUrl:track.audioUrl||'',detailsLoaded:true,lrc:null,source:'room'};
+      // Optimistic local add
+      if(pl){pl.tracks.push(newTrack);renderPlaylistList();}
+      sb.from('room_playlist_tracks').insert({
+        playlist_id:numId,room_id:room,song_id:sid,
+        title:track.title||'',artist:track.artist||'',audio_url:track.audioUrl||''
+      }).then().catch(function(e){
+        // Rollback
+        if(pl){
+          var ri=pl.tracks.findIndex(function(x){return x.uid===sid;});
+          if(ri>=0){pl.tracks.splice(ri,1);renderPlaylistList();}
+        }
+        handleSupabaseError(e,'addTrack');
+      });
+    };
+
+    window.removeTrackFromRoomPlaylist=function(plId,track){
+      if(!window.requireLogin('请先登录后再删除歌曲'))return;
+      var numId=parseInt(plId.replace('rpl-',''),10);
+      if(!numId)return;
+      var sid=track.uid||track.songid||'';
+      if(!sid)return;
+      // Optimistic local remove
+      var pl=state.playlists.find(function(x){return x.id===plId;});
+      var removed=null,removedIdx=-1;
+      if(pl){
+        var idx=pl.tracks.findIndex(function(x){return x.uid===sid;});
+        if(idx>=0){removed=pl.tracks.splice(idx,1)[0];removedIdx=idx;}
+        renderPlaylistList();
+      }
+      sb.from('room_playlist_tracks').delete().eq('playlist_id',numId).eq('song_id',sid).then().catch(function(e){
+        // Rollback
+        if(pl&&removed){pl.tracks.splice(removedIdx,0,removed);renderPlaylistList();}
+        handleSupabaseError(e,'removeTrack');
+      });
+    };
+
+    // ===== 初始化数据加载 =====
+    if(username){
+      loadFavorites();
+      subscribeFavorites();
+    }
+    loadRoomPlaylists();
+    subscribeRoomPlaylists();
+    subscribeRoomTracks();
+    updateLoginUI();
+
+    // Welcome modal setup
+    setupWelcomeModal();
 
   })();
   </script>
