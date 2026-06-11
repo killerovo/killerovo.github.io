@@ -3721,6 +3721,7 @@
       else dom.audio.play().catch(e=>console.error(e));
       // Sync mode: broadcast new play/pause state
       if(state.playMode==='sync'&&state.currentTrack){
+        console.log('[sync] togglePlayPause, broadcasting',willBePlaying);
         syncUpsert(state.currentTrack,willBePlaying,dom.audio.currentTime||0);
       }
     }
@@ -4870,6 +4871,7 @@
 
     function syncUpsert(track,isPlaying,position){
       if(!track||!track.uid)return;
+      console.log('[sync] upsert',track.uid,track.title,isPlaying,position);
       sb.from('room_sync').upsert({
         room_id:room,
         sender:chatName,
@@ -4880,27 +4882,35 @@
         is_playing:!!isPlaying,
         position:position||0,
         updated_at:new Date().toISOString()
-      }).then().catch(function(e){console.error('syncUpsert failed:',e);});
+      },{onConflict:'room_id'}).then(function(r){console.log('[sync] upsert ok',r);}).catch(function(e){console.error('[sync] upsert failed:',e);});
     }
 
     function subscribeRoomSync(){
       if(syncCh)try{syncCh.unsubscribe();}catch(e){}
+      console.log('[sync] subscribing to room',room);
       syncCh=sb.channel('room-'+room+'-sync');
       syncCh.on('postgres_changes',{event:'INSERT',schema:'public',table:'room_sync',filter:'room_id=eq.'+room},function(p){
+        console.log('[sync] received INSERT',p.new);
         handleSyncEvent(p.new);
       }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'room_sync',filter:'room_id=eq.'+room},function(p){
+        console.log('[sync] received UPDATE',p.new);
         handleSyncEvent(p.new);
-      }).subscribe(function(status){if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Sync channel error:',status);});
+      }).subscribe(function(status){
+        console.log('[sync] channel status:',status);
+        if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.error('Sync channel error:',status);
+      });
     }
 
     function handleSyncEvent(s){
       if(!s)return;
+      console.log('[sync] handle event',s.sender,'vs me',chatName,'mode',state.playMode);
       // Ignore own events (with 3s grace for initial join)
-      if(s.sender===chatName&&Date.now()>syncIgnoreUntil)return;
-      if(state.playMode!=='sync')return;
+      if(s.sender===chatName&&Date.now()>syncIgnoreUntil){console.log('[sync] ignored own event');return;}
+      if(state.playMode!=='sync'){console.log('[sync] not in sync mode, ignoring');return;}
       syncReceiving=true;
-      // Don't sync if we already have this song loaded
+      // Same song — just adjust play/pause and position
       if(state.currentTrack&&state.currentTrack.uid===s.song_id){
+        console.log('[sync] same song, adjusting state');
         if(s.is_playing&&!state.isPlaying){dom.audio.play().catch(function(){});}
         if(!s.is_playing&&state.isPlaying){dom.audio.pause();}
         var seekPos=parseFloat(s.position)||0;
@@ -4911,6 +4921,7 @@
         return;
       }
       // Load and play a different song
+      console.log('[sync] switching to new song',s.song_id,s.title);
       var track={
         uid:s.song_id,title:s.title||'',artist:s.artist||'',
         audioUrl:s.audio_url,detailsLoaded:true,lrc:null,source:'room'
@@ -4948,16 +4959,20 @@
       state.playContext={type:'playlist',index:0,playlistId:pl.id};
       subscribeRoomSync();
       syncIgnoreUntil=Date.now()+3000;
+      console.log('[sync] enterSyncMode, fetching existing state for room',room);
       // Fetch existing sync state from room
       sb.from('room_sync').select('*').eq('room_id',room).maybeSingle().then(function(r){
+        console.log('[sync] fetched existing',r.data);
         if(r.data&&r.data.song_id){
           handleSyncEvent(r.data);
         }else if(state.currentTrack&&state.currentTrack.audioUrl){
+          console.log('[sync] no remote state, broadcasting current track');
           syncUpsert(state.currentTrack,state.isPlaying,dom.audio.currentTime||0);
         }else{
+          console.log('[sync] no remote state & no current track, starting first track');
           playFromList('playlist',0,pl.id);
         }
-      }).catch(function(){});
+      }).catch(function(e){console.error('[sync] fetch failed:',e);});
       showToast(state.language==='zh'?'已进入同步播放':'Sync play on');
       var si=document.getElementById('sync-indicator');
       if(si)si.style.display='';
