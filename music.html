@@ -1286,7 +1286,7 @@
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:2000;
+      z-index:99999;
     }
     .modal-backdrop.show { display:flex; }
 
@@ -2398,7 +2398,13 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:16px;font-weight:600;color:var(--text-main);"><span style="margin-right:6px;">👥</span>一起听歌</span>
         <span id="roomTag" style="font-size:12px;color:var(--text-sub);cursor:pointer;padding:5px 12px;border-radius:14px;border:1px solid var(--border);" onclick="var e=document.getElementById('roomBox');e.style.display=e.style.display==='flex'?'none':'flex';if(e.style.display==='flex')document.getElementById('roomInput').focus();">#room</span>
-        <span id="userTag" style="font-size:12px;color:var(--accent);padding:5px 12px;border-radius:14px;border:1px solid var(--border);cursor:pointer;display:none;" title="点击退出登录"></span>
+        <span style="position:relative;">
+          <span id="userTag" style="font-size:12px;color:var(--accent);padding:5px 12px;border-radius:14px;border:1px solid var(--border);cursor:pointer;display:none;" title="点击管理账号"></span>
+          <span id="userDropdown" style="display:none;position:absolute;top:100%;right:0;margin-top:6px;background:var(--panel-bg);border:1px solid var(--border);border-radius:10px;padding:4px;min-width:120px;z-index:3000;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+            <div id="dd-change-pwd" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--text-main);">🔒 修改密码</div>
+            <div id="dd-logout" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--accent-red);">退出登录</div>
+          </span>
+        </span>
         <span id="guestTag" style="font-size:12px;color:var(--text-sub);cursor:pointer;padding:5px 12px;border-radius:14px;border:1px solid var(--border);" title="点击登录">👤 未登录</span>
         <span id="roomBox" style="display:none;align-items:center;gap:6px;">
           <input id="roomInput" type="text" placeholder="输入房间名…" style="width:130px;padding:5px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg-primary, rgba(0,0,0,.5));color:var(--text-main);font-size:12px;outline:none;">
@@ -2714,6 +2720,28 @@
       </div>
       <div class="modal-actions" style="margin-top:14px;">
         <button id="shortcut-close-btn2" class="btn" style="padding:8px 24px;font-size:13px;">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- 修改密码弹窗 -->
+  <div id="password-modal" class="modal-backdrop">
+    <div class="modal ripple-target" style="max-width:380px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-title-icon">🔒</span>
+          <span>修改密码</span>
+        </div>
+        <button id="password-close" class="modal-close-btn">×</button>
+      </div>
+      <p class="modal-desc" style="font-size:13px;line-height:1.6;">为账号 <strong id="pwd-modal-username"></strong> 设置新密码</p>
+      <input id="old-password-input" type="password" placeholder="当前密码" style="width:100%;padding:8px 12px;border-radius:8px 8px 0 0;border:1px solid rgba(255,255,255,0.15);border-bottom:none;background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;">
+      <input id="new-password-input" type="password" placeholder="新密码（至少3位）" style="width:100%;padding:8px 12px;border-radius:0 0 8px 8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:var(--text-main);font-size:13px;box-sizing:border-box;margin-bottom:10px;">
+      <div class="modal-actions">
+        <button id="password-cancel-btn" class="btn btn-ghost ripple-target">取消</button>
+        <button id="password-confirm-btn" class="btn btn-secondary ripple-target">确认修改</button>
       </div>
     </div>
   </div>
@@ -4363,6 +4391,10 @@
       });
     });
     document.addEventListener('click',function(e){
+      // Close user dropdown
+      if(!e.target.closest('#userTag')&&!e.target.closest('#userDropdown')){
+        var dd=document.getElementById('userDropdown');if(dd)dd.style.display='none';
+      }
       if(e.target.closest('.p-close')){
         var ex=document.querySelector('.panel.expanded');if(ex)ex.classList.remove('expanded');
         document.querySelector('.app').classList.remove('dim');
@@ -4538,6 +4570,48 @@
       }
     }
 
+    // ===== 修改密码 =====
+    function openChangePwd(){
+      if(!username)return;
+      var modal=document.getElementById('password-modal');
+      if(!modal)return;
+      document.getElementById('pwd-modal-username').textContent=username;
+      document.getElementById('old-password-input').value='';
+      document.getElementById('new-password-input').value='';
+      modal.classList.add('show');
+    }
+
+    function closeChangePwd(){
+      var modal=document.getElementById('password-modal');
+      if(modal)modal.classList.remove('show');
+    }
+
+    async function submitChangePwd(){
+      var oldPw=document.getElementById('old-password-input').value;
+      var newPw=document.getElementById('new-password-input').value;
+      if(!oldPw){showToast(state.language==='zh'?'请输入当前密码':'Enter current password');return;}
+      if(!newPw){showToast(state.language==='zh'?'请输入新密码':'Enter new password');return;}
+      if(newPw.length<3){showToast(state.language==='zh'?'新密码至少3位':'New password min 3 chars');return;}
+      var oldHash=await hashPassword(oldPw);
+      // Verify current password
+      var r=await sb.from('profiles').select('password_hash').eq('username',username).maybeSingle();
+      if(r.error||!r.data){showToast(state.language==='zh'?'验证失败，请重试':'Verification failed');return;}
+      if(r.data.password_hash!==oldHash){showToast(state.language==='zh'?'当前密码错误':'Current password wrong');return;}
+      // Set new password
+      var newHash=await hashPassword(newPw);
+      var up=await sb.from('profiles').update({password_hash:newHash}).eq('username',username);
+      if(up.error){showToast(state.language==='zh'?'修改失败，请重试':'Change failed, retry');console.error(up.error);return;}
+      closeChangePwd();
+      showToast(state.language==='zh'?'密码修改成功':'Password changed');
+    }
+
+    // Password modal event handlers
+    document.getElementById('password-confirm-btn').addEventListener('click',submitChangePwd);
+    document.getElementById('password-cancel-btn').addEventListener('click',closeChangePwd);
+    document.getElementById('password-close').addEventListener('click',closeChangePwd);
+    document.getElementById('password-modal').addEventListener('click',function(e){if(e.target===this)closeChangePwd();});
+    document.getElementById('password-modal').addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePwd();});
+
     async function hashPassword(pw){
       var enc=new TextEncoder().encode(pw);
       var buf=await crypto.subtle.digest('SHA-256',enc);
@@ -4564,16 +4638,19 @@
     function updateLoginUI(){
       var tag=document.getElementById('userTag');
       var gtag=document.getElementById('guestTag');
+      var dd=document.getElementById('userDropdown');
       if(tag){
         if(username){
           tag.textContent='👤 '+username;tag.style.display='';
-          tag.onclick=function(){
-            if(confirm((state.language==='zh'?'退出登录？':'Logout?')+' ('+username+')')){
-              localStorage.removeItem('mu_username');
-              localStorage.removeItem('mu_welcome');
-              location.reload();
-            }
-          };
+          tag.onclick=function(e){e.stopPropagation();if(dd)dd.style.display=dd.style.display==='none'?'':'none';};
+          if(dd){
+            document.getElementById('dd-change-pwd').onclick=function(){dd.style.display='none';openChangePwd();};
+            document.getElementById('dd-logout').onclick=function(){dd.style.display='none';
+              if(confirm((state.language==='zh'?'退出登录？':'Logout?')+' ('+username+')')){
+                localStorage.removeItem('mu_username');localStorage.removeItem('mu_welcome');location.reload();
+              }
+            };
+          }
           if(gtag)gtag.style.display='none';
         }
         else{
