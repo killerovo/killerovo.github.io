@@ -222,7 +222,7 @@
 }
 .board-wrapper {
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
   aspect-ratio: 1;
   position: relative;
 }
@@ -376,6 +376,52 @@
 @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
 
+/* Nickname Gate */
+.nickname-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.nickname-card {
+  background: var(--go-panel-bg);
+  border: 1px solid var(--go-panel-border);
+  border-radius: 16px;
+  padding: 36px 40px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  max-width: 380px;
+  width: 90%;
+}
+.nickname-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+  color: var(--go-text);
+}
+.nickname-card .sub {
+  font-size: 0.85rem;
+  color: var(--go-text-secondary);
+  margin-bottom: 20px;
+}
+.nickname-card input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--go-panel-border);
+  border-radius: 8px;
+  background: var(--go-input-bg);
+  color: var(--go-text);
+  font-size: 1rem;
+  font-family: var(--font-system);
+  outline: none;
+  text-align: center;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.nickname-card input:focus { border-color: var(--go-accent); }
+.nickname-card .btn { padding: 10px 32px; font-size: 0.95rem; }
+
 /* Responsive */
 @media (max-width: 1024px) {
   .gomoku-main {
@@ -384,9 +430,9 @@
     padding: 12px;
     margin-top: 54px;
   }
-  .side-panel { width: 100%; max-width: 520px; flex-direction: row; flex-wrap: wrap; gap: 10px; max-height: none; }
+  .side-panel { width: 100%; max-width: 600px; flex-direction: row; flex-wrap: wrap; gap: 10px; max-height: none; }
   .side-panel .panel-section { flex: 1; min-width: 140px; }
-  .chat-panel { width: 100%; max-width: 520px; max-height: 350px; }
+  .chat-panel { width: 100%; max-width: 600px; max-height: 350px; }
   .board-area { order: -1; width: 100%; }
 }
 
@@ -416,6 +462,17 @@
     </div>
   </div>
 </nav>
+
+<!-- Nickname Gate -->
+<div class="nickname-overlay" id="nicknameOverlay">
+  <div class="nickname-card">
+    <h2>☯ 五子棋 · 方圆</h2>
+    <div class="sub">墨玉与羊脂对弈，请输入你的雅号</div>
+    <input type="text" id="nicknameInput" placeholder="输入昵称..." maxlength="12" autofocus>
+    <br>
+    <button class="btn accent" id="nicknameEnterBtn">进入棋室</button>
+  </div>
+</div>
 
 <!-- Main Layout -->
 <main class="gomoku-main">
@@ -526,7 +583,7 @@
   // ===================== State =====================
   var sb;
   var roomChannel, chatChannel;
-  var username = localStorage.getItem('gomoku_username') || ('弈客' + Math.floor(Math.random() * 900 + 100));
+  var username = localStorage.getItem('gomoku_username') || '';
   var roomId;
   var myColor = null;   // 'black' | 'white' | 'spectator'
   var moves = [];
@@ -542,8 +599,7 @@
   var displaySize = 400;
   var hoverGridPos = null;
   var paperTexture = null;
-
-  localStorage.setItem('gomoku_username', username);
+  var gameInited = false;
 
   // ===================== Theme Toggle =====================
   (function() {
@@ -603,7 +659,7 @@
 
   // ===================== Canvas / Board =====================
   function resizeCanvas() {
-    var size = Math.min(boardWrapper.clientWidth, 520);
+    var size = Math.min(boardWrapper.clientWidth, 600);
     if (size < 280) size = 280;
     if (size === displaySize && paperTexture) return; // no change, texture cached
     displaySize = size;
@@ -1019,19 +1075,28 @@
       winLineCells = [];
     }
 
-    // Update myColor if reconnecting
+    // Update myColor if reconnecting or opponent left
+    var prevColor = myColor;
     if (playerBlack === username) myColor = 'black';
     else if (playerWhite === username) myColor = 'white';
     else if (playerBlack && playerWhite) myColor = 'spectator';
+    else if (!playerBlack && !playerWhite) myColor = null;
+    else if (playerBlack && !playerWhite) myColor = (playerBlack === username) ? 'black' : 'spectator';
+    else if (!playerBlack && playerWhite) myColor = (playerWhite === username) ? 'white' : 'spectator';
+
+    // Detect opponent left
+    if (gameInited && gameStatus === 'waiting' && prevColor && (prevColor === 'black' || prevColor === 'white') && moves.length > 0) {
+      addChatMessage('系统', '对手离开了房间', true);
+      showToast('对手离开了房间');
+    }
 
     drawBoard();
     updateUI();
     updateBoardCursor();
 
-    // Show result overlay
-    if (winner) {
-      showResultOverlay();
-    }
+    // Hide result overlay if game reset
+    if (!winner) $('resultOverlay').style.display = 'none';
+    else showResultOverlay();
   }
 
   // ===================== UI Updates =====================
@@ -1329,6 +1394,7 @@
     updateBoardCursor();
 
     if (winner) showResultOverlay();
+    gameInited = true;
   }
 
   function generateRoomId() {
@@ -1519,10 +1585,128 @@
   });
 
   // ===================== Start =====================
-  initGame().catch(function(err) {
-    console.error('Init error:', err);
-    showToast('连接失败，请刷新页面重试');
-    $('statusBar').textContent = '⚠ 连接失败';
+  // If user already has a saved nickname, skip the gate and init directly
+  if (username) {
+    $('nicknameOverlay').style.display = 'none';
+    initGame().catch(function(err) {
+      console.error('Init error:', err);
+      showToast('连接失败，请刷新页面重试');
+      $('statusBar').textContent = '⚠ 连接失败';
+    });
+  } else {
+    // Show nickname gate
+    $('nicknameInput').focus();
+    $('nicknameEnterBtn').addEventListener('click', enterGame);
+    $('nicknameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') enterGame();
+    });
+  }
+
+  function enterGame() {
+    var name = $('nicknameInput').value.trim();
+    if (!name) { showToast('请输入昵称'); return; }
+    if (name.length > 12) { showToast('昵称最多12个字'); return; }
+    username = name;
+    localStorage.setItem('gomoku_username', username);
+    $('nicknameOverlay').style.display = 'none';
+    initGame().catch(function(err) {
+      console.error('Init error:', err);
+      showToast('连接失败，请刷新页面重试');
+      $('statusBar').textContent = '⚠ 连接失败';
+    });
+  }
+
+  // ===================== Disconnect Cleanup =====================
+  async function leaveRoom() {
+    if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
+    // Remove self from room
+    var room = await getRoom(roomId);
+    if (!room) return;
+    if (myColor === 'black' && room.player_black === username) {
+      // Black leaves — clear black seat, reset room
+      await updateRoom({
+        player_black: null,
+        status: 'waiting',
+        moves: [],
+        current_turn: 'black',
+        winner: null,
+        undo_count: 0,
+        undo_request: null,
+      });
+    } else if (myColor === 'white' && room.player_white === username) {
+      // White leaves — clear white seat, reset room
+      await updateRoom({
+        player_white: null,
+        status: 'waiting',
+        moves: [],
+        current_turn: 'black',
+        winner: null,
+        undo_count: 0,
+        undo_request: null,
+      });
+    }
+  }
+
+  window.addEventListener('beforeunload', function() {
+    // Use sendBeacon-style synchronous cleanup via fetch as fallback
+    if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
+    if (sb && myColor && roomId) {
+      var updates = { updated_at: new Date().toISOString() };
+      if (myColor === 'black') {
+        updates.player_black = null;
+        updates.status = 'waiting';
+        updates.moves = [];
+        updates.current_turn = 'black';
+        updates.winner = null;
+        updates.undo_count = 0;
+        updates.undo_request = null;
+      } else if (myColor === 'white') {
+        updates.player_white = null;
+        updates.status = 'waiting';
+        updates.moves = [];
+        updates.current_turn = 'black';
+        updates.winner = null;
+        updates.undo_count = 0;
+        updates.undo_request = null;
+      }
+      // Use fetch directly for reliable beforeunload cleanup
+      var xhr = new XMLHttpRequest();
+      xhr.open('PATCH', SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId), false);
+      xhr.setRequestHeader('apikey', SUPABASE_KEY);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Prefer', 'return=minimal');
+      xhr.send(JSON.stringify(updates));
+    }
+  });
+
+  window.addEventListener('pagehide', function() {
+    if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
+    if (sb && myColor && roomId) {
+      var updates = { updated_at: new Date().toISOString() };
+      if (myColor === 'black') {
+        updates.player_black = null;
+        updates.status = 'waiting';
+        updates.moves = [];
+        updates.current_turn = 'black';
+        updates.winner = null;
+        updates.undo_count = 0;
+        updates.undo_request = null;
+      } else if (myColor === 'white') {
+        updates.player_white = null;
+        updates.status = 'waiting';
+        updates.moves = [];
+        updates.current_turn = 'black';
+        updates.winner = null;
+        updates.undo_count = 0;
+        updates.undo_request = null;
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open('PATCH', SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId), false);
+      xhr.setRequestHeader('apikey', SUPABASE_KEY);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Prefer', 'return=minimal');
+      xhr.send(JSON.stringify(updates));
+    }
   });
 })();
 </script>
