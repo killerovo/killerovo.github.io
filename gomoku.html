@@ -660,7 +660,10 @@
   function onRoomUpdate(r) {
     if (!r) return;
     var nm = r.moves || [];
-    if (nm.length === moves.length && r.undo_request === undoRequest && r.undo_count === undoCount && r.winner === winner && r.status === gameStatus && r.player_black === playerBlack && r.player_white === playerWhite && r.current_turn === currentTurn) return;
+    // Compare active move count too — undo marks moves inactive without changing array length
+    var localActive = moves.filter(function(m) { return m.active !== false; }).length;
+    var remoteActive = nm.filter(function(m) { return m.active !== false; }).length;
+    if (nm.length === moves.length && localActive === remoteActive && r.undo_request === undoRequest && r.undo_count === undoCount && r.winner === winner && r.status === gameStatus && r.player_black === playerBlack && r.player_white === playerWhite && r.current_turn === currentTurn) return;
 
     var prevBlack = playerBlack, prevWhite = playerWhite, prevColor = myColor;
     moves = nm; currentTurn = r.current_turn; gameStatus = r.status; winner = r.winner;
@@ -683,7 +686,6 @@
     // Detect opponent left
     if (gameInited && (prevColor === 'black' || prevColor === 'white')) {
       var mySide = prevColor === 'black' ? 'black' : 'white';
-      var oppSide = mySide === 'black' ? 'white' : 'black';
       var prevOpp = mySide === 'black' ? prevWhite : prevBlack;
       var currOpp = mySide === 'black' ? playerWhite : playerBlack;
       if (prevOpp && !currOpp) {
@@ -768,9 +770,10 @@
     var wl = checkWin(nm, { x: gx, y: gy, color: myColor });
     moves = nm; currentTurn = nt;
     if (wl) { winner = myColor; gameStatus = 'finished'; winLineCells = wl; }
+    else if (nm.filter(function(m) { return m.active !== false; }).length >= GRID_SIZE * GRID_SIZE) { gameStatus = 'finished'; } // draw
     if (undoRequest) undoRequest = null;
     drawBoard(); updateUI(); updateCursor();
-    await dbUpdateRoom({ moves: nm, current_turn: nt, winner: wl ? myColor : null, status: wl ? 'finished' : 'playing', undo_request: null });
+    await dbUpdateRoom({ moves: nm, current_turn: nt, winner: wl ? myColor : null, status: (wl || gameStatus === 'finished') ? 'finished' : 'playing', undo_request: null });
     if (wl) { showResult(); }
   }
 
