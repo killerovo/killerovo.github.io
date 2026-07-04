@@ -28,6 +28,42 @@ cc-connect 是一款开源自托管的 AI Agent 桥接工具，将 Claude Code �
 
 [查看完整教程](autodl-claude-code.html)
 
+## Z-Library 资源汇总 · 备用入口 & 客户端
+
+Z-Library 全球最大电子书库的备用域名、客户端下载及联系方式合集。**注意：Z-Library 在中国大陆被屏蔽，以下所有链接需科学上网才能访问。**
+
+### 主域名
+
+- [z-lib.sk](https://z-lib.sk)
+- [z-library.sk](https://z-library.sk)
+- [z-lib.fm](https://z-lib.fm)
+- [z-lib.gd](https://z-lib.gd)
+
+### 客户端下载
+
+| 平台 | 下载 |
+|------|------|
+| Android | [zlibrary-app-latest.apk](https://s3proxy-alp.cdn-zlib.sk/swfs_second_public_files/soft/android/zlibrary-app-latest.apk) |
+| Windows | [Z-Library-latest.exe](https://dln1.ncdn.ec/general-files/soft/desktop/Z-Library-latest.exe) |
+| Linux | [Z-Library_3.1.0_amd64.deb](https://dln1.ncdn.ec/general-files/soft/desktop/Z-Library_3.1.0_amd64.deb) |
+| macOS | [zlibrary-setup-latest.dmg](https://dln1.ncdn.ec/general-files/soft/desktop/zlibrary-setup-latest.dmg) |
+
+### Magic Email 快捷访问
+
+向 `blackbox@z-library.so` 发送任意邮件，3-5 分钟内自动回复 Z-Library 访问链接。
+
+### 社交媒体
+
+- [X (Twitter)](https://x.com/Z_Lib_official)
+- [Telegram](https://t.me/zlib_chat)
+- [Mastodon](https://mastodon.social/@Z_Lib_official)
+
+### 其他有用链接
+
+- [Wikipedia](https://wikipedia.org/wiki/Z-Library) · [Reddit](https://reddit.com/r/zlibrary) · [lib-talk.io](https://lib-talk.io)
+
+> 以上方法均无效时，联系支持团队：`support@z-lib.fm`
+
 ## MCP 与 Skills 入门指南
 
 MCP（模型上下文协议）是给 AI 接外部工具的「USB 接口」，Skills 是教 AI 怎么做的「操作手册」。本文介绍两者的核心区别，以及如何使用 mcpmarket.com 和 skillhub.cn 来发现、安装热门 MCP 和 Skills。附 2026 年 5 月最热 Skills Top 5 排行榜。
