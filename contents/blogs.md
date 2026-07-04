@@ -48,21 +48,6 @@ Z-Library 全球最大电子书库的备用域名、客户端下载及联系方�
 | Linux | [Z-Library_3.1.0_amd64.deb](https://dln1.ncdn.ec/general-files/soft/desktop/Z-Library_3.1.0_amd64.deb) |
 | macOS | [zlibrary-setup-latest.dmg](https://dln1.ncdn.ec/general-files/soft/desktop/zlibrary-setup-latest.dmg) |
 
-### Magic Email 快捷访问
-
-向 `blackbox@z-library.so` 发送任意邮件，3-5 分钟内自动回复 Z-Library 访问链接。
-
-### 社交媒体
-
-- [X (Twitter)](https://x.com/Z_Lib_official)
-- [Telegram](https://t.me/zlib_chat)
-- [Mastodon](https://mastodon.social/@Z_Lib_official)
-
-### 其他有用链接
-
-- [Wikipedia](https://wikipedia.org/wiki/Z-Library) · [Reddit](https://reddit.com/r/zlibrary) · [lib-talk.io](https://lib-talk.io)
-
-> 以上方法均无效时，联系支持团队：`support@z-lib.fm`
 
 ## MCP 与 Skills 入门指南
 
