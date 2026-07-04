@@ -683,6 +683,13 @@
 
   async function dbLeaveRoom() {
     if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
+    // Last player leaving → delete the room and its chat entirely
+    if ((myColor === 'black' && !playerWhite) || (myColor === 'white' && !playerBlack)) {
+      await sb.from('gomoku_chat').delete().eq('room_id', roomId);
+      await sb.from('gomoku_rooms').delete().eq('room_id', roomId);
+      return;
+    }
+    // Otherwise just clear our own slot so the room can be reused
     var up = { updated_at: new Date().toISOString() };
     if (myColor === 'black') {
       up.player_black = null; up.status = 'waiting'; up.moves = []; up.current_turn = 'black';
@@ -847,14 +854,14 @@
 
   async function confirmUndo() {
     if (!undoRequest || undoRequest === myColor) return;
-    var am = moves.filter(function(m) { return m.active !== false; }), removed = [];
-    for (var i = am.length - 1; i >= 0 && removed.length < 2; i--) { am[i].active = false; removed.unshift(am[i]); }
-    var all = moves.map(function(m) {
-      for (var j = 0; j < removed.length; j++) { if (removed[j].x === m.x && removed[j].y === m.y && removed[j].color === m.color) return Object.assign({}, m, { active: false }); }
-      return m;
+    var am = moves.filter(function(m) { return m.active !== false; });
+    if (am.length < 2) return;
+    // Actually remove the last 2 moves instead of marking them inactive
+    var removed = am.slice(-2);
+    var all = moves.filter(function(m) {
+      return !removed.some(function(r) { return r.x === m.x && r.y === m.y && r.color === m.color; });
     });
-    var active = all.filter(function(m) { return m.active !== false; });
-    var nt = active.length > 0 ? (active[active.length-1].color === 'black' ? 'white' : 'black') : 'black';
+    var nt = all.length > 0 ? (all[all.length-1].color === 'black' ? 'white' : 'black') : 'black';
     await dbUpdateRoom({ moves: all, undo_request: null, undo_count: undoCount + 1, current_turn: nt, winner: null, status: 'playing' });
   }
 
@@ -876,6 +883,24 @@
   }
 
   // ===================== Init =====================
+  var STALE_HOURS = 1; // rooms abandoned for this long get cleaned up on next join
+
+  function isRoomStale(room) {
+    if (!room) return false;
+    if (room.status !== 'waiting') return false;
+    if (room.player_black || room.player_white) return false;
+    var updated = new Date(room.updated_at || room.created_at).getTime();
+    return (Date.now() - updated) > STALE_HOURS * 3600 * 1000;
+  }
+
+  async function deleteAndRecreate(roomId) {
+    await sb.from('gomoku_chat').delete().eq('room_id', roomId);
+    await sb.from('gomoku_rooms').delete().eq('room_id', roomId);
+    await dbCreateRoom(roomId);
+    myColor = 'black'; playerBlack = username; gameStatus = 'waiting';
+    moves = []; currentTurn = 'black'; winner = null; undoRequest = null; undoCount = 0; winLineCells = [];
+  }
+
   async function initGame() {
     initSupabase();
     var urlRoom = new URLSearchParams(location.search).get('room');
@@ -883,9 +908,10 @@
     if (!urlRoom) history.replaceState(null, '', '?room=' + encodeURIComponent(roomId));
 
     var room = await dbGetRoom(roomId);
-    if (!room) {
-      await dbCreateRoom(roomId);
-      myColor = 'black'; playerBlack = username; gameStatus = 'waiting';
+    if (!room || isRoomStale(room)) {
+      if (isRoomStale(room)) await deleteAndRecreate(roomId);
+      else await dbCreateRoom(roomId);
+      if (!myColor) { myColor = 'black'; playerBlack = username; gameStatus = 'waiting'; }
       addChat('系统', '房间已创建，等待对手加入...', true);
     } else {
       playerBlack = room.player_black; playerWhite = room.player_white;
@@ -929,8 +955,10 @@
     $('chatMsgs').innerHTML = '<div class="chat-msg sys"><span class="body">欢迎来到五子棋 · 方圆</span></div>';
 
     var room = await dbGetRoom(roomId);
-    if (!room) {
-      await dbCreateRoom(roomId); myColor = 'black'; playerBlack = username; gameStatus = 'waiting';
+    if (!room || isRoomStale(room)) {
+      if (isRoomStale(room)) await deleteAndRecreate(roomId);
+      else await dbCreateRoom(roomId);
+      if (!myColor) { myColor = 'black'; playerBlack = username; gameStatus = 'waiting'; }
       addChat('系统', '房间已创建，等待对手加入...', true);
     } else {
       playerBlack = room.player_black; playerWhite = room.player_white;
@@ -1024,24 +1052,34 @@
 
   // ===================== Disconnect Cleanup =====================
   function leavePayload() {
+    // If the other slot is already empty, delete the room on disconnect
+    if ((myColor === 'black' && !playerWhite) || (myColor === 'white' && !playerBlack)) {
+      return {
+        method: 'DELETE',
+        url: SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId),
+        body: null
+      };
+    }
     var up = { updated_at: new Date().toISOString(), moves: [], current_turn: 'black', winner: null, undo_count: 0, undo_request: null };
     if (myColor === 'black') { up.player_black = null; up.status = 'waiting'; }
     else if (myColor === 'white') { up.player_white = null; up.status = 'waiting'; }
-    return JSON.stringify(up);
+    return {
+      method: 'PATCH',
+      url: SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId),
+      body: JSON.stringify(up)
+    };
   }
 
   function syncCleanup() {
     if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
-    fetch(SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId), {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: leavePayload(),
+    var lp = leavePayload();
+    var opts = {
+      method: lp.method,
+      headers: { 'apikey': SUPABASE_KEY, 'Prefer': 'return=minimal' },
       keepalive: true
-    });
+    };
+    if (lp.body) { opts.headers['Content-Type'] = 'application/json'; opts.body = lp.body; }
+    fetch(lp.url, opts);
   }
 
   window.addEventListener('beforeunload', syncCleanup);
