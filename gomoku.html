@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -324,6 +324,7 @@
     </div>
     <div class="board-actions">
       <button class="btn" id="undoBtn" disabled>↩ 悔棋</button>
+      <button class="btn danger" id="resignBtn" style="display:none;">🏳 认输</button>
       <button class="btn" id="restartBtn">🔄 重新开始</button>
     </div>
   </section>
@@ -355,6 +356,10 @@
         <div class="info-cell">
           <div class="ic-label">悔棋</div>
           <div class="ic-val" id="undoCount">0/3</div>
+        </div>
+        <div class="info-cell">
+          <div class="ic-label">用时</div>
+          <div class="ic-val" id="elapsedTime">00:00</div>
         </div>
       </div>
       <div class="undo-bar" id="undoBar" style="margin-top:8px;">
@@ -412,6 +417,7 @@
   var playerBlack = null, playerWhite = null;
   var winLineCells = [], cellSize = 30, displaySize = 400;
   var hoverGridPos = null, paperTexture = null, gameInited = false;
+  var gameStartTime = null, timerInterval = null;
 
   // ===================== Theme =====================
   (function() {
@@ -593,6 +599,27 @@
     boardCanvas.style.cursor = (myColor && gameStatus === 'playing' && currentTurn === myColor && !winner) ? 'pointer' : 'default';
   }
 
+  // ===================== Timer =====================
+  function startTimer() {
+    stopTimer();
+    gameStartTime = Date.now();
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function updateTimer() {
+    var el = $('elapsedTime');
+    if (!el) return;
+    if (!gameStartTime) { el.textContent = '00:00'; return; }
+    var sec = Math.floor((Date.now() - gameStartTime) / 1000);
+    var min = Math.floor(sec / 60), s = sec % 60;
+    el.textContent = (min < 10 ? '0' : '') + min + ':' + (s < 10 ? '0' : '') + s;
+  }
+
   // ===================== Win Detection =====================
   function checkWin(allMoves, lastMove) {
     if (!lastMove) return null;
@@ -694,6 +721,13 @@
       }
     }
 
+    // Timer: start on game begin, reset on new game, stop on finish
+    if (gameStatus === 'playing') {
+      var currentActive = nm.filter(function(m) { return m.active !== false; }).length;
+      if (currentActive === 0) { stopTimer(); gameStartTime = null; startTimer(); }
+      else if (!gameStartTime) startTimer();
+    } else { stopTimer(); }
+
     drawBoard(); updateUI(); updateCursor();
     if (!winner) $('resultOverlay').style.display = 'none'; else showResult();
   }
@@ -709,6 +743,7 @@
     $('youBlack').style.display = (playerBlack === username) ? '' : 'none';
     $('youWhite').style.display = (playerWhite === username) ? '' : 'none';
     $('leaveBtn').style.display = (myColor === 'black' || myColor === 'white') ? '' : 'none';
+    $('resignBtn').style.display = (myColor && myColor !== 'spectator' && gameStatus === 'playing' && !winner) ? '' : 'none';
 
     var sb = $('statusBadge');
     sb.className = 'status-badge ' + gameStatus;
@@ -794,6 +829,14 @@
 
   async function rejectUndo() { await dbUpdateRoom({ undo_request: null }); }
   async function cancelUndo() { await dbUpdateRoom({ undo_request: null }); }
+
+  async function resign() {
+    if (gameStatus !== 'playing' || winner || !myColor || myColor === 'spectator') return;
+    if (!confirm('确定认输吗？')) return;
+    var oppColor = myColor === 'black' ? 'white' : 'black';
+    dbSendChat('🏳 我认输了');
+    await dbUpdateRoom({ winner: oppColor, status: 'finished' });
+  }
 
   async function restartGame() {
     if (!playerBlack || !playerWhite) return;
@@ -898,6 +941,7 @@
   window.addEventListener('resize', function() { resizeCanvas(); drawBoard(); });
 
   $('undoBtn').addEventListener('click', requestUndo);
+  $('resignBtn').addEventListener('click', resign);
   $('undoAccept').addEventListener('click', confirmUndo);
   // undoReject is set in updateUndoBar
   $('restartBtn').addEventListener('click', function() { if (confirm('确定重新开始？双方颜色会交换。')) restartGame(); });
@@ -919,7 +963,18 @@
 
   // Leave button
   $('leaveBtn').addEventListener('click', function() {
-    if (confirm('确定离开房间吗？')) { dbLeaveRoom().then(function() { toast('已离开房间'); }); }
+    if (confirm('确定离开房间吗？')) {
+      stopTimer(); gameStartTime = null;
+      if (roomChannel) { sb.removeChannel(roomChannel); roomChannel = null; }
+      if (chatChannel) { sb.removeChannel(chatChannel); chatChannel = null; }
+      dbLeaveRoom().then(function() {
+        moves = []; currentTurn = 'black'; gameStatus = 'waiting'; winner = null;
+        undoRequest = null; undoCount = 0; winLineCells = []; hoverGridPos = null;
+        playerBlack = null; playerWhite = null; myColor = null; gameInited = false;
+        drawBoard(); updateUI(); updateCursor();
+        toast('已离开房间');
+      });
+    }
   });
 
   // ===================== Nickname Gate =====================
@@ -946,12 +1001,16 @@
 
   function syncCleanup() {
     if (!gameInited || !roomId || !myColor || myColor === 'spectator') return;
-    var xhr = new XMLHttpRequest();
-    xhr.open('PATCH', SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId), false);
-    xhr.setRequestHeader('apikey', SUPABASE_KEY);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Prefer', 'return=minimal');
-    xhr.send(leavePayload());
+    fetch(SUPABASE_URL + '/rest/v1/gomoku_rooms?room_id=eq.' + encodeURIComponent(roomId), {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: leavePayload(),
+      keepalive: true
+    });
   }
 
   window.addEventListener('beforeunload', syncCleanup);
