@@ -1,27 +1,27 @@
-# Li Zhijiang · 个人主页
+# Li Zhijiang · Personal Site
 
-我的个人学术主页 & 工具箱，托管在 GitHub Pages。
+My academic homepage & toolbox, hosted on GitHub Pages.
 
-**在线访问** → [killerovo.github.io](https://killerovo.github.io)
+**Live** → [killerovo.github.io](https://killerovo.github.io)
 
-## 页面
+## Pages
 
-| 页面 | 说明 |
-|------|------|
-| `index.html` | 主页 |
-| `gomoku.html` | 双人五子棋 · 方圆（Supabase 实时对战） |
-| `rubiks-cube.html` | 3D 魔方 |
-| `maze-search.html` | 迷宫寻路 |
-| `music.html` | 一起听歌（Supabase 实时同步） |
-| `ui.html` | 💕 纪念日计时 |
-| `kali-tutorial.html` | Kali Linux 教程 |
-| `mcp-skills-guide.html` | MCP Skills 指南 |
-| `autodl-claude-code.html` | AutoDL + Claude Code 教程 |
+| Page | Description |
+|------|-------------|
+| `index.html` | Home |
+| `gomoku.html` | Gomoku · 方圆 — real-time PvP over Supabase |
+| `rubiks-cube.html` | 3D Rubik's Cube |
+| `maze-search.html` | Maze pathfinding |
+| `music.html` | Shared music player — real-time sync via Supabase |
+| `ui.html` | Anniversary countdown |
+| `kali-tutorial.html` | Kali Linux guide |
+| `mcp-skills-guide.html` | MCP Skills guide |
+| `autodl-claude-code.html` | AutoDL + Claude Code guide |
 
-## 技术栈
+## Stack
 
-- 纯静态 HTML/CSS/JS，无框架
-- [Supabase](https://supabase.com) — 实时数据库 & 订阅
+- Vanilla HTML/CSS/JS, no frameworks
+- [Supabase](https://supabase.com) — real-time DB & subscriptions
 - Canvas 2D / Three.js
 
 ## License
