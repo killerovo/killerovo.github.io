@@ -82,7 +82,11 @@
       "Bash(cmd.exe *)",
       "PowerShell(Start-Sleep -Seconds 2; try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/music.html\" -UseBasicParsing -TimeoutSec 5; Write-Host $r.StatusCode } catch { Write-Host \"Not ready: $_\" })",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/music.html\" -UseBasicParsing -TimeoutSec 3; Write-Host \"OK: $\\($r.StatusCode\\)\" } catch { Write-Host \"DOWN: $_\" })",
-      "PowerShell($f=\"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\\\\killerovo.github.io\\\\music.html\"; $l=\\(Get-Content $f -Encoding UTF8\\); Write-Host \"Line 4612: [$\\($l[4611]\\)]\"; Write-Host \"Line 4613: [$\\($l[4612]\\)]\"; Write-Host \"Line 4614: [$\\($l[4613]\\)]\")"
+      "PowerShell($f=\"D:\\\\INFORMATION\\\\GITHUB_sapce\\\\killerovo.github.io\\\\killerovo.github.io\\\\music.html\"; $l=\\(Get-Content $f -Encoding UTF8\\); Write-Host \"Line 4612: [$\\($l[4611]\\)]\"; Write-Host \"Line 4613: [$\\($l[4612]\\)]\"; Write-Host \"Line 4614: [$\\($l[4613]\\)]\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh run *)"
     ]
   }
 }
