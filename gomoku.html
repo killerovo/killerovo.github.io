@@ -361,6 +361,10 @@
           <div class="ic-label">用时</div>
           <div class="ic-val" id="elapsedTime">00:00</div>
         </div>
+        <div class="info-cell">
+          <div class="ic-label">倒计时</div>
+          <div class="ic-val" id="countdownTime" style="font-variant-numeric:tabular-nums;">60</div>
+        </div>
       </div>
       <div class="undo-bar" id="undoBar" style="margin-top:8px;">
         <span id="undoText">对手申请悔棋</span>
@@ -417,7 +421,7 @@
   var playerBlack = null, playerWhite = null;
   var winLineCells = [], cellSize = 30, displaySize = 400;
   var hoverGridPos = null, paperTexture = null, gameInited = false;
-  var gameStartTime = null, timerInterval = null;
+  var gameStartTime = null, timerInterval = null, moveDeadline = null;
 
   // ===================== Theme =====================
   (function() {
@@ -600,25 +604,47 @@
   }
 
   // ===================== Timer =====================
+  var MOVE_SECONDS = 60;
+
+  function resetMoveDeadline() {
+    moveDeadline = Date.now() + MOVE_SECONDS * 1000;
+  }
+
   function startTimer() {
     stopTimer();
     gameStartTime = Date.now();
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
+    updateTimerDisplay();
+    timerInterval = setInterval(updateTimerDisplay, 200);
   }
 
   function stopTimer() {
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   }
 
-  function updateTimer() {
-    var el = $('elapsedTime');
-    if (!el) return;
-    if (!gameStartTime) { el.textContent = '00:00'; return; }
-    var sec = Math.floor((Date.now() - gameStartTime) / 1000);
-    var min = Math.floor(sec / 60), s = sec % 60;
-    el.textContent = (min < 10 ? '0' : '') + min + ':' + (s < 10 ? '0' : '') + s;
+  function updateTimerDisplay() {
+    // Elapsed time
+    var et = $('elapsedTime');
+    if (et) {
+      if (!gameStartTime) { et.textContent = '00:00'; }
+      else {
+        var sec = Math.floor((Date.now() - gameStartTime) / 1000);
+        var min = Math.floor(sec / 60), s = sec % 60;
+        et.textContent = (min < 10 ? '0' : '') + min + ':' + (s < 10 ? '0' : '') + s;
+      }
+    }
+    // Move countdown
+    var cd = $('countdownTime');
+    if (cd) {
+      if (!moveDeadline) { cd.textContent = '—'; cd.style.color = ''; }
+      else {
+        var remaining = Math.max(0, Math.ceil((moveDeadline - Date.now()) / 1000));
+        cd.textContent = remaining;
+        cd.style.color = remaining <= 10 ? 'var(--go-accent)' : '';
+      }
+    }
   }
+
+  function updateTimer() { updateTimerDisplay(); }
 
   // ===================== Win Detection =====================
   function checkWin(allMoves, lastMove) {
@@ -721,12 +747,16 @@
       }
     }
 
-    // Timer: start on game begin, reset on new game, stop on finish
+    // Timer: start on game begin, reset countdown per move, stop on finish
     if (gameStatus === 'playing') {
       var currentActive = nm.filter(function(m) { return m.active !== false; }).length;
-      if (currentActive === 0) { stopTimer(); gameStartTime = null; startTimer(); }
-      else if (!gameStartTime) startTimer();
-    } else { stopTimer(); }
+      if (currentActive === 0) { stopTimer(); gameStartTime = null; resetMoveDeadline(); startTimer(); }
+      else {
+        if (!gameStartTime) startTimer();
+        // Reset countdown on every new move
+        if (currentActive !== localActive) resetMoveDeadline();
+      }
+    } else { stopTimer(); moveDeadline = null; }
 
     drawBoard(); updateUI(); updateCursor();
     if (!winner) $('resultOverlay').style.display = 'none'; else showResult();
@@ -807,6 +837,7 @@
     if (wl) { winner = myColor; gameStatus = 'finished'; winLineCells = wl; }
     else if (nm.filter(function(m) { return m.active !== false; }).length >= GRID_SIZE * GRID_SIZE) { gameStatus = 'finished'; } // draw
     if (undoRequest) undoRequest = null;
+    resetMoveDeadline();
     drawBoard(); updateUI(); updateCursor();
     await dbUpdateRoom({ moves: nm, current_turn: nt, winner: wl ? myColor : null, status: (wl || gameStatus === 'finished') ? 'finished' : 'playing', undo_request: null });
     if (wl) { showResult(); }
@@ -964,7 +995,7 @@
   // Leave button
   $('leaveBtn').addEventListener('click', function() {
     if (confirm('确定离开房间吗？')) {
-      stopTimer(); gameStartTime = null;
+      stopTimer(); gameStartTime = null; moveDeadline = null;
       if (roomChannel) { sb.removeChannel(roomChannel); roomChannel = null; }
       if (chatChannel) { sb.removeChannel(chatChannel); chatChannel = null; }
       dbLeaveRoom().then(function() {
